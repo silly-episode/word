@@ -25,6 +25,12 @@ spring:
       maxFileSize: 10MB
       maxRequestSize: 30MB
 
+#配置RestFul
+  mvc:
+    hiddenmethod:
+      filter:
+        enabled: true   #默认是关闭的
+
 #  redis配置信息
   redis:
     # Redis服务器地址
