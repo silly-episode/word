@@ -31,7 +31,7 @@ public class UserController  {
     private UserService userService;
 
     @PostMapping("loginPassword")
-    public String login(@RequestBody LoginMessage loginMessage) {
+    public String loginPassword(@RequestBody LoginMessage loginMessage) {
         // 获取当前登录用户
         Subject subject = SecurityUtils.getSubject();
 
@@ -52,6 +52,13 @@ public class UserController  {
         // 如果认证失败仍然回到登录页面
         return "redirect:/login.jsp";
     }
+
+    @PostMapping("loginSms")
+    public String loginSms(@RequestBody LoginMessage loginMessage) {
+        return "";
+    }
+
+
 
 }
 
