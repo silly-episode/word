@@ -211,15 +211,15 @@
 
     <build>
 
-            <resources>
-                <resource>
-                    <directory>lib</directory>
-                    <targetPath>/WEB-INF/lib/</targetPath>
-                    <includes>
-                        <include>**/*.jar</include>
-                    </includes>
-                </resource>
-            </resources>
+<!--            <resources>-->
+<!--                <resource>-->
+<!--                    <directory>lib</directory>-->
+<!--                    <targetPath>/WEB-INF/lib/</targetPath>-->
+<!--                    <includes>-->
+<!--                        <include>**/*.jar</include>-->
+<!--                    </includes>-->
+<!--                </resource>-->
+<!--            </resources>-->
 
 
 
