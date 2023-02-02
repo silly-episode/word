@@ -31,7 +31,7 @@ public class ShiroConfig {
         Map<String, String> map = new HashMap<String, String>();
         map.put("/index","authc");//表示这个资源需要认证和授权
         // 设置认证界面路径
-        shiroFilterFactoryBean.setLoginUrl("/login.jsp");
+        shiroFilterFactoryBean.setLoginUrl("/login");
         shiroFilterFactoryBean.setFilterChainDefinitionMap(map);
 
         return shiroFilterFactoryBean;
@@ -46,8 +46,7 @@ public class ShiroConfig {
     //创建自定义Realm
     @Bean
     public Realm getRealm() {
-        MyRealm realm = new MyRealm();
-        return realm;
+        return new MyRealm();
     }
 }
 
