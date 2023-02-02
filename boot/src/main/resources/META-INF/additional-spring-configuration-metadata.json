@@ -1,0 +1,28 @@
+{
+  "properties": [
+    {
+      "name": "elasticsearch",
+      "type": "java.lang.String",
+      "description": "Description for elasticsearch."
+    },
+    {
+      "name": "elasticsearch.host",
+      "type": "java.lang.String",
+      "description": "Description for elasticsearch.host."
+    },
+    {
+      "name": "minio.accesskey",
+      "type": "java.lang.String",
+      "description": "Description for minio.accesskey."
+    },
+    {
+      "name": "minio.endpoint",
+      "type": "java.lang.String",
+      "description": "Description for minio.endpoint."
+    },
+    {
+      "name": "minio.secretKey",
+      "type": "java.lang.String",
+      "description": "Description for minio.secretKey."
+    }
+  ] }
