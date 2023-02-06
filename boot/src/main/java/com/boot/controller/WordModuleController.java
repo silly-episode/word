@@ -45,7 +45,6 @@ public class WordModuleController {
 
 
 
-        smsUtils.sendMessage("13142397682");
         log.info("in2");
         // 判断上传文件是否为空
         if (null == file || 0 == file.getSize()) {

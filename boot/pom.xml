@@ -240,6 +240,12 @@
 <!--            <version>3.3.1</version>-->
 <!--        </dependency>-->
 
+        <dependency>
+            <groupId>io.lettuce</groupId>
+            <artifactId>lettuce-core</artifactId>
+            <version>6.1.10.RELEASE</version>
+            <scope>compile</scope>
+        </dependency>
 
         <!--redis-->
                 <dependency>
@@ -276,6 +282,8 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
+                    <!-- devtools依赖此配置（否则，devtools不生效）。 -->
+                    <fork>true</fork>
                     <excludes>
                         <exclude>
                             <groupId>org.projectlombok</groupId>

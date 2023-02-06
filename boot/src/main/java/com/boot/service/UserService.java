@@ -11,8 +11,8 @@ import com.boot.entity.User;
  */
 public interface UserService extends IService<User> {
 
-    public User getUserByAccount(String account);
+    User getUserByAccount(String account);
 
-
+    User getUserByTel(String phone);
 }
 

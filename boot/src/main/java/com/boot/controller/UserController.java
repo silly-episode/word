@@ -9,8 +9,8 @@ import com.boot.dto.LoginMessage;
 
 import com.boot.entity.User;
 import com.boot.service.UserService;
-import com.boot.utils.JsonUtils;
-import com.boot.utils.JwtUtils;
+import com.boot.utils.*;
+import com.tencentcloudapi.live.v20180801.models.LogInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.IncorrectCredentialsException;
@@ -20,6 +20,7 @@ import org.apache.shiro.authz.UnauthorizedException;
 import org.apache.shiro.subject.Subject;
 import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
+import java.util.concurrent.TimeUnit;
 
 
 /**
@@ -41,10 +42,29 @@ public class UserController {
     @Resource
     private JwtUtils jwtUtils;
 
+    @Resource
+    private SmsUtils smsUtils;
+
+    @Resource
+    private RedisUtils redisUtils;
+
+    private final String codePre = "verifyCode";
+
+
 
     @GetMapping("sms")
-    public String getCode() {
-
+    public String getCode(@RequestParam("phone") String phone) {
+        User userBean = userService.getUserByTel(phone);
+        if (userBean == null) {
+            return "400";
+        }
+        String code = RandomUtils.getSixBitRandom();
+        if (smsUtils.sendMessage(phone, code)) {
+            redisUtils.add(codePre+ phone, code, 5L, TimeUnit.MINUTES);
+            return "200";
+        } else {
+            return "400";
+        }
 
     }
 
@@ -67,12 +87,11 @@ public class UserController {
 
     @PostMapping("loginSms")
     public String loginSms(@RequestBody LoginMessage loginMessage) {
-
-        User userBean = userService.getUserByAccount(loginMessage.getLoginAccount());
+        User userBean = userService.getUserByTel(loginMessage.getLoginAccount());
         if (null == userBean) {
             return JsonUtils.getBeanToJson(Result.error(CodeMsg.BAD_CREDENTIAL));
-        } else if (userBean.getPassword().equals(loginMessage.getLoginPassword())) {
-            return JsonUtils.getBeanToJson(Result.success(jwtUtils.sign(loginMessage.getLoginAccount())));
+        } else if ( loginMessage.getLoginPassword().equals(redisUtils.get(codePre+ loginMessage.getLoginAccount()))) {
+            return JsonUtils.getBeanToJson(Result.success(jwtUtils.sign(userBean.getAccount())));
         } else {
             throw new UnauthorizedException();
         }

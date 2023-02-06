@@ -1,6 +1,7 @@
 package com.boot;
 
 
+import com.boot.utils.RandomUtils;
 import com.boot.utils.SmsUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +28,7 @@ public class SmsTest {
 
     @Test
     public void smsTest(){
-        boolean result = smsUtils.sendMessage("13142397682");
+        boolean result = smsUtils.sendMessage("13142397682", RandomUtils.getSixBitRandom());
         System.out.println(result);
     }
 

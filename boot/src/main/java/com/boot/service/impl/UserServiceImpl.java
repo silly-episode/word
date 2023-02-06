@@ -27,5 +27,12 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements UserS
         query.eq("account", account);
         return userDao.selectOne(query);
     }
+
+    @Override
+    public User getUserByTel(String phone) {
+        QueryWrapper<User> query = new QueryWrapper<User>();
+        query.eq("tel", phone);
+        return userDao.selectOne(query);
+    }
 }
 

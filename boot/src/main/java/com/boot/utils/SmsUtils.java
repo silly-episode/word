@@ -27,7 +27,7 @@ public class SmsUtils {
 
 
 
-    public  boolean sendMessage(String phone){
+    public  boolean sendMessage(String phone,String code){
 
         try {
             //这里是实例化一个Credential，也就是认证对象，参数是密钥对；你要使用肯定要进行认证
@@ -54,7 +54,7 @@ public class SmsUtils {
             request.setSign(SmsConfig.SIGN_NAME);
             request.setTemplateID(SmsConfig.TEMPLATE_ID);
             //生成随机验证码和时间
-            String verificationCode = RandomUtils.getSixBitRandom();
+            String verificationCode = code;
             String time="5";
             String[] templateParamSet = {verificationCode,time};
             request.setTemplateParamSet(templateParamSet);
