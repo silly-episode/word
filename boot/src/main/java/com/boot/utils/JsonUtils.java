@@ -8,7 +8,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-
+/**
+ * @Project: word
+ * @Author: DengYinzhe
+ * @Date: 2023/2/3 11:29
+ * @FileName: JsonUtils
+ * @Description: 序列化反序列化
+ */
 public class JsonUtils
 {
     private static final ObjectMapper MAPPER = new ObjectMapper();

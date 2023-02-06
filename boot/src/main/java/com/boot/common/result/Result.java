@@ -1,5 +1,6 @@
 package com.boot.common.result;
 
+import com.boot.utils.JsonUtils;
 import lombok.Data;
 import org.springframework.http.HttpStatus;
 
@@ -12,34 +13,65 @@ import org.springframework.http.HttpStatus;
  */
 @Data
 public class Result<T> {
-    /** 结果状态 ,正常响应200，其他状态码都为失败*/
+
     private int code;
     private String msg;
     private T data;
 
 
     /**
-     * 成功时候的调用
+     * @param data: 成功的返回数据
+     * @Return: String
+     * @Author: DengYinzhe
+     * @Description: 成功时调用，需返回数据
+     * @Date: 2023/2/6 21:09
      */
-    public static <T> Result<T> success(T data) {
-        return new Result<T>(data, CodeMsg.SUCCESS);
-    }
-    public static <T> Result<T> success() {
-        return new Result<T>(CodeMsg.SUCCESS);
+    public static <T> String success(T data) {
+        return JsonUtils.getBeanToJson(new Result<T>(data, CodeMsg.SUCCESS));
     }
 
     /**
-     * 失败时候的调用
+     * @Return: String
+     * @Author: DengYinzhe
+     * @Description: 成功时调用，不需返回数据
+     * @Date: 2023/2/6 21:10
      */
-    public static <T> Result<T> error(Integer code, String msg) {
-        return new Result<T>(code, msg);
+    public static <T> String success() {
+        return JsonUtils.getBeanToJson(new Result<T>(CodeMsg.SUCCESS));
     }
-    public static <T> Result<T> error(CodeMsg codeMsg) {
-        return new Result<T>(codeMsg);
+
+    /**
+     * @param code:
+     * @param msg:
+     * @Return: String
+     * @Author: DengYinzhe
+     * @Description: 失败时候的调用，自定义code和msg
+     * @Date: 2023/2/6 21:11
+     */
+    public static <T> String error(Integer code, String msg) {
+        return JsonUtils.getBeanToJson(new Result<T>(code, msg));
     }
-    public static <T> Result<T> error(String msg) {
+
+    /**
+     * @param codeMsg:
+     * @Return: String
+     * @Author: DengYinzhe
+     * @Description: 失败时候的调用，使用CodeMsg中固定的code和msg
+     * @Date: 2023/2/6 21:12
+     */
+    public static <T> String error(CodeMsg codeMsg) {
+        return JsonUtils.getBeanToJson(new Result<T>(codeMsg));
+    }
+    /**
+     * @param msg:
+     * @Return: String
+     * @Author: DengYinzhe
+     * @Description: 失败时候的调用，http的code和自定义的msg
+     * @Date: 2023/2/6 21:12
+     */
+    public static <T> String error(String msg) {
         CodeMsg codeMsg = new CodeMsg(HttpStatus.INTERNAL_SERVER_ERROR.value(), msg);
-        return new Result<T>(codeMsg);
+        return JsonUtils.getBeanToJson(new Result<T>(codeMsg));
     }
 
 
