@@ -1,5 +1,6 @@
 package com.boot.common.result;
 
+import lombok.Data;
 import org.springframework.http.HttpStatus;
 
 /**
@@ -9,13 +10,14 @@ import org.springframework.http.HttpStatus;
  * @FileName: Result
  * @Description: 响应返回结果
  */
+@Data
 public class Result<T> {
     /** 结果状态 ,正常响应200，其他状态码都为失败*/
     private int code;
     private String msg;
     private T data;
 
-    // Static methods
+
     /**
      * 成功时候的调用
      */
@@ -40,7 +42,7 @@ public class Result<T> {
         return new Result<T>(codeMsg);
     }
 
-    // Constructor
+
     private Result(Integer code, String msg) {
         this.code = code;
         this.msg = msg;

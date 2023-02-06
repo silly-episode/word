@@ -33,5 +33,8 @@ int insertBatch(@Param("entities") List<User> entities);
 */
 int insertOrUpdateBatch(@Param("entities") List<User> entities);
 
+
+
+
 }
 

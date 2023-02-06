@@ -1,10 +1,13 @@
 package com.boot.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.boot.dao.UserDao;
 import com.boot.entity.User;
 import com.boot.service.UserService;
 import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
 
 /**
  * 用户表(User)表服务实现类
@@ -15,5 +18,14 @@ import org.springframework.stereotype.Service;
 @Service("userService")
 public class UserServiceImpl extends ServiceImpl<UserDao, User> implements UserService {
 
+    @Resource
+    private UserDao userDao;
+
+    @Override
+    public User getUserByAccount(String account) {
+        QueryWrapper<User> query = new QueryWrapper<User>();
+        query.eq("account", account);
+        return userDao.selectOne(query);
+    }
 }
 

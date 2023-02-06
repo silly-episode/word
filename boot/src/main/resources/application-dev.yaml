@@ -80,3 +80,10 @@ tencent:
     signName: 邓胤喆比赛项目个人网
     templateId: 1678253
 
+
+word:
+  jwt:
+    secret: f4e2e52034348f86b67ade581c0f9eb5
+    expire: 86400
+    header: Authorization
+

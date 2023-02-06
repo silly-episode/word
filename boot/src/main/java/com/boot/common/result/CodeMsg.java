@@ -36,6 +36,7 @@ public class CodeMsg {
     public static final CodeMsg BAD_CREDENTIAL = new CodeMsg(4003, "用户名或密码错误");
     public static final CodeMsg ACCOUNT_NOT_FOUND = new CodeMsg(4004, "账号不存在");
     public static final CodeMsg ACCOUNT_NOT_ACTIVATED = new CodeMsg(4005, "账号未激活");
+    public static final CodeMsg SHIRO_ERROR = new CodeMsg(4006, "服务器Shiro运行错误");
 
     /*角色相关*/
     public static final CodeMsg ROLE_ID_CONFLICT = new CodeMsg(4101,"角色ID已存在");
@@ -44,9 +45,6 @@ public class CodeMsg {
 
     public static final CodeMsg ROLE_PERMISSION_DENIED = new CodeMsg(4103,"角色权限不足");
 
-    public static final CodeMsg JOB_USER_CONNECTED = new CodeMsg(4104,"所选岗位存在用户关联，请取消关联后再试");
-
-    public static final CodeMsg DEPT_JOB_CONNECTED = new CodeMsg(4104,"所选部门中存在岗位关联，请取消关联后再试");
 
     public static CodeMsg error(String msg){
         return new CodeMsg(HttpStatus.BAD_REQUEST.value(),msg);

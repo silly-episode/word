@@ -20,7 +20,7 @@
                   value="%d{yyyy-MM-dd HH:mm:ss.SSS} %highlight{%-5level}[%thread] %style{%logger{36}}{cyan} : %msg%n"/>
 
         <!-- 定义日志存储的路径，不要配置相对路径 -->
-        <property name="FILE_PATH" value="D://test"/>
+        <property name="FILE_PATH" value="C://Users//DYZ89//Desktop//项目//word//log"/>
         <!-- 服务名 -->
         <property name="FILE_NAME" value="demo"/>
     </Properties>
