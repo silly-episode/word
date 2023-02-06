@@ -22,8 +22,7 @@ public class JsonUtils
     {
         try
         {
-            String result = MAPPER.writeValueAsString(data);
-            return result;
+            return MAPPER.writeValueAsString(data);
         }
         catch (JsonProcessingException e)
         {
@@ -42,8 +41,7 @@ public class JsonUtils
     {
         try
         {
-            T result = MAPPER.readValue(jsonData, beanType);
-            return result;
+            return MAPPER.readValue(jsonData, beanType);
         }
         catch (Exception e)
         {
@@ -63,8 +61,7 @@ public class JsonUtils
         try
         {
             JavaType javaType = MAPPER.getTypeFactory().constructParametricType(List.class, beanType);
-            List<T> resultList = MAPPER.readValue(jsonData, javaType);
-            return resultList;
+            return MAPPER.readValue(jsonData, javaType);
         }
         catch (Exception e)
         {
@@ -84,8 +81,7 @@ public class JsonUtils
         try
         {
             JavaType javaType = MAPPER.getTypeFactory().constructCollectionType(Set.class, elementType);
-            Set<E> resultSet = MAPPER.readValue(jsonData, javaType);
-            return resultSet;
+            return MAPPER.readValue(jsonData, javaType);
         }
         catch (Exception e)
         {
@@ -106,8 +102,7 @@ public class JsonUtils
         try
         {
             JavaType javaType = MAPPER.getTypeFactory().constructMapType(Map.class, keyType, valueType);
-            Map<K, V> resultMap = MAPPER.readValue(jsonData, javaType);
-            return resultMap;
+            return MAPPER.readValue(jsonData, javaType);
         }
         catch (Exception e)
         {
