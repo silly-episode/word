@@ -28,7 +28,7 @@ public class GlobalExceptionHandler {
     // shiro 异常
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(value = ShiroException.class)
-    public String handler(ShiroException e){
+    public Result handler(ShiroException e){
         log.error("运行时shiro异常:------------------{}",e);
         return Result.error(4003,e.getMessage());
     }
@@ -36,14 +36,14 @@ public class GlobalExceptionHandler {
     // 捕捉UnauthorizedException
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(UnauthorizedException.class)
-    public String handle401() {
+    public Result handle401() {
         return  Result.error(401, "Unauthorized");
     }
 
     // 业务大的异常
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(value = RuntimeErrorException.class)
-    public String handler(RuntimeException e){
+    public Result handler(RuntimeException e){
         log.error("运行时异常:------------------{}",e);
         return Result.error(40008,e.getMessage());
     }
@@ -51,7 +51,7 @@ public class GlobalExceptionHandler {
     // 实体的异常
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(value = MethodArgumentNotValidException.class)
-    public String handler(MethodArgumentNotValidException e){
+    public Result handler(MethodArgumentNotValidException e){
         log.error("实体校验异常:------------------{}",e);
         BindingResult bindingResult = e.getBindingResult();
         ObjectError objectError =  bindingResult.getAllErrors().stream().findFirst().get();
@@ -63,7 +63,7 @@ public class GlobalExceptionHandler {
     // Assert 断言的异常
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(value = IllegalArgumentException.class)
-    public String handler(IllegalArgumentException e){
+    public Result handler(IllegalArgumentException e){
         log.error("Assert 断言异常:------------------{}",e);
         return Result.error(e.getMessage());
     }

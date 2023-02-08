@@ -11,7 +11,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.PrintWriter;
+
 
 /**
  * @Project: word
@@ -24,8 +24,12 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
 
 
     /**
-     * 判断用户是否想要登入。
-     * 检测header里面是否包含Authorization字段即可
+     * @param request:
+     * @param response:
+     * @Return: boolean
+     * @Author: DengYinzhe
+     * @Description: 判断用户是否想要登入。检测header里面是否包含Authorization字段即可
+     * @Date: 2023/2/7 21:16
      */
     @Override
     protected boolean isLoginAttempt(ServletRequest request, ServletResponse response) {

@@ -2,7 +2,6 @@ package com.boot.common.result;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.http.HttpStatus;
 
@@ -68,12 +67,22 @@ public class CodeMsg {
      * @Description: 角色相关
      * @Date: 2023/2/6 21:23
      */
-    public static final CodeMsg ROLE_ID_CONFLICT = new CodeMsg(4101,"角色ID已存在");
-    public static final CodeMsg ROLE_USER_CONNECTED = new CodeMsg(4102,"角色用户存在关联");
-    public static final CodeMsg ROLE_PERMISSION_DENIED = new CodeMsg(4103,"角色权限不足");
+    public static final CodeMsg ROLE_ID_CONFLICT = new CodeMsg(4007,"角色ID已存在");
+    public static final CodeMsg ROLE_USER_CONNECTED = new CodeMsg(4008,"角色用户存在关联");
+    public static final CodeMsg ROLE_PERMISSION_DENIED = new CodeMsg(4009,"角色权限不足");
+
+    /**
+     * @Author: DengYinzhe
+     * @Description: minio文件相关
+     * @Date: 2023/2/8 9:17
+     */
+    public static final CodeMsg NULL_FILE = new CodeMsg(4101,"上传空文件");
 
 
-
-
-
+    /**
+     * @Author: DengYinzhe
+     * @Description: 业务相关返回信息
+     * @Date: 2023/2/8 11:33
+     */
+    public static final CodeMsg UPLOAD_WORD_MODULE_FAILED = new CodeMsg(4201,"单词");
 }

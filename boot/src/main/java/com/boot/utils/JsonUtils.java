@@ -3,6 +3,7 @@ package com.boot.utils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import java.util.List;
 import java.util.Map;
@@ -28,6 +29,7 @@ public class JsonUtils
     {
         try
         {
+            MAPPER.registerModule(new JavaTimeModule());
             return MAPPER.writeValueAsString(data);
         }
         catch (JsonProcessingException e)
@@ -47,6 +49,7 @@ public class JsonUtils
     {
         try
         {
+            MAPPER.registerModule(new JavaTimeModule());
             return MAPPER.readValue(jsonData, beanType);
         }
         catch (Exception e)
@@ -66,6 +69,7 @@ public class JsonUtils
     {
         try
         {
+            MAPPER.registerModule(new JavaTimeModule());
             JavaType javaType = MAPPER.getTypeFactory().constructParametricType(List.class, beanType);
             return MAPPER.readValue(jsonData, javaType);
         }
@@ -86,6 +90,7 @@ public class JsonUtils
     {
         try
         {
+            MAPPER.registerModule(new JavaTimeModule());
             JavaType javaType = MAPPER.getTypeFactory().constructCollectionType(Set.class, elementType);
             return MAPPER.readValue(jsonData, javaType);
         }
@@ -107,6 +112,7 @@ public class JsonUtils
     {
         try
         {
+            MAPPER.registerModule(new JavaTimeModule());
             JavaType javaType = MAPPER.getTypeFactory().constructMapType(Map.class, keyType, valueType);
             return MAPPER.readValue(jsonData, javaType);
         }

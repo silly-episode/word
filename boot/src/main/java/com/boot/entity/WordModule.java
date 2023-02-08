@@ -40,6 +40,8 @@ public class WordModule extends Model<WordModule> {
     private String status;
     //在线学习人数
     private Integer studyNumber;
+    //上级模块名称
+    private String superiorModule;
 
 
 

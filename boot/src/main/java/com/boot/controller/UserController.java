@@ -98,13 +98,22 @@ public class UserController {
     }
 
     @GetMapping("test")
-    public String test() {
-        Subject subject = SecurityUtils.getSubject();
-        if (subject.isAuthenticated()) {
-            return "You are already logged in";
-        } else {
-            return "You are guest";
-        }
+    @ResponseBody
+    public User test() {
+
+//        鉴权
+//        Subject subject = SecurityUtils.getSubject();
+//        if (subject.isAuthenticated()) {
+//            return "You are already logged in";
+//        } else {
+//            return "You are guest";
+//        }
+
+
+//        序列化
+        User user = userService.getUserByTel("13142397682");
+        System.out.println(JsonUtils.getBeanToJson(user));
+        return user;
     }
 }
 

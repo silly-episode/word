@@ -1,6 +1,5 @@
 package com.boot.common.result;
 
-import com.boot.utils.JsonUtils;
 import lombok.Data;
 import org.springframework.http.HttpStatus;
 
@@ -26,8 +25,8 @@ public class Result<T> {
      * @Description: 成功时调用，需返回数据
      * @Date: 2023/2/6 21:09
      */
-    public static <T> String success(T data) {
-        return JsonUtils.getBeanToJson(new Result<T>(data, CodeMsg.SUCCESS));
+    public static <T> Result<T> success(T data) {
+        return new Result<>(data, CodeMsg.SUCCESS);
     }
 
     /**
@@ -36,8 +35,8 @@ public class Result<T> {
      * @Description: 成功时调用，不需返回数据
      * @Date: 2023/2/6 21:10
      */
-    public static <T> String success() {
-        return JsonUtils.getBeanToJson(new Result<T>(CodeMsg.SUCCESS));
+    public static <T> Result<T>success() {
+        return new Result<>(CodeMsg.SUCCESS);
     }
 
     /**
@@ -48,8 +47,8 @@ public class Result<T> {
      * @Description: 失败时候的调用，自定义code和msg
      * @Date: 2023/2/6 21:11
      */
-    public static <T> String error(Integer code, String msg) {
-        return JsonUtils.getBeanToJson(new Result<T>(code, msg));
+    public static <T> Result<T> error(Integer code, String msg) {
+        return new Result<T>(code, msg);
     }
 
     /**
@@ -59,8 +58,8 @@ public class Result<T> {
      * @Description: 失败时候的调用，使用CodeMsg中固定的code和msg
      * @Date: 2023/2/6 21:12
      */
-    public static <T> String error(CodeMsg codeMsg) {
-        return JsonUtils.getBeanToJson(new Result<T>(codeMsg));
+    public static <T> Result<T> error(CodeMsg codeMsg) {
+        return new Result<>(codeMsg);
     }
     /**
      * @param msg:
@@ -69,9 +68,9 @@ public class Result<T> {
      * @Description: 失败时候的调用，http的code和自定义的msg
      * @Date: 2023/2/6 21:12
      */
-    public static <T> String error(String msg) {
+    public static <T> Result<T> error(String msg) {
         CodeMsg codeMsg = new CodeMsg(HttpStatus.INTERNAL_SERVER_ERROR.value(), msg);
-        return JsonUtils.getBeanToJson(new Result<T>(codeMsg));
+        return new Result<>(codeMsg);
     }
 
 

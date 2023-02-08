@@ -19,7 +19,7 @@
     </properties>
     <dependencies>
 
-
+<!--spring-boot configuration注解-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-configuration-processor</artifactId>
@@ -33,13 +33,13 @@
         </dependency>
 
 
-        <!-- 异步日志依赖 -->
+        <!-- 异步日志依赖，可能没有用处 -->
         <dependency>
             <groupId>com.lmax</groupId>
             <artifactId>disruptor</artifactId>
             <version>3.3.7</version>
         </dependency>
-
+<!--序列化和反序列化-->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
@@ -50,7 +50,14 @@
             <artifactId>jakarta.json-api</artifactId>
             <version>2.0.1</version>
         </dependency>
+<!--        解决无法序列化local-date-time-->
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
+            <version>2.13.4</version>
+        </dependency>
 
+<!--重新引入okk-->
         <dependency>
             <groupId>com.squareup.okio</groupId>
             <artifactId>okio</artifactId>
@@ -80,10 +87,6 @@
 <!--                </exclusion>-->
             </exclusions>
         </dependency>
-
-
-
-
 
 
 <!--mp-->
@@ -131,7 +134,7 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
-            <!-- 去掉logback配置 -->
+            <!-- 去掉springboot默认的logback配置 -->
             <exclusions>
                 <exclusion>
                     <groupId>org.springframework.boot</groupId>
@@ -143,7 +146,7 @@
                 </exclusion>
             </exclusions>
         </dependency>
-<!--        去除 log4j-to-slf4j-->
+<!--        去除 log4j-to-slf4j，防止jar包冲突-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-logging</artifactId>
@@ -154,7 +157,7 @@
                 </exclusion>
             </exclusions>
         </dependency>
-
+<!--热部署-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-devtools</artifactId>
@@ -181,7 +184,7 @@
             <artifactId>spring-boot-starter-tomcat</artifactId>
             <scope>provided</scope>
         </dependency>
-
+<!--dev-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
@@ -196,18 +199,15 @@
             <systemPath>${project.basedir}/lib/rename-lib-1.0-SNAPSHOT.jar</systemPath>
         </dependency>
 
+<!--        jwt-->
         <dependency>
             <groupId>com.auth0</groupId>
             <artifactId>java-jwt</artifactId>
             <version>4.0.0</version>
         </dependency>
 
-        <dependency>
-            <groupId>io.jsonwebtoken</groupId>
-            <artifactId>jjwt</artifactId>
-            <version>0.9.1</version>
-        </dependency>
 
+<!--        实体校验器-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-validation</artifactId>
@@ -234,18 +234,7 @@
             <artifactId>freemarker</artifactId>
         </dependency>
 
-<!--        <dependency>-->
-<!--            <groupId>org.crazycake</groupId>-->
-<!--            <artifactId>shiro-redis-spring-boot-starter</artifactId>-->
-<!--            <version>3.3.1</version>-->
-<!--        </dependency>-->
 
-        <dependency>
-            <groupId>io.lettuce</groupId>
-            <artifactId>lettuce-core</artifactId>
-            <version>6.1.10.RELEASE</version>
-            <scope>compile</scope>
-        </dependency>
 
         <!--redis-->
                 <dependency>
@@ -259,6 +248,11 @@
                     <artifactId>shiro-spring-boot-starter</artifactId>
                     <version>1.9.1</version>
                 </dependency>
+<!--Aop-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-aop</artifactId>
+        </dependency>
 
 
     </dependencies>

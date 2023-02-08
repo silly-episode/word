@@ -4,6 +4,9 @@ package com.boot.controller;
 
 
 
+import com.boot.common.result.CodeMsg;
+import com.boot.common.result.Result;
+import com.boot.dto.WordModuleDto;
 import com.boot.utils.MinIOUtils;
 import com.boot.utils.SmsUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -13,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import javax.validation.Valid;
 
 
 /**
@@ -24,12 +28,12 @@ import javax.annotation.Resource;
 
 @RestController
 @Slf4j
+@RequestMapping("word")
 public class WordModuleController {
 
     @Resource
     private MinIOUtils minioUtils;
-    @Autowired
-    private SmsUtils smsUtils;
+
 
 
 
@@ -40,32 +44,43 @@ public class WordModuleController {
      * @Description: TODO
      * @Date: 2023/1/31 8:00
      */
-    @PostMapping("upload")
-    public String upload(MultipartFile file) {
+    @PostMapping("wordModule")
+    public Result wordModule(@RequestParam MultipartFile[] file,@Valid WordModuleDto wordModuleDto) {
 
+        MultipartFile image = null;
 
+        MultipartFile word=null;
 
-        log.info("in2");
-        // 判断上传文件是否为空
-        if (null == file || 0 == file.getSize()) {
-            return "2";
+        String bucketName = "word";
+
+        String wordFileType = "json";
+        for (MultipartFile multipartFile : file) {
+            // 判断上传文件是否为空
+            if (null == multipartFile || 0 == multipartFile.getSize()) {
+                return Result.error(CodeMsg.NULL_FILE);
+            }
+            if (wordFileType.equals(multipartFile.getContentType())) {
+                word = multipartFile;
+            } else {
+                image = multipartFile;
+            }
         }
+
         try {
-            String bucketName = "word";
             // 文件名
-            String originalFilename = file.getOriginalFilename();
-            log.info(originalFilename);
+            assert image != null;
+            String originalFilename = image.getOriginalFilename();
             // 新的文件名 = 存储桶名称_时间戳.后缀名
             String fileName = bucketName + "_" + System.currentTimeMillis() + originalFilename.substring(originalFilename.lastIndexOf("."));
             // 开始上传
-            minioUtils.putObject(bucketName, file, fileName);
+            minioUtils.putObject(bucketName, image, fileName);
 
-            return "0";
+            return Result.success();
         } catch (Exception e) {
-//            log.error("上传文件失败：{}", e.getMessage());
+            log.error("上传文件失败：{}", e.getMessage());
 
         }
-        return "1";
+        return Result.error("error");
     }
 
 }
