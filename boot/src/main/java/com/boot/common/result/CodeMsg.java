@@ -84,5 +84,7 @@ public class CodeMsg {
      * @Description: 业务相关返回信息
      * @Date: 2023/2/8 11:33
      */
-    public static final CodeMsg UPLOAD_WORD_MODULE_FAILED = new CodeMsg(4201,"单词");
+    public static final CodeMsg UPLOAD_WORD_MODULE_FAILED = new CodeMsg(4201,"建立单词模块失败");
+    public static final CodeMsg NEED_TWO_FILES = new CodeMsg(4202,"需上传模块图片和词源文件");
+    public static final CodeMsg FILE_FORMAT_ERROR = new CodeMsg(4203,"词源文件或图片文件格式错误");
 }

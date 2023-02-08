@@ -48,7 +48,7 @@ export default {
   data() {
     return {
       headers: {
-        Authorization: "Bearer " +"123"
+        Authorization: "Bearer " +"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2NzU5MTk2MzcsImlhdCI6MTY3NTgzMzIzNywiYWNjb3VudCI6Ijg5NzkxNzcyOCJ9.kjGMhBFkBFxf_D6G-srMkPogilpL91vE_EEE3n71ozA"
       },
       wordModule: {
         superiorModule: "",

@@ -24,7 +24,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class WordModule extends Model<WordModule> {
     //单词模块id
-    @TableId(type = IdType.ASSIGN_ID)
+    @TableId(type = IdType.INPUT)
     private Long moduleId;
     //单词模块名称
     private String moduleName;

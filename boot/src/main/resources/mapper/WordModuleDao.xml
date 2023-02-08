@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.boot.dao.WordModuleDao">
+
+    <resultMap type="com.boot.entity.WordModule" id="WordModuleMap">
+        <result property="moduleId" column="module_id" jdbcType="INTEGER"/>
+        <result property="moduleName" column="module_name" jdbcType="VARCHAR"/>
+        <result property="moduleImagePath" column="module_image_path" jdbcType="VARCHAR"/>
+        <result property="remark" column="remark" jdbcType="VARCHAR"/>
+        <result property="wordPath" column="word_path" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="status" column="status" jdbcType="VARCHAR"/>
+        <result property="studyNumber" column="study_number" jdbcType="INTEGER"/>
+        <result property="superiormodule" column="superiorModule" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!-- 批量插入 -->
+    <insert id="insertBatch" keyProperty="moduleId" useGeneratedKeys="true">
+        insert into word.word_module(module_name, module_image_path, remark, word_path, create_time, status, study_number, superiorModule)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+        (#{entity.moduleName}, #{entity.moduleImagePath}, #{entity.remark}, #{entity.wordPath}, #{entity.createTime}, #{entity.status}, #{entity.studyNumber}, #{entity.superiormodule})
+        </foreach>
+    </insert>
+    <!-- 批量插入或按主键更新 -->
+    <insert id="insertOrUpdateBatch" keyProperty="moduleId" useGeneratedKeys="true">
+        insert into word.word_module(module_name, module_image_path, remark, word_path, create_time, status, study_number, superiorModule)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.moduleName}, #{entity.moduleImagePath}, #{entity.remark}, #{entity.wordPath}, #{entity.createTime}, #{entity.status}, #{entity.studyNumber}, #{entity.superiormodule})
+        </foreach>
+        on duplicate key update
+         module_name = values(module_name) , module_image_path = values(module_image_path) , remark = values(remark) , word_path = values(word_path) , create_time = values(create_time) , status = values(status) , study_number = values(study_number) , superiorModule = values(superiorModule)     </insert>
+
+</mapper>
+
