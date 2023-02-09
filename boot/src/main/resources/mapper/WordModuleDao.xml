@@ -11,12 +11,12 @@
         <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
         <result property="status" column="status" jdbcType="VARCHAR"/>
         <result property="studyNumber" column="study_number" jdbcType="INTEGER"/>
-        <result property="superiormodule" column="superiorModule" jdbcType="VARCHAR"/>
+        <result property="superiormodule" column="superior_module" jdbcType="VARCHAR"/>
     </resultMap>
 
     <!-- 批量插入 -->
     <insert id="insertBatch" keyProperty="moduleId" useGeneratedKeys="true">
-        insert into word.word_module(module_name, module_image_path, remark, word_path, create_time, status, study_number, superiorModule)
+        insert into word.word_module(module_name, module_image_path, remark, word_path, create_time, status, study_number, superior_module)
         values
         <foreach collection="entities" item="entity" separator=",">
         (#{entity.moduleName}, #{entity.moduleImagePath}, #{entity.remark}, #{entity.wordPath}, #{entity.createTime}, #{entity.status}, #{entity.studyNumber}, #{entity.superiormodule})
@@ -24,13 +24,13 @@
     </insert>
     <!-- 批量插入或按主键更新 -->
     <insert id="insertOrUpdateBatch" keyProperty="moduleId" useGeneratedKeys="true">
-        insert into word.word_module(module_name, module_image_path, remark, word_path, create_time, status, study_number, superiorModule)
+        insert into word.word_module(module_name, module_image_path, remark, word_path, create_time, status, study_number, superior_module)
         values
         <foreach collection="entities" item="entity" separator=",">
             (#{entity.moduleName}, #{entity.moduleImagePath}, #{entity.remark}, #{entity.wordPath}, #{entity.createTime}, #{entity.status}, #{entity.studyNumber}, #{entity.superiormodule})
         </foreach>
         on duplicate key update
-         module_name = values(module_name) , module_image_path = values(module_image_path) , remark = values(remark) , word_path = values(word_path) , create_time = values(create_time) , status = values(status) , study_number = values(study_number) , superiorModule = values(superiorModule)     </insert>
+         module_name = values(module_name) , module_image_path = values(module_image_path) , remark = values(remark) , word_path = values(word_path) , create_time = values(create_time) , status = values(status) , study_number = values(study_number) , superior_module = values(superior_module)     </insert>
 
 </mapper>
 

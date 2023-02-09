@@ -64,16 +64,16 @@ public class EsTest {
         FileReader file = new FileReader("src/main/resources/static/wordResources/test.json");
         BufferedReader buffer = new BufferedReader(file);
         ObjectMapper mapper = new ObjectMapper();
-        while (word!=null) {
-            word = buffer.readLine();
-            if (word!=null){
-                StringReader sr = new StringReader(word);
-                IndexResponse response = client.index(i -> i.index("cet-4").withJson(sr).id("1"));
-            }
-        }
+//        while (word!=null) {
+//            word = buffer.readLine();
+//            if (word!=null){
+//                StringReader sr = new StringReader(word);
+//                IndexResponse response = client.index(i -> i.index("cet-4").withJson(sr).id("1"));
+//            }
+//        }
         word = buffer.readLine();
         StringReader sr = new StringReader(word);
-        IndexResponse response = client.index(i -> i.index("cet-4").withJson(sr));
+        IndexResponse response = client.index(i -> i.index("cet-4").withJson(sr).id(String.valueOf(1)));
         SearchResponse<ObjectNode> search = client.search(g -> g
                         .index("cet-4"),
                 ObjectNode.class

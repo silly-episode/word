@@ -26,8 +26,10 @@ public class EsClientConfig {
     private String host;
 
     /**
-     * 解析配置的字符串，转为HttpHost对象数组
-     * @return
+     * @Return: HttpHost
+     * @Author: DengYinzhe
+     * @Description: 解析配置的字符串，转为HttpHost对象数组
+     * @Date: 2023/2/9 9:06
      */
     private HttpHost[] toHttpHost() {
         if (!StringUtils.hasLength(host)) {
