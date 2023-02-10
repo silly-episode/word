@@ -120,15 +120,6 @@ public class WordModuleController {
             }
             log.info("存入Es正常");
 
-            //        存入Mysql
-            wordModule = BeanDtoVoUtils.convert(wordModuleDto, WordModule.class);
-            wordModule.setModuleId(moduleId);
-            wordModule.setModuleImagePath(imageFileName);
-            wordModule.setWordPath(wordFileName);
-            wordModule.setCreateTime(LocalDateTime.now());
-            wordModuleService.save(wordModule);
-            log.info("存入mysql正常");
-            return Result.success();
 
         } catch (Exception e) {
             log.error("上传文件失败：{}", e.getMessage());
@@ -145,6 +136,15 @@ public class WordModuleController {
             return Result.error("error");
 
         }
+        //        存入Mysql
+        wordModule = BeanDtoVoUtils.convert(wordModuleDto, WordModule.class);
+        wordModule.setModuleId(moduleId);
+        wordModule.setModuleImagePath(imageFileName);
+        wordModule.setWordPath(wordFileName);
+        wordModule.setCreateTime(LocalDateTime.now());
+        wordModuleService.save(wordModule);
+        log.info("存入mysql正常");
+        return Result.success();
 
 
     }

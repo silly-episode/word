@@ -14,9 +14,11 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class RegisterMessage extends LoginMessage{
+public class RegisterMessage {
 
-    private String nickname;
+    private String nickName;
 
     private String password;
+
+    private String account;
 }
