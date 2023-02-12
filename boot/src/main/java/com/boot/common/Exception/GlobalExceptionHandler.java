@@ -23,49 +23,90 @@ import javax.management.RuntimeErrorException;
  */
 @Slf4j
 @RestControllerAdvice
+@SuppressWarnings("all")
 public class GlobalExceptionHandler {
 
-    // shiro 异常
+    /**
+     * @param e:
+     * @Return: Result
+     * @Author: DengYinzhe
+     * @Description: shiro 异常
+     * @Date: 2023/2/12 21:10
+     */
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(value = ShiroException.class)
     public Result handler(ShiroException e){
-        log.error("运行时shiro异常:------------------{}",e);
+        log.error("运行时shiro异常:",e);
         return Result.error(4003,e.getMessage());
     }
 
-    // 捕捉UnauthorizedException
+    /**
+     * @param :
+     * @Return: Result
+     * @Author: DengYinzhe
+     * @Description: 捕捉UnauthorizedException
+     * @Date: 2023/2/12 21:10
+     */
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(UnauthorizedException.class)
     public Result handle401() {
         return  Result.error(401, "Unauthorized");
     }
 
-    // 业务大的异常
+    /**
+     * @param e:
+     * @Return: Result
+     * @Author: DengYinzhe
+     * @Description: 运行时异常
+     * @Date: 2023/2/12 21:10
+     */
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(value = RuntimeErrorException.class)
     public Result handler(RuntimeException e){
-        log.error("运行时异常:------------------{}",e);
+        log.error("运行时异常:",e);
         return Result.error(40008,e.getMessage());
     }
 
-    // 实体的异常
+    /**
+     * @param e:
+     * @Return: Result
+     * @Author: DengYinzhe
+     * @Description: 实体的异常
+     * @Date: 2023/2/12 21:10
+     */
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(value = MethodArgumentNotValidException.class)
     public Result handler(MethodArgumentNotValidException e){
-        log.error("实体校验异常:------------------{}",e);
+        log.error("实体校验异常:}",e);
         BindingResult bindingResult = e.getBindingResult();
         ObjectError objectError =  bindingResult.getAllErrors().stream().findFirst().get();
-
-//        System.out.println(objectError.getDefaultMessage());
         return Result.error(4007,objectError.getDefaultMessage());
     }
 
-    // Assert 断言的异常
+    /**
+     * @param e:
+     * @Return: Result
+     * @Author: DengYinzhe
+     * @Description: Assert 断言的异常
+     * @Date: 2023/2/12 21:11
+     */
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(value = IllegalArgumentException.class)
     public Result handler(IllegalArgumentException e){
-        log.error("Assert 断言异常:------------------{}",e);
+        log.error("Assert 断言异常:",e);
         return Result.error(e.getMessage());
+    }
+
+    /**
+     * @param ex:
+     * @Return: Result<String>
+     * @Author: DengYinzhe
+     * @Description: 自定义异常
+     * @Date: 2023/2/12 21:11
+     */
+    @ExceptionHandler(CustomException.class)
+    public Result<String> exceptionHandler(CustomException ex){
+        return Result.error(ex.getMessage());
     }
 
 }

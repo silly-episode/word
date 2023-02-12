@@ -4,20 +4,21 @@ package com.boot.controller;
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.elasticsearch.core.IndexResponse;
 import co.elastic.clients.elasticsearch.indices.DeleteIndexResponse;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.boot.common.result.CodeMsg;
 import com.boot.common.result.Result;
-import com.boot.dto.WordModuleDto;
+
+
+import com.boot.entity.Plan;
 import com.boot.entity.WordModule;
+import com.boot.service.PlanService;
 import com.boot.service.WordModuleService;
 import com.boot.utils.BeanDtoVoUtils;
 import com.boot.utils.MinIOUtils;
 import com.boot.utils.SnowFlakeUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
@@ -51,9 +52,12 @@ public class WordModuleController {
     private ElasticsearchClient elasticsearchClient;
 
 
+    @Resource
+    private PlanService planService;
+
     /**
      * @param file: 词源和模块头像文件
-     * @param wordModuleDto: 单词模块dto
+     * @param wordModule: 单词模块dto
      * @Return: Result
      * @Author: DengYinzhe
      * @Description: 上传单词模块
@@ -62,7 +66,7 @@ public class WordModuleController {
     @PostMapping("wordModule")
     @Transactional
     @SuppressWarnings("all")
-    public Result wordModule(@RequestParam MultipartFile[] file,@Valid WordModuleDto wordModuleDto) throws IOException {
+    public Result wordModule(@RequestParam MultipartFile[] file,@Valid WordModule wordModule) throws IOException {
 
         MultipartFile imageFile = null;
         String imageFileName = "";
@@ -73,7 +77,6 @@ public class WordModuleController {
         String wordFileType = "application/json";
         String imageFileType = "image/jpeg";
         String word = "";
-        WordModule wordModule;
         AtomicInteger id = new AtomicInteger(1);
 //        判断文件数量
         if (file.length < 2) {
@@ -103,8 +106,8 @@ public class WordModuleController {
 
         try {
             //上传文件到minIo
-            imageFileName = (bucketName + "_" + wordModuleDto.getModuleName() + "_image_" + moduleId.toString()  + imageFile.getOriginalFilename().substring(imageFile.getOriginalFilename().lastIndexOf(".")));
-            wordFileName = (bucketName + "_" + wordModuleDto.getModuleName() + "_word_" + moduleId.toString() + ".json");
+            imageFileName = (bucketName + "_" + wordModule.getModuleName() + "_image_" + moduleId.toString()  + imageFile.getOriginalFilename().substring(imageFile.getOriginalFilename().lastIndexOf(".")));
+            wordFileName = (bucketName + "_" + wordModule.getModuleName() + "_word_" + moduleId.toString() + ".json");
             minioUtils.putObject(bucketName, imageFile, imageFileName);
             minioUtils.putObject(bucketName, wordFile, wordFileName);
             log.info("存入minIO正常");
@@ -115,7 +118,7 @@ public class WordModuleController {
                 word = bufferReader.readLine();
                 if (word!=null){
                     StringReader sr = new StringReader(word);
-                    IndexResponse response = elasticsearchClient.index(i -> i.index(wordModuleDto.getModuleName()).withJson(sr).id(String.valueOf(id.getAndIncrement())));
+                    IndexResponse response = elasticsearchClient.index(i -> i.index(wordModule.getModuleName()).withJson(sr).id(String.valueOf(id.getAndIncrement())));
                 }
             }
             log.info("存入Es正常");
@@ -131,13 +134,12 @@ public class WordModuleController {
 
             //删除一个索引
             DeleteIndexResponse delete = elasticsearchClient.indices().delete(f ->
-                    f.index(wordModuleDto.getModuleName()));
+                    f.index(wordModule.getModuleName()));
             log.info("删除Es索引");
             return Result.error("error");
 
         }
         //        存入Mysql
-        wordModule = BeanDtoVoUtils.convert(wordModuleDto, WordModule.class);
         wordModule.setModuleId(moduleId);
         wordModule.setModuleImagePath(imageFileName);
         wordModule.setWordPath(wordFileName);
@@ -150,8 +152,23 @@ public class WordModuleController {
     }
 
 
+    /**
+     * @param userId: 用户id
+     * @Return: Result
+     * @Author: DengYinzhe
+     * @Description: 查询完成一次计划任务所需要的单词信息
+     * @Date: 2023/2/12 12:37
+     */
+    @GetMapping("word/{userId}")
+    public Result word(@PathVariable Long userId) {
+        QueryWrapper<Plan> wrapper = new QueryWrapper<>();
+        wrapper.eq("user_id", userId);
+        wrapper.eq("status", '1');
+        Plan plan = planService.getOne(wrapper);
 
-    
+
+        return Result.success("1");
+    }
 
 }
 

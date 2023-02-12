@@ -1,6 +1,7 @@
 package com.boot.common.Jwt;
 
 
+import com.boot.common.Exception.CustomException;
 import org.apache.shiro.web.filter.authc.BasicHttpAuthenticationFilter;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -92,14 +93,19 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
     }
 
     /**
-     * 将非法请求跳转到 /401
+     * @param req:
+     * @param resp:
+     * @Return: void
+     * @Author: DengYinzhe
+     * @Description: todo
+     * @Date: 2023/2/12 21:14
      */
     private void response401(ServletRequest req, ServletResponse resp) {
         try {
             HttpServletResponse httpServletResponse = (HttpServletResponse) resp;
             httpServletResponse.sendRedirect("/401");
         } catch (IOException e) {
-
+            throw new CustomException("非法请求");
         }
     }
 }

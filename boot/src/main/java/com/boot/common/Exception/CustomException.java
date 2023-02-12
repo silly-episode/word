@@ -1,6 +1,5 @@
 package com.boot.common.Exception;
 
-import com.boot.common.result.Result;
 
 /**
  * @Project: word
@@ -9,13 +8,9 @@ import com.boot.common.result.Result;
  * @FileName: CustomException
  * @Description: 自定义异常类
  */
-public class CustomException extends Exception{
-
-    private final Result result;
-
-    public CustomException(Result result) {
-        this.result = result;
+public class CustomException extends RuntimeException {
+    public CustomException(String message) {
+        super(message);
     }
-
 
 }

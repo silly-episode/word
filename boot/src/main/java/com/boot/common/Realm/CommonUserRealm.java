@@ -1,5 +1,6 @@
 package com.boot.common.Realm;
 
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.boot.common.Jwt.JwtToken;
 import com.boot.entity.User;
 import com.boot.service.UserService;
@@ -9,6 +10,7 @@ import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.SimpleAuthenticationInfo;
 import org.apache.shiro.authz.AuthorizationInfo;
+import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.springframework.stereotype.Service;
@@ -46,7 +48,21 @@ public class CommonUserRealm extends AuthorizingRealm {
 
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
-        return null;
+        System.out.println("MyRealm doGetAuthorizationInfo() 方法授权 ");
+        String token = principals.toString();
+        String username = jwtUtils.getAccount(token);
+        User user = userService.getUserByAccount(username);
+        if (StringUtils.isBlank(username)) {
+            throw new AuthenticationException("token认证失败");
+        }
+        //查询当前
+        SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
+
+        //查询数据库来获取用户的角色
+//        info.addRole(String.valueOf(user.getType()));
+        //查询数据库来获取用户的权限
+        //info.addStringPermission(String.valueOf(user.getType()));
+        return info;
     }
 
     @Override

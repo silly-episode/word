@@ -1,6 +1,8 @@
 package com.boot.entity;
 
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.AllArgsConstructor;
@@ -25,6 +27,7 @@ import java.time.LocalDateTime;
 @SuppressWarnings("all")
 public class Plan extends Model<Plan> {
     //计划id
+    @TableId(type = IdType.ASSIGN_ID)
     private Long planId;
     //用户id
     private Long userId;
@@ -35,7 +38,7 @@ public class Plan extends Model<Plan> {
     //单词总数
     private Integer allWord;
     //模块id
-    private Integer moduleId;
+    private Long moduleId;
     //已完成单词数量
     private Integer finishedWord;
     //计划每天完成单词数量

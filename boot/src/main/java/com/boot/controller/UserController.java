@@ -163,7 +163,7 @@ public class UserController {
         if (inputStream != null) {
             return IoUtils.toByteArray(inputStream);
         }else {
-            throw new CustomException(Result.error("头像获取失败"));
+            throw new CustomException("头像获取失败");
         }
 
     }
