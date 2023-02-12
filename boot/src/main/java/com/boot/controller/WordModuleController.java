@@ -1,7 +1,6 @@
 package com.boot.controller;
 
 
-
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.elasticsearch.core.IndexResponse;
 import co.elastic.clients.elasticsearch.indices.DeleteIndexResponse;
@@ -12,13 +11,13 @@ import com.boot.entity.WordModule;
 import com.boot.service.WordModuleService;
 import com.boot.utils.BeanDtoVoUtils;
 import com.boot.utils.MinIOUtils;
-
 import com.boot.utils.SnowFlakeUtil;
 import lombok.extern.slf4j.Slf4j;
-
-
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
@@ -39,6 +38,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 @RestController
 @Slf4j
 @RequestMapping("word")
+@SuppressWarnings("all")
 public class WordModuleController {
 
     @Resource
@@ -150,6 +150,8 @@ public class WordModuleController {
     }
 
 
+
+    
 
 }
 

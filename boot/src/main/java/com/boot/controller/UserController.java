@@ -1,33 +1,22 @@
 package com.boot.controller;
 
 
-
-
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.boot.common.Exception.CustomException;
 import com.boot.common.result.CodeMsg;
 import com.boot.common.result.Result;
 import com.boot.dto.LoginMessage;
-
 import com.boot.dto.RegisterMessage;
 import com.boot.dto.UserMsgDto;
 import com.boot.entity.User;
 import com.boot.service.UserService;
 import com.boot.utils.*;
-import com.tencentcloudapi.live.v20180801.models.LogInfo;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.authc.IncorrectCredentialsException;
-import org.apache.shiro.authc.UnknownAccountException;
-import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.authz.UnauthorizedException;
-import org.apache.shiro.subject.Subject;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDateTime;

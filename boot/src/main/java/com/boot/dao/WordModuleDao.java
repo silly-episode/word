@@ -1,10 +1,11 @@
 package com.boot.dao;
 
-import java.util.List;
-
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import org.apache.ibatis.annotations.Param;
 import com.boot.entity.WordModule;
+import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 /**
  * (WordModule)表数据库访问层
@@ -12,6 +13,7 @@ import com.boot.entity.WordModule;
  * @author makejava
  * @since 2023-02-08 15:30:18
  */
+@Repository
 public interface WordModuleDao extends BaseMapper<WordModule> {
 
 /**

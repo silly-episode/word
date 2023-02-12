@@ -1,12 +1,15 @@
 package com.boot.entity;
 
 
-import com.baomidou.mybatisplus.annotation.*;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -17,11 +20,13 @@ import java.time.LocalDateTime;
  * @author makejava
  * @since 2023-01-28 23:53:07
  */
+@Accessors(chain = true)
 @TableName("word_module")
 @EqualsAndHashCode(callSuper = true)
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@SuppressWarnings("all")
 public class WordModule extends Model<WordModule> {
     //单词模块id
     @TableId(type = IdType.INPUT)
