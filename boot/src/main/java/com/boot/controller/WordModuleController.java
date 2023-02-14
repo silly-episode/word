@@ -5,6 +5,7 @@ import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.elasticsearch.core.IndexResponse;
 import co.elastic.clients.elasticsearch.indices.DeleteIndexResponse;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.boot.bo.WordPlan;
 import com.boot.common.result.CodeMsg;
 import com.boot.common.result.Result;
 
@@ -143,7 +144,7 @@ public class WordModuleController {
         wordModule.setModuleId(moduleId);
         wordModule.setModuleImagePath(imageFileName);
         wordModule.setWordPath(wordFileName);
-        wordModule.setCreateTime(LocalDateTime.now());
+        wordModule.setWordModuleCreateTime(LocalDateTime.now());
         wordModuleService.save(wordModule);
         log.info("存入mysql正常");
         return Result.success();
@@ -161,13 +162,10 @@ public class WordModuleController {
      */
     @GetMapping("word/{userId}")
     public Result word(@PathVariable Long userId) {
-        QueryWrapper<Plan> wrapper = new QueryWrapper<>();
-        wrapper.eq("user_id", userId);
-        wrapper.eq("status", '1');
-        Plan plan = planService.getOne(wrapper);
+        WordPlan wordPlan=wordModuleService.selectWordPlan(userId);
 
 
-        return Result.success("1");
+        return Result.success(wordPlan);
     }
 
 }

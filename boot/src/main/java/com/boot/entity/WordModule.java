@@ -40,9 +40,9 @@ public class WordModule extends Model<WordModule> {
     //单词文件路径
     private String wordPath;
     //创建时间
-    private LocalDateTime createTime;
+    private LocalDateTime wordModuleCreateTime;
     //状态
-    private String status;
+    private String wordModuleStatus;
     //在线学习人数
     private Integer studyNumber;
     //上级模块名称

@@ -270,8 +270,8 @@ public class MinIOUtils {
             url = minioClient.getPresignedObjectUrl(
                     GetPresignedObjectUrlArgs.builder()
                             .method(Method.GET)
-                            .bucket("bucketName")
-                            .object("objectName")
+                            .bucket(bucketName)
+                            .object(objectName)
                             .expiry(expires)
                             .build());
         }
@@ -319,7 +319,7 @@ public class MinIOUtils {
     @SneakyThrows
     public StatObjectResponse statObject(String bucketName, String objectName) {
         if (bucketExists(bucketName)) {
-            return  minioClient.statObject(StatObjectArgs.builder().bucket("bucketName").object("objectName").build());
+            return  minioClient.statObject(StatObjectArgs.builder().bucket(bucketName).object(objectName).build());
         }
         return null;
     }
@@ -331,7 +331,7 @@ public class MinIOUtils {
         try {
             InputStream file = getObject(bucketName, filePath);
             if (!StringUtils.isEmpty(originalName)) {
-                response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(originalName, "UTF-8"));
+                response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(originalName, StandardCharsets.UTF_8));
             } else {
                 String filename = new String(filePath.getBytes("ISO8859-1"), StandardCharsets.UTF_8);
                 response.setHeader("Content-Disposition", "attachment;filename=" + filename);

@@ -1,6 +1,7 @@
 package com.boot.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.boot.bo.WordPlan;
 import com.boot.entity.WordModule;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
@@ -32,6 +33,17 @@ int insertBatch(@Param("entities") List<WordModule> entities);
 * @throws org.springframework.jdbc.BadSqlGrammarException 入参是空List的时候会抛SQL语句错误的异常，请自行校验入参
 */
 int insertOrUpdateBatch(@Param("entities") List<WordModule> entities);
+
+
+    /**
+     * @param userId:
+     * @Return: WordPlan
+     * @Author: DengYinzhe
+     * @Description: 查询正在执行的单词计划
+     * @Date: 2023/2/14 9:53
+     */
+    WordPlan selectWordPlan(@Param("userId") Long userId);
+
 
 }
 

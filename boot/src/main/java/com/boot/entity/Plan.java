@@ -32,9 +32,9 @@ public class Plan extends Model<Plan> {
     //用户id
     private Long userId;
     //创建时间
-    private LocalDateTime createTime;
+    private LocalDateTime planCreateTime;
     //状态，没想好
-    private String status;
+    private String planStatus;
     //单词总数
     private Integer allWord;
     //模块id

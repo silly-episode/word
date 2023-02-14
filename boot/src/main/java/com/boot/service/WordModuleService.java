@@ -1,7 +1,9 @@
 package com.boot.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.boot.bo.WordPlan;
 import com.boot.entity.WordModule;
+import org.apache.ibatis.annotations.Param;
 
 
 /**
@@ -13,6 +15,6 @@ import com.boot.entity.WordModule;
  */
 public interface WordModuleService extends IService<WordModule> {
 
-
+    WordPlan selectWordPlan( Long userId);
 
 }

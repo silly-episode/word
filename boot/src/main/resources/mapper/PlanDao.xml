@@ -5,8 +5,8 @@
     <resultMap type="com.boot.entity.Plan" id="PlanMap">
         <result property="planId" column="plan_id" jdbcType="INTEGER"/>
         <result property="userId" column="user_id" jdbcType="INTEGER"/>
-        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
-        <result property="status" column="status" jdbcType="VARCHAR"/>
+        <result property="createTime" column="plan_create_time" jdbcType="TIMESTAMP"/>
+        <result property="status" column="plan_status" jdbcType="VARCHAR"/>
         <result property="allWord" column="all_word" jdbcType="INTEGER"/>
         <result property="moduleId" column="module_id" jdbcType="INTEGER"/>
         <result property="finishedWord" column="finished_word" jdbcType="INTEGER"/>
@@ -15,7 +15,7 @@
 
     <!-- 批量插入 -->
     <insert id="insertBatch" keyProperty="planId" useGeneratedKeys="true">
-        insert into word.plan(user_id, create_time, status, all_word, module_id, finished_word, day_word)
+        insert into word.plan(user_id, plan_create_time, plan_status, all_word, module_id, finished_word, day_word)
         values
         <foreach collection="entities" item="entity" separator=",">
         (#{entity.userId}, #{entity.createTime}, #{entity.status}, #{entity.allWord}, #{entity.moduleId}, #{entity.finishedWord}, #{entity.dayWord})
@@ -23,13 +23,13 @@
     </insert>
     <!-- 批量插入或按主键更新 -->
     <insert id="insertOrUpdateBatch" keyProperty="planId" useGeneratedKeys="true">
-        insert into word.plan(user_id, create_time, status, all_word, module_id, finished_word, day_word)
+        insert into word.plan(user_id, plan_create_time, plan_status, all_word, module_id, finished_word, day_word)
         values
         <foreach collection="entities" item="entity" separator=",">
             (#{entity.userId}, #{entity.createTime}, #{entity.status}, #{entity.allWord}, #{entity.moduleId}, #{entity.finishedWord}, #{entity.dayWord})
         </foreach>
         on duplicate key update
-         user_id = values(user_id) , create_time = values(create_time) , status = values(status) , all_word = values(all_word) , module_id = values(module_id) , finished_word = values(finished_word) , day_word = values(day_word)     </insert>
+         user_id = values(user_id) , plan_create_time = values(plan_create_time) , plan_status = values(plan_status) , all_word = values(all_word) , module_id = values(module_id) , finished_word = values(finished_word) , day_word = values(day_word)     </insert>
 
 </mapper>
 

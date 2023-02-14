@@ -62,7 +62,7 @@ public class UserController {
      * @param phone: 中国手机号码
      * @Return: String 短信验证码
      * @Author: DengYinzhe
-     * @Description: 获取短信验证码并存入Redis中
+     * @Description: 获取短信验证码并存入Redis中 已测试
      * @Date: 2023/2/9 10:43
      */
     @GetMapping("sms")
@@ -85,7 +85,7 @@ public class UserController {
      * @param loginMessage: 登录信息
      * @Return: String
      * @Author: DengYinzhe
-     * @Description: 密码登录
+     * @Description: 密码登录 已测试
      * @Date: 2023/2/9 10:44
      */
     @PostMapping("loginPassword")
@@ -105,7 +105,7 @@ public class UserController {
      * @param loginMessage: 登录信息
      * @Return: String
      * @Author: DengYinzhe
-     * @Description: 短信登录
+     * @Description: 短信登录 已测试
      * @Date: 2023/2/9 10:45
      */
     @PostMapping("loginSms")
@@ -125,7 +125,7 @@ public class UserController {
      * @param userId: 用户id
      * @Return: Result
      * @Author: DengYinzhe
-     * @Description: 修改用户头像
+     * @Description: 修改用户头像 todo
      * @Date: 2023/2/9 10:53
      */
     @PostMapping("userImage")
@@ -152,14 +152,14 @@ public class UserController {
      * @param userId:
      * @Return: Result
      * @Author: DengYinzhe
-     * @Description: 获取用户头像
+     * @Description: 获取用户头像,已测试
      * @Date: 2023/2/9 11:44
      */
     @GetMapping("userImage/{userId}")
     public byte[] userImage(@PathVariable("userId") Long userId) throws IOException, CustomException {
-        String bulkName = "word";
-        String objectName = "user_image_" + userId.toString() + ".jpg";
-        InputStream inputStream =minIOUtils.getObject(bulkName, objectName);
+        String bucketName = "word";
+        String objectName = userService.getById(userId).getHeadImage();
+        InputStream inputStream =minIOUtils.getObject(bucketName, objectName);
         if (inputStream != null) {
             return IoUtils.toByteArray(inputStream);
         }else {
@@ -188,7 +188,7 @@ public class UserController {
      * @param userMsgDto:
      * @Return: Result
      * @Author: DengYinzhe
-     * @Description: 获取用户信息
+     * @Description: 获取用户信息 已测试
      * @Date: 2023/2/9 11:44
      */
     @GetMapping("user/{userId}")
@@ -235,24 +235,5 @@ public class UserController {
     }
 
 
-
-    @GetMapping("test")
-    @ResponseBody
-    public User test() {
-
-//        鉴权
-//        Subject subject = SecurityUtils.getSubject();
-//        if (subject.isAuthenticated()) {
-//            return "You are already logged in";
-//        } else {
-//            return "You are guest";
-//        }
-
-
-//        序列化
-        User user = userService.getUserByTel("13142397682");
-        System.out.println(JsonUtils.getBeanToJson(user));
-        return user;
-    }
 }
 
