@@ -172,7 +172,7 @@ public class UserController {
      * @param userMsgDto:
      * @Return: Result
      * @Author: DengYinzhe
-     * @Description: 修改用户信息
+     * @Description: 修改用户信息  todo
      * @Date: 2023/2/9 11:44
      */
     @PutMapping("user")
@@ -202,7 +202,7 @@ public class UserController {
      * @param userId:
      * @Return: Result
      * @Author: DengYinzhe
-     * @Description: 注销账户，月初彻底删除
+     * @Description: 注销账户，月初彻底删除  todo
      * @Date: 2023/2/9 14:27
      */
     @DeleteMapping("user/{userId}")
@@ -221,7 +221,7 @@ public class UserController {
      * @param registerMessage:
      * @Return: Result
      * @Author: DengYinzhe
-     * @Description: 用户注册
+     * @Description: 用户注册  todo
      * @Date: 2023/2/10 13:08
      */
     @PostMapping("user")

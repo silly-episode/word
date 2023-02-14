@@ -26,10 +26,20 @@
         insert into word.plan(user_id, plan_create_time, plan_status, all_word, module_id, finished_word, day_word)
         values
         <foreach collection="entities" item="entity" separator=",">
-            (#{entity.userId}, #{entity.createTime}, #{entity.status}, #{entity.allWord}, #{entity.moduleId}, #{entity.finishedWord}, #{entity.dayWord})
+            (#{entity.userId}, #{entity.createTime}, #{entity.status}, #{entity.allWord}, #{entity.moduleId},
+            #{entity.finishedWord}, #{entity.dayWord})
         </foreach>
         on duplicate key update
-         user_id = values(user_id) , plan_create_time = values(plan_create_time) , plan_status = values(plan_status) , all_word = values(all_word) , module_id = values(module_id) , finished_word = values(finished_word) , day_word = values(day_word)     </insert>
+        user_id = values(user_id) , plan_create_time = values(plan_create_time) , plan_status = values(plan_status) ,
+        all_word = values(all_word) , module_id = values(module_id) , finished_word = values(finished_word) , day_word =
+        values(day_word);
+        </insert>
+
+
+    <select id="selectAll" resultType="com.boot.vo.PlanVo">
+        select p.*,w.module_name from word.plan p left join word.word_module w on p.module_id=w.module_id
+        where p.user_id=#{userId} and p.plan_status!=1
+    </select>
 
 </mapper>
 

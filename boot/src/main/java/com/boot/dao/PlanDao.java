@@ -2,6 +2,7 @@ package com.boot.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.boot.entity.Plan;
+import com.boot.vo.PlanVo;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
@@ -32,6 +33,16 @@ int insertBatch(@Param("entities") List<Plan> entities);
 * @throws org.springframework.jdbc.BadSqlGrammarException 入参是空List的时候会抛SQL语句错误的异常，请自行校验入参
 */
 int insertOrUpdateBatch(@Param("entities") List<Plan> entities);
+
+    /**
+     * @param userId:
+     * @Return: List<PlanVo>
+     * @Author: DengYinzhe
+     * @Description: 查询用户的计划（附带模块名称）
+     * @Date: 2023/2/14 15:39
+     */
+    List<PlanVo> selectAll(@Param("userId") Long userId);
+
 
 }
 
