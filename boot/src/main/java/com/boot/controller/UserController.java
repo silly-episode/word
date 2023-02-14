@@ -289,7 +289,7 @@ public class UserController {
      * @param code:
      * @Return: Result
      * @Author: DengYinzhe
-     * @Description: 验证手机号码，用于销户或者找回密码或者更换手机号码 todo
+     * @Description: 验证手机号码，用于销户或者未登录时重新设置密码或者更换手机号码 todo
      * @Date: 2023/2/14 20:48
      */
     @GetMapping("tel/{tel}/{code}")
@@ -301,7 +301,25 @@ public class UserController {
             return Result.error(222,"验证码不正确");
         }
     }
+    /**
+     * @param tel:
+     * @param code:
+     * @Return: Result
+     * @Author: DengYinzhe
+     * @Description: TODO 更换密码
+     * @Date: 2023/2/14 20:58
+     */
+    @PutMapping("password/{tel}/{password}")
+    public Result password(@PathVariable String tel,@PathVariable String password){
+        UpdateWrapper<User> updateWrapper = new UpdateWrapper<>();
+        updateWrapper.set("password", password).eq("tel", tel);
+            if(userService.update(updateWrapper)){
+                return Result.success("重置密码成功");
+            }else {
+                return Result.error("更换密码失败");
+            }
 
+    }
 
 }
 
