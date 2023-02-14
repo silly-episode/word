@@ -1,7 +1,6 @@
 package com.boot.bo;
 
 import com.boot.entity.Plan;
-import com.boot.entity.WordModule;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

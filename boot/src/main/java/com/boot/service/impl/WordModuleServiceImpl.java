@@ -5,7 +5,6 @@ import com.boot.bo.WordPlan;
 import com.boot.dao.WordModuleDao;
 import com.boot.entity.WordModule;
 import com.boot.service.WordModuleService;
-import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;

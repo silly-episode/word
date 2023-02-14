@@ -1,7 +1,7 @@
 package com.boot;
+
 import com.boot.dao.UserDao;
 import com.boot.entity.User;
-import com.mysql.cj.log.Log;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

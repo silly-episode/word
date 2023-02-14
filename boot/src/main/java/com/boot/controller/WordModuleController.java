@@ -2,22 +2,22 @@ package com.boot.controller;
 
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
+import co.elastic.clients.elasticsearch._types.query_dsl.QueryBuilders;
 import co.elastic.clients.elasticsearch.core.IndexResponse;
+import co.elastic.clients.elasticsearch.core.SearchRequest;
+import co.elastic.clients.elasticsearch.core.search.Hit;
 import co.elastic.clients.elasticsearch.indices.DeleteIndexResponse;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.boot.bo.WordPlan;
 import com.boot.common.result.CodeMsg;
 import com.boot.common.result.Result;
-
-
-import com.boot.entity.Plan;
 import com.boot.entity.WordModule;
 import com.boot.service.PlanService;
 import com.boot.service.WordModuleService;
-import com.boot.utils.BeanDtoVoUtils;
 import com.boot.utils.MinIOUtils;
 import com.boot.utils.SnowFlakeUtil;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -26,7 +26,7 @@ import javax.annotation.Resource;
 import javax.validation.Valid;
 import java.io.*;
 import java.time.LocalDateTime;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 
@@ -61,7 +61,7 @@ public class WordModuleController {
      * @param wordModule: 单词模块dto
      * @Return: Result
      * @Author: DengYinzhe
-     * @Description: 上传单词模块
+     * @Description: 上传单词模块 已测试
      * @Date: 2023/2/9 10:41
      */
     @PostMapping("wordModule")
@@ -157,16 +157,32 @@ public class WordModuleController {
      * @param userId: 用户id
      * @Return: Result
      * @Author: DengYinzhe
-     * @Description: 查询完成一次计划任务所需要的单词信息
+     * @Description: 查询完成一次计划任务所需要的单词信息 已测试
      * @Date: 2023/2/12 12:37
      */
     @GetMapping("word/{userId}")
-    public Result word(@PathVariable Long userId) {
+    public Result<Map> word(@PathVariable Long userId) throws IOException {
+        Map map = new HashMap();
+        List word = new ArrayList<ObjectNode>();
+//        单词计划和单词模块信息
         WordPlan wordPlan=wordModuleService.selectWordPlan(userId);
-
-
-        return Result.success(wordPlan);
+//        词源
+        SearchRequest request = new SearchRequest.Builder()
+                .index(wordPlan.getModuleName())
+                .query(QueryBuilders.matchAll().build()._toQuery())
+                .from(wordPlan.getFinishedWord())
+                .size(wordPlan.getDayWord())
+                .build();
+        List<Hit<ObjectNode>> hits = elasticsearchClient.search(request, ObjectNode.class).hits().hits();
+        for (Hit<ObjectNode> Hit : hits) {
+            word.add(Hit.source());
+        }
+        map.put("wordPlan", wordPlan);
+        map.put("word", word);
+        return Result.success(map);
     }
+
+
 
 }
 

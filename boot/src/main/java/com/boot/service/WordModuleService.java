@@ -3,7 +3,6 @@ package com.boot.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.boot.bo.WordPlan;
 import com.boot.entity.WordModule;
-import org.apache.ibatis.annotations.Param;
 
 
 /**

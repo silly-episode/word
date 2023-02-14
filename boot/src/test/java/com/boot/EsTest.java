@@ -1,8 +1,14 @@
 package com.boot;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
+import co.elastic.clients.elasticsearch._types.ShardStatistics;
+import co.elastic.clients.elasticsearch._types.query_dsl.QueryBuilders;
 import co.elastic.clients.elasticsearch.core.IndexResponse;
+import co.elastic.clients.elasticsearch.core.SearchRequest;
 import co.elastic.clients.elasticsearch.core.SearchResponse;
+import co.elastic.clients.elasticsearch.core.search.Hit;
+import co.elastic.clients.elasticsearch.core.search.HitsMetadata;
+import co.elastic.clients.elasticsearch.core.search.TotalHits;
 import co.elastic.clients.elasticsearch.indices.DeleteIndexResponse;
 import co.elastic.clients.json.jackson.JacksonJsonpMapper;
 import co.elastic.clients.transport.ElasticsearchTransport;
@@ -16,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.io.*;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -79,5 +86,48 @@ public class EsTest {
                 ObjectNode.class
         );
         System.out.println(search.toString());
+    }
+
+
+
+    @Test
+    public void select() throws IOException {
+
+        SearchRequest request = new SearchRequest.Builder()
+                .index("英语四级")
+                .query(QueryBuilders.matchAll().build()._toQuery())
+                .from(0)
+                .size(10)
+                .build();
+        //        查询体
+        SearchResponse<ObjectNode> search = elasticsearchClient.search(request, ObjectNode.class);
+        System.out.println("search.toString() = " + search.toString());
+//
+        long took = search.took();
+        System.out.println("took = " + took);
+//        是否超时
+        boolean b = search.timedOut();
+        System.out.println("b = " + b);
+//        分片信息
+        ShardStatistics shards = search.shards();
+        System.out.println("shards = " + shards);
+//        hit
+        HitsMetadata<ObjectNode> hits = search.hits();
+//        total
+        TotalHits total = hits.total();
+        System.out.println("total = " + total);
+//        评分
+        Double maxScore = hits.maxScore();
+        System.out.println("maxScore = " + maxScore);
+//        hit中的hit
+        List<Hit<ObjectNode>> list = hits.hits();
+        for (Hit<ObjectNode> bookHit : list) {
+//            source
+            System.out.println("bookHit.source() = " + bookHit.source());
+//            score
+            System.out.println("bookHit.score() = " + bookHit.score());
+//            index
+            System.out.println("bookHit.index() = " + bookHit.index());
+        }
     }
 }

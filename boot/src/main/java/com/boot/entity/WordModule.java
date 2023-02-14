@@ -31,7 +31,7 @@ public class WordModule extends Model<WordModule> {
     //单词模块id
     @TableId(type = IdType.INPUT)
     private Long moduleId;
-    //单词模块名称
+    //单词模块名称,索引名称
     private String moduleName;
     //单词头像路径
     private String moduleImagePath;
