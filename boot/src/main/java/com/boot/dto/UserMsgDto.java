@@ -30,4 +30,6 @@ public class UserMsgDto {
     private String wechat;
 
     private String signature;
+
+    private Integer integration;
 }

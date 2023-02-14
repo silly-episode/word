@@ -159,5 +159,25 @@ public class PlanController {
         }
     }
 
+    /**
+     * @param planId:
+     * @Return: Result
+     * @Author: DengYinzhe
+     * @Description: 修改状态为已完成 已测试
+     * @Date: 2023/2/14 17:13
+     */
+    @PutMapping("finishPlan/{planId}")
+    public Result finishPlan(@PathVariable Long planId){
+        UpdateWrapper<Plan> updateWrapper = new UpdateWrapper<>();
+        updateWrapper.set("plan_status", 2).eq("plan_id", planId);
+        if (!"1".equals(planService.getById(planId).getPlanStatus())) {
+            return Result.error("无法设置非主计划的任务为已完成");
+        } else if (planService.update(updateWrapper)) {
+            return Result.success("更改成功");
+        }else {
+            return Result.error("更改失败");
+        }
+    }
+
 }
 

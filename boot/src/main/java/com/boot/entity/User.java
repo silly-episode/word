@@ -58,6 +58,8 @@ public class User extends Model<User> {
     //随机盐
     private String salt;
 
+    private Integer integration;
+
 
 
     /**

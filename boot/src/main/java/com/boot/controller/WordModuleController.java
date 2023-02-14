@@ -8,11 +8,16 @@ import co.elastic.clients.elasticsearch.core.SearchRequest;
 import co.elastic.clients.elasticsearch.core.search.Hit;
 import co.elastic.clients.elasticsearch.indices.DeleteIndexResponse;
 import com.boot.bo.WordPlan;
+import com.boot.common.Exception.CustomException;
 import com.boot.common.result.CodeMsg;
 import com.boot.common.result.Result;
+import com.boot.entity.Plan;
+import com.boot.entity.User;
 import com.boot.entity.WordModule;
 import com.boot.service.PlanService;
+import com.boot.service.UserService;
 import com.boot.service.WordModuleService;
+import com.boot.utils.IoUtils;
 import com.boot.utils.MinIOUtils;
 import com.boot.utils.SnowFlakeUtil;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -51,6 +56,13 @@ public class WordModuleController {
 
     @Resource
     private ElasticsearchClient elasticsearchClient;
+
+    @Resource
+    private MinIOUtils minIOUtils;
+
+
+    @Resource
+    private UserService userService;
 
 
     @Resource
@@ -180,6 +192,56 @@ public class WordModuleController {
         map.put("wordPlan", wordPlan);
         map.put("word", word);
         return Result.success(map);
+    }
+
+    /**
+     * @param wordModuleId:
+     * @Return: Result
+     * @Author: DengYinzhe
+     * @Description: 获取单词模块头像,已测试
+     * @Date: 2023/2/9 11:44
+     */
+    @GetMapping("wordModuleImage/{wordModuleId}")
+    public byte[] wordImage(@PathVariable("wordModuleId") Long wordModuleId) throws IOException, CustomException {
+        String bucketName = "word";
+        String objectName = wordModuleService.getById(wordModuleId).getModuleImagePath();
+        InputStream inputStream =minIOUtils.getObject(bucketName, objectName);
+        if (inputStream != null) {
+            return IoUtils.toByteArray(inputStream);
+        }else {
+            throw new CustomException("头像获取失败");
+        }
+
+    }
+
+    /**
+     * @param userId:
+     * @param planId:
+     * @Return: Result
+     * @Author: DengYinzhe
+     * @Description: 完成日常单词后
+     * @Date: 2023/2/14 18:05
+     */
+    @PutMapping("dayWord/{userId}/{planId}")
+    @Transactional
+    public Result dayWord(@PathVariable Long userId,@PathVariable Long planId){
+//        更新计划表
+        Plan plan = planService.getById(planId);
+        plan.setFinishedWord(plan.getFinishedWord() + plan.getDayWord());
+        if(plan.getFinishedWord()>=plan.getAllWord()){
+            plan.setPlanStatus("2");
+        }
+        log.info(plan.toString());
+        Boolean flag = planService.updateById(plan);
+//更新用户积分
+        User user = userService.getById(userId);
+        user.setIntegration(user.getIntegration() + plan.getDayWord());
+        Boolean flag2 = userService.updateById(user);
+        if (flag2&&flag){
+            return Result.success("完成计划后续更改成功");
+        }else {
+            return Result.error("后续更改失败");
+        }
     }
 
 

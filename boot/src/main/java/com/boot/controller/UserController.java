@@ -125,10 +125,10 @@ public class UserController {
      * @param userId: 用户id
      * @Return: Result
      * @Author: DengYinzhe
-     * @Description: 修改用户头像 todo
+     * @Description: 修改用户头像 已测试
      * @Date: 2023/2/9 10:53
      */
-    @PostMapping("userImage")
+    @PutMapping("userImage")
     public Result userImage(@RequestParam MultipartFile file,@RequestParam("userId") Long userId ){
         User user = userService.getById(userId);
         String fileName = "user_image_" + userId.toString() + file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."));
@@ -141,8 +141,10 @@ public class UserController {
             minIOUtils.removeObject("word", fileName);
             return Result.error("上传头像失败");
         }
-
-        minIOUtils.removeObject("word", user.getHeadImage());
+//        如果用户不是默认头像则删除头像文件
+        if(!"user_defalut_image.jpg".equals(user.getHeadImage())){
+            minIOUtils.removeObject("word", user.getHeadImage());
+        }
         user.setHeadImage(fileName);
         userService.updateById(user);
         return Result.success();
@@ -172,7 +174,7 @@ public class UserController {
      * @param userMsgDto:
      * @Return: Result
      * @Author: DengYinzhe
-     * @Description: 修改用户信息  todo
+     * @Description: 修改用户信息  已测试
      * @Date: 2023/2/9 11:44
      */
     @PutMapping("user")
@@ -202,7 +204,7 @@ public class UserController {
      * @param userId:
      * @Return: Result
      * @Author: DengYinzhe
-     * @Description: 注销账户，月初彻底删除  todo
+     * @Description: 注销账户，月初彻底删除  已测试
      * @Date: 2023/2/9 14:27
      */
     @DeleteMapping("user/{userId}")
@@ -221,7 +223,7 @@ public class UserController {
      * @param registerMessage:
      * @Return: Result
      * @Author: DengYinzhe
-     * @Description: 用户注册  todo
+     * @Description: 用户注册  已测试
      * @Date: 2023/2/10 13:08
      */
     @PostMapping("user")
@@ -232,6 +234,72 @@ public class UserController {
         user.setRegisterTime(LocalDateTime.now());
         userService.save(user);
         return Result.success("注册成功");
+    }
+
+    /**
+     * @param userId:
+     * @param password:
+     * @Return: Result
+     * @Author: DengYinzhe
+     * @Description: 修改密码
+     * @Date: 2023/2/14 20:09
+     */
+    @PutMapping("password")
+    public Result password(@RequestParam Long userId,@RequestParam String password){
+        UpdateWrapper<User> updateWrapper = new UpdateWrapper<>();
+        updateWrapper.set("password", password).eq("user_id", userId);
+        if (userService.update(updateWrapper)) {
+            return Result.success("修改密码成功");
+        }else {
+            return Result.error("修改密码失败");
+        }
+    }
+
+    /**
+     * @param userId:
+     * @param tel:
+     * @param code:
+     * @Return: Result
+     * @Author: DengYinzhe
+     * @Description: 绑定新手机号 todo
+     * @Date: 2023/2/14 20:36
+     */
+    @PostMapping("tel")
+    public Result tel(@RequestParam Long userId,@RequestParam String tel ,@RequestParam String code){
+
+        if (null!=userService.getUserByTel(tel)) {
+            return Result.error(111,"手机号已被绑定");
+        }
+        if (code.equals(redisUtils.get(codePre+ tel))){
+            UpdateWrapper<User> updateWrapper = new UpdateWrapper<>();
+            updateWrapper.set("tel", tel).eq("user_id", userId);
+            if (userService.update(updateWrapper)){
+                return Result.success("绑定手机成功");
+            }else {
+                return Result.success("绑定手机号失败");
+            }
+        }else {
+            return Result.error(222,"验证码不正确");
+        }
+
+    }
+
+    /**
+     * @param tel:
+     * @param code:
+     * @Return: Result
+     * @Author: DengYinzhe
+     * @Description: 验证手机号码，用于销户或者找回密码或者更换手机号码 todo
+     * @Date: 2023/2/14 20:48
+     */
+    @GetMapping("tel/{tel}/{code}")
+    public Result tel(@PathVariable String tel,@PathVariable String code){
+
+        if(code.equals(redisUtils.get(codePre+ tel))){
+            return Result.success("手机号验证成功");
+        }else {
+            return Result.error(222,"验证码不正确");
+        }
     }
 
 
