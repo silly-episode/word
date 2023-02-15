@@ -24,7 +24,7 @@ public class MyRealm extends AuthorizingRealm {
 //        授权逻辑
         // 从系统返回的身份信息集合中获取主身份信息（用户名）
         String primaryPrincipal = (String) principalCollection.getPrimaryPrincipal();
-        System.out.println("1用户名: "+primaryPrincipal);
+        System.out.println("1用户名: " + primaryPrincipal);
 
         //根据用户名获取当前用户的角色信息,以及权限信息
         SimpleAuthorizationInfo simpleAuthorizationInfo = new SimpleAuthorizationInfo();
@@ -50,7 +50,7 @@ public class MyRealm extends AuthorizingRealm {
         String principal = (String) authenticationToken.getPrincipal();
         System.out.println(principal);
         // 模拟根据身份信息从数据库查询
-        if("christy".equals(principal)){
+        if ("christy".equals(principal)) {
             /**
              * 用户名
              * 加密后的密码

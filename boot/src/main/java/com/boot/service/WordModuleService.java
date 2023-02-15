@@ -21,6 +21,6 @@ public interface WordModuleService extends IService<WordModule> {
      * @Description: 查询正在执行的单词计划
      * @Date: 2023/2/14 15:48
      */
-    WordPlan selectWordPlan( Long userId);
+    WordPlan selectWordPlan(Long userId);
 
 }

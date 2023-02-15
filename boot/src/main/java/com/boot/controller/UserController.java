@@ -34,29 +34,20 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 @SuppressWarnings("all")
 public class UserController {
+    private final String codePre = "verifyCode";
     /**
      * 服务对象
      */
     @Resource
     private UserService userService;
-
     @Resource
     private JwtUtils jwtUtils;
-
     @Resource
     private SmsUtils smsUtils;
-
     @Resource
     private RedisUtils redisUtils;
-
     @Resource
     private MinIOUtils minIOUtils;
-
-    private final String codePre = "verifyCode";
-
-
-
-
 
     /**
      * @param phone: 中国手机号码
@@ -73,7 +64,7 @@ public class UserController {
         }
         String code = RandomUtils.getSixBitRandom();
         if (smsUtils.sendMessage(phone, code)) {
-            redisUtils.add(codePre+ phone, code, 5L, TimeUnit.MINUTES);
+            redisUtils.add(codePre + phone, code, 5L, TimeUnit.MINUTES);
             return "200";
         } else {
             return "400";
@@ -113,7 +104,7 @@ public class UserController {
         User userBean = userService.getUserByTel(loginMessage.getLoginAccount());
         if (null == userBean) {
             return JsonUtils.getBeanToJson(Result.error(CodeMsg.BAD_CREDENTIAL));
-        } else if ( loginMessage.getLoginPassword().equals(redisUtils.get(codePre+ loginMessage.getLoginAccount()))) {
+        } else if (loginMessage.getLoginPassword().equals(redisUtils.get(codePre + loginMessage.getLoginAccount()))) {
             return JsonUtils.getBeanToJson(Result.success(jwtUtils.sign(userBean.getAccount())));
         } else {
             throw new UnauthorizedException();
@@ -121,7 +112,7 @@ public class UserController {
     }
 
     /**
-     * @param file: 用户头像
+     * @param file:   用户头像
      * @param userId: 用户id
      * @Return: Result
      * @Author: DengYinzhe
@@ -129,11 +120,11 @@ public class UserController {
      * @Date: 2023/2/9 10:53
      */
     @PutMapping("userImage")
-    public Result userImage(@RequestParam MultipartFile file,@RequestParam("userId") Long userId ){
+    public Result userImage(@RequestParam MultipartFile file, @RequestParam("userId") Long userId) {
         User user = userService.getById(userId);
         String fileName = "user_image_" + userId.toString() + file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."));
         try {
-            if (0 != file.getSize()&&"image/jpeg".equals(file.getContentType())) {
+            if (0 != file.getSize() && "image/jpeg".equals(file.getContentType())) {
                 minIOUtils.putObject("word", file, fileName);
             }
         } catch (Exception e) {
@@ -142,7 +133,7 @@ public class UserController {
             return Result.error("上传头像失败");
         }
 //        如果用户不是默认头像则删除头像文件
-        if(!"user_defalut_image.jpg".equals(user.getHeadImage())){
+        if (!"user_defalut_image.jpg".equals(user.getHeadImage())) {
             minIOUtils.removeObject("word", user.getHeadImage());
         }
         user.setHeadImage(fileName);
@@ -154,17 +145,17 @@ public class UserController {
      * @param userId:
      * @Return: Result
      * @Author: DengYinzhe
-     * @Description: 获取用户头像,已测试
+     * @Description: 获取用户头像, 已测试
      * @Date: 2023/2/9 11:44
      */
     @GetMapping("userImage/{userId}")
     public byte[] userImage(@PathVariable("userId") Long userId) throws IOException, CustomException {
         String bucketName = "word";
         String objectName = userService.getById(userId).getHeadImage();
-        InputStream inputStream =minIOUtils.getObject(bucketName, objectName);
+        InputStream inputStream = minIOUtils.getObject(bucketName, objectName);
         if (inputStream != null) {
             return IoUtils.toByteArray(inputStream);
-        }else {
+        } else {
             throw new CustomException("头像获取失败");
         }
 
@@ -181,7 +172,7 @@ public class UserController {
     public Result user(@RequestBody UserMsgDto userMsgDto) {
         if (userService.updateById(BeanDtoVoUtils.convert(userMsgDto, User.class))) {
             return Result.success();
-        }else {
+        } else {
             return Result.error("更新失败");
         }
     }
@@ -195,8 +186,8 @@ public class UserController {
      */
     @GetMapping("user/{userId}")
     public Result<UserMsgDto> user(@PathVariable("userId") Long userId) {
-        User user= userService.getById(userId);
-        UserMsgDto userMsgDto=BeanDtoVoUtils.convert(user,UserMsgDto.class);
+        User user = userService.getById(userId);
+        UserMsgDto userMsgDto = BeanDtoVoUtils.convert(user, UserMsgDto.class);
         return Result.success(userMsgDto);
     }
 
@@ -211,10 +202,10 @@ public class UserController {
     public Result userDelete(@PathVariable("userId") Long userId) {
         UpdateWrapper<User> wrapper = new UpdateWrapper<>();
         wrapper.set("user_status", '2').eq("user_id", userId);
-        boolean result = userService.update(null,wrapper);
-        if (result){
+        boolean result = userService.update(null, wrapper);
+        if (result) {
             return Result.success("注销成功");
-        }else {
+        } else {
             return Result.error("注销失败");
         }
     }
@@ -245,12 +236,12 @@ public class UserController {
      * @Date: 2023/2/14 20:09
      */
     @PutMapping("password")
-    public Result password(@RequestParam Long userId,@RequestParam String password){
+    public Result password(@RequestParam Long userId, @RequestParam String password) {
         UpdateWrapper<User> updateWrapper = new UpdateWrapper<>();
         updateWrapper.set("password", password).eq("user_id", userId);
         if (userService.update(updateWrapper)) {
             return Result.success("修改密码成功");
-        }else {
+        } else {
             return Result.error("修改密码失败");
         }
     }
@@ -265,21 +256,21 @@ public class UserController {
      * @Date: 2023/2/14 20:36
      */
     @PostMapping("tel")
-    public Result tel(@RequestParam Long userId,@RequestParam String tel ,@RequestParam String code){
+    public Result tel(@RequestParam Long userId, @RequestParam String tel, @RequestParam String code) {
 
-        if (null!=userService.getUserByTel(tel)) {
-            return Result.error(111,"手机号已被绑定");
+        if (null != userService.getUserByTel(tel)) {
+            return Result.error(111, "手机号已被绑定");
         }
-        if (code.equals(redisUtils.get(codePre+ tel))){
+        if (code.equals(redisUtils.get(codePre + tel))) {
             UpdateWrapper<User> updateWrapper = new UpdateWrapper<>();
             updateWrapper.set("tel", tel).eq("user_id", userId);
-            if (userService.update(updateWrapper)){
+            if (userService.update(updateWrapper)) {
                 return Result.success("绑定手机成功");
-            }else {
+            } else {
                 return Result.success("绑定手机号失败");
             }
-        }else {
-            return Result.error(222,"验证码不正确");
+        } else {
+            return Result.error(222, "验证码不正确");
         }
 
     }
@@ -293,14 +284,15 @@ public class UserController {
      * @Date: 2023/2/14 20:48
      */
     @GetMapping("tel/{tel}/{code}")
-    public Result tel(@PathVariable String tel,@PathVariable String code){
+    public Result tel(@PathVariable String tel, @PathVariable String code) {
 
-        if(code.equals(redisUtils.get(codePre+ tel))){
+        if (code.equals(redisUtils.get(codePre + tel))) {
             return Result.success("手机号验证成功");
-        }else {
-            return Result.error(222,"验证码不正确");
+        } else {
+            return Result.error(222, "验证码不正确");
         }
     }
+
     /**
      * @param tel:
      * @param code:
@@ -310,14 +302,14 @@ public class UserController {
      * @Date: 2023/2/14 20:58
      */
     @PutMapping("password/{tel}/{password}")
-    public Result password(@PathVariable String tel,@PathVariable String password){
+    public Result password(@PathVariable String tel, @PathVariable String password) {
         UpdateWrapper<User> updateWrapper = new UpdateWrapper<>();
         updateWrapper.set("password", password).eq("tel", tel);
-            if(userService.update(updateWrapper)){
-                return Result.success("重置密码成功");
-            }else {
-                return Result.error("更换密码失败");
-            }
+        if (userService.update(updateWrapper)) {
+            return Result.success("重置密码成功");
+        } else {
+            return Result.error("更换密码失败");
+        }
 
     }
 

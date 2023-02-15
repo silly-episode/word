@@ -6,7 +6,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 
-
 /**
  * @Project: word
  * @Author: DengYinzhe
@@ -24,16 +23,15 @@ public class MinioConfig {
     private String secretKey;
 
 
-
-/**
- * @param :
- * @Return: MinioClient
- * @Author: DengYinzhe
- * @Description: 获取MinioClient
- * @Date: 2023/1/29 13:56
- */
+    /**
+     * @param :
+     * @Return: MinioClient
+     * @Author: DengYinzhe
+     * @Description: 获取MinioClient
+     * @Date: 2023/1/29 13:56
+     */
     @Bean
-    public MinioClient Client()  {
+    public MinioClient Client() {
         System.out.println("==========================");
         System.out.println(endpoint);
 

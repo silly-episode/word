@@ -23,22 +23,20 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class RedisUtils {
 
-    @Resource
-    private RedisTemplate<String, Object> redisTemplate;
-
     private final String DEFAULT_KEY_PREFIX = "word";
     private final int EXPIRE_TIME = 1;
     private final TimeUnit EXPIRE_TIME_TYPE = TimeUnit.DAYS;
+    @Resource
+    private RedisTemplate<String, Object> redisTemplate;
 
-
-/**
- * @param key:
- * @param value:
- * @Return: void
- * @Author: DengYinzhe
- * @Description: 添加key-value
- * @Date: 2023/2/6 19:35
- */
+    /**
+     * @param key:
+     * @param value:
+     * @Return: void
+     * @Author: DengYinzhe
+     * @Description: 添加key-value
+     * @Date: 2023/2/6 19:35
+     */
     public <K, V> void add(K key, V value) {
         try {
             if (value != null) {
@@ -67,7 +65,7 @@ public class RedisUtils {
             if (value != null) {
                 redisTemplate
                         .opsForValue()
-                        .set(DEFAULT_KEY_PREFIX + key,value, timeout, unit);
+                        .set(DEFAULT_KEY_PREFIX + key, value, timeout, unit);
             }
         } catch (Exception e) {
             log.error(e.getMessage(), e);
@@ -75,15 +73,15 @@ public class RedisUtils {
         }
     }
 
-/**
- * @param key:
- * @param subKey:
- * @param value:
- * @Return: void
- * @Author: DengYinzhe
- * @Description: 写入 hash-set,已经是key-value的键值，不能再写入为hash-set
- * @Date: 2023/2/6 19:36
- */
+    /**
+     * @param key:
+     * @param subKey:
+     * @param value:
+     * @Return: void
+     * @Author: DengYinzhe
+     * @Description: 写入 hash-set,已经是key-value的键值，不能再写入为hash-set
+     * @Date: 2023/2/6 19:36
+     */
     public <K, SK, V> void addHashCache(K key, SK subKey, V value) {
         redisTemplate.opsForHash().put(DEFAULT_KEY_PREFIX + key, subKey, value);
     }
@@ -104,16 +102,16 @@ public class RedisUtils {
         redisTemplate.expire(DEFAULT_KEY_PREFIX + key, timeout, unit);
     }
 
-/**
- * @param key:
- * @param subKey:
- * @Return: Object
- * @Author: DengYinzhe
- * @Description: 获取 hash-set-value
- * @Date: 2023/2/6 19:37
- */
+    /**
+     * @param key:
+     * @param subKey:
+     * @Return: Object
+     * @Author: DengYinzhe
+     * @Description: 获取 hash-set-value
+     * @Date: 2023/2/6 19:37
+     */
     public <K, SK> Object getHashCache(K key, SK subKey) {
-        return  redisTemplate.opsForHash().get(DEFAULT_KEY_PREFIX + key, subKey);
+        return redisTemplate.opsForHash().get(DEFAULT_KEY_PREFIX + key, subKey);
     }
 
 

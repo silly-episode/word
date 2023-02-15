@@ -22,7 +22,6 @@ import com.boot.utils.MinIOUtils;
 import com.boot.utils.SnowFlakeUtil;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -69,7 +68,7 @@ public class WordModuleController {
     private PlanService planService;
 
     /**
-     * @param file: 词源和模块头像文件
+     * @param file:       词源和模块头像文件
      * @param wordModule: 单词模块dto
      * @Return: Result
      * @Author: DengYinzhe
@@ -79,11 +78,11 @@ public class WordModuleController {
     @PostMapping("wordModule")
     @Transactional
     @SuppressWarnings("all")
-    public Result wordModule(@RequestParam MultipartFile[] file,@Valid WordModule wordModule) throws IOException {
+    public Result wordModule(@RequestParam MultipartFile[] file, @Valid WordModule wordModule) throws IOException {
 
         MultipartFile imageFile = null;
         String imageFileName = "";
-        MultipartFile wordFile=null;
+        MultipartFile wordFile = null;
         String wordFileName = "";
         String bucketName = "word";
         Long moduleId = SnowFlakeUtil.getNextId();
@@ -104,22 +103,20 @@ public class WordModuleController {
             }
             if (wordFileType.equals(multipartFile.getContentType())) {
                 wordFile = multipartFile;
-            } else if(imageFileType.equals(multipartFile.getContentType())){
+            } else if (imageFileType.equals(multipartFile.getContentType())) {
                 imageFile = multipartFile;
             }
         }
 //        判断文件格式
-        if (0==Objects.requireNonNull(imageFile).getSize()||0== Objects.requireNonNull(wordFile).getSize()){
+        if (0 == Objects.requireNonNull(imageFile).getSize() || 0 == Objects.requireNonNull(wordFile).getSize()) {
             log.error("文件格式错误");
             return Result.error(CodeMsg.FILE_FORMAT_ERROR);
         }
 
 
-
-
         try {
             //上传文件到minIo
-            imageFileName = (bucketName + "_" + wordModule.getModuleName() + "_image_" + moduleId.toString()  + imageFile.getOriginalFilename().substring(imageFile.getOriginalFilename().lastIndexOf(".")));
+            imageFileName = (bucketName + "_" + wordModule.getModuleName() + "_image_" + moduleId.toString() + imageFile.getOriginalFilename().substring(imageFile.getOriginalFilename().lastIndexOf(".")));
             wordFileName = (bucketName + "_" + wordModule.getModuleName() + "_word_" + moduleId.toString() + ".json");
             minioUtils.putObject(bucketName, imageFile, imageFileName);
             minioUtils.putObject(bucketName, wordFile, wordFileName);
@@ -127,9 +124,9 @@ public class WordModuleController {
 //        存入ES
             InputStream inputStream = wordFile.getInputStream();
             BufferedReader bufferReader = new BufferedReader(new InputStreamReader(inputStream));
-            while (word!=null) {
+            while (word != null) {
                 word = bufferReader.readLine();
-                if (word!=null){
+                if (word != null) {
                     StringReader sr = new StringReader(word);
                     IndexResponse response = elasticsearchClient.index(i -> i.index(wordModule.getModuleName()).withJson(sr).id(String.valueOf(id.getAndIncrement())));
                 }
@@ -177,7 +174,7 @@ public class WordModuleController {
         Map map = new HashMap();
         List word = new ArrayList<ObjectNode>();
 //        单词计划和单词模块信息
-        WordPlan wordPlan=wordModuleService.selectWordPlan(userId);
+        WordPlan wordPlan = wordModuleService.selectWordPlan(userId);
 //        词源
         SearchRequest request = new SearchRequest.Builder()
                 .index(wordPlan.getModuleName())
@@ -198,17 +195,17 @@ public class WordModuleController {
      * @param wordModuleId:
      * @Return: Result
      * @Author: DengYinzhe
-     * @Description: 获取单词模块头像,已测试
+     * @Description: 获取单词模块头像, 已测试
      * @Date: 2023/2/9 11:44
      */
     @GetMapping("wordModuleImage/{wordModuleId}")
     public byte[] wordImage(@PathVariable("wordModuleId") Long wordModuleId) throws IOException, CustomException {
         String bucketName = "word";
         String objectName = wordModuleService.getById(wordModuleId).getModuleImagePath();
-        InputStream inputStream =minIOUtils.getObject(bucketName, objectName);
+        InputStream inputStream = minIOUtils.getObject(bucketName, objectName);
         if (inputStream != null) {
             return IoUtils.toByteArray(inputStream);
-        }else {
+        } else {
             throw new CustomException("头像获取失败");
         }
 
@@ -224,11 +221,11 @@ public class WordModuleController {
      */
     @PutMapping("dayWord/{userId}/{planId}")
     @Transactional
-    public Result dayWord(@PathVariable Long userId,@PathVariable Long planId){
+    public Result dayWord(@PathVariable Long userId, @PathVariable Long planId) {
 //        更新计划表
         Plan plan = planService.getById(planId);
         plan.setFinishedWord(plan.getFinishedWord() + plan.getDayWord());
-        if(plan.getFinishedWord()>=plan.getAllWord()){
+        if (plan.getFinishedWord() >= plan.getAllWord()) {
             plan.setPlanStatus("2");
         }
         log.info(plan.toString());
@@ -237,13 +234,12 @@ public class WordModuleController {
         User user = userService.getById(userId);
         user.setIntegration(user.getIntegration() + plan.getDayWord());
         Boolean flag2 = userService.updateById(user);
-        if (flag2&&flag){
+        if (flag2 && flag) {
             return Result.success("完成计划后续更改成功");
-        }else {
+        } else {
             return Result.error("后续更改失败");
         }
     }
-
 
 
 }

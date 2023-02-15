@@ -13,23 +13,6 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class SmsConfig implements InitializingBean {
-    @Value("${tencent.msm.id}")
-    private String secretID ;
-
-    @Value("${tencent.msm.secret}")
-    private String secretKey ;
-
-    @Value("${tencent.msm.endPoint}")
-    private String endPoint;
-
-    @Value("${tencent.msm.appId}")
-    private String appId;
-
-    @Value("${tencent.msm.signName}")
-    private String signName;
-
-    @Value("${tencent.msm.templateId}")
-    private String templateId;
     //六个相关的参数
     public static String SECRET_ID;
     public static String SECRET_KEY;
@@ -37,6 +20,18 @@ public class SmsConfig implements InitializingBean {
     public static String APP_ID;
     public static String SIGN_NAME;
     public static String TEMPLATE_ID;
+    @Value("${tencent.msm.id}")
+    private String secretID;
+    @Value("${tencent.msm.secret}")
+    private String secretKey;
+    @Value("${tencent.msm.endPoint}")
+    private String endPoint;
+    @Value("${tencent.msm.appId}")
+    private String appId;
+    @Value("${tencent.msm.signName}")
+    private String signName;
+    @Value("${tencent.msm.templateId}")
+    private String templateId;
 
     @Override
     public void afterPropertiesSet() throws Exception {

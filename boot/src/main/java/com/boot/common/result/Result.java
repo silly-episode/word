@@ -18,6 +18,26 @@ public class Result<T> {
     private T data;
 
 
+    private Result(Integer code, String msg) {
+        this.code = code;
+        this.msg = msg;
+    }
+
+    private Result(T data, CodeMsg codeMsg) {
+        this.data = data;
+        if (codeMsg != null) {
+            this.code = codeMsg.getCode();
+            this.msg = codeMsg.getMsg();
+        }
+    }
+
+    private Result(CodeMsg codeMsg) {
+        if (codeMsg != null) {
+            this.code = codeMsg.getCode();
+            this.msg = codeMsg.getMsg();
+        }
+    }
+
     /**
      * @param data: 成功的返回数据
      * @Return: String
@@ -35,7 +55,7 @@ public class Result<T> {
      * @Description: 成功时调用，不需返回数据
      * @Date: 2023/2/6 21:10
      */
-    public static <T> Result<T>success() {
+    public static <T> Result<T> success() {
         return new Result<>(CodeMsg.SUCCESS);
     }
 
@@ -61,6 +81,7 @@ public class Result<T> {
     public static <T> Result<T> error(CodeMsg codeMsg) {
         return new Result<>(codeMsg);
     }
+
     /**
      * @param msg:
      * @Return: String
@@ -71,25 +92,5 @@ public class Result<T> {
     public static <T> Result<T> error(String msg) {
         CodeMsg codeMsg = new CodeMsg(HttpStatus.INTERNAL_SERVER_ERROR.value(), msg);
         return new Result<>(codeMsg);
-    }
-
-
-    private Result(Integer code, String msg) {
-        this.code = code;
-        this.msg = msg;
-    }
-
-    private Result(T data, CodeMsg codeMsg) {
-        this.data = data;
-        if (codeMsg != null) {
-            this.code = codeMsg.getCode();
-            this.msg = codeMsg.getMsg();
-        }
-    }
-    private Result(CodeMsg codeMsg) {
-        if (codeMsg != null) {
-            this.code = codeMsg.getCode();
-            this.msg = codeMsg.getMsg();
-        }
     }
 }

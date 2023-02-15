@@ -35,19 +35,18 @@ import java.util.Map;
 @Component
 public class MinIOUtils {
 
+    private static final int DEFAULT_EXPIRY_TIME = 7 * 24 * 3600;
     @Autowired
     @Qualifier("Client")
     private MinioClient minioClient;
 
-    private static final int DEFAULT_EXPIRY_TIME = 7 * 24 * 3600;
-
-/**
- * @param bucketName: 桶名称
- * @Return: boolean
- * @Author: DengYinzhe
- * @Description: 桶是否存在
- * @Date: 2023/1/29 15:04
- */
+    /**
+     * @param bucketName: 桶名称
+     * @Return: boolean
+     * @Author: DengYinzhe
+     * @Description: 桶是否存在
+     * @Date: 2023/1/29 15:04
+     */
     public boolean bucketExists(String bucketName) throws IOException, NoSuchAlgorithmException, InvalidKeyException {
         try {
             BucketExistsArgs args = BucketExistsArgs.builder().bucket(bucketName).build();
@@ -59,13 +58,13 @@ public class MinIOUtils {
     }
 
 
-/**
- * @param :
- * @Return: List<String>
- * @Author: DengYinzhe
- * @Description: 列出所有存储桶名称
- * @Date: 2023/1/29 15:58
- */
+    /**
+     * @param :
+     * @Return: List<String>
+     * @Author: DengYinzhe
+     * @Description: 列出所有存储桶名称
+     * @Date: 2023/1/29 15:58
+     */
     @SneakyThrows
     public List<String> listBucketNames() {
         List<Bucket> bucketList = listBuckets();
@@ -76,13 +75,13 @@ public class MinIOUtils {
         return bucketListName;
     }
 
-/**
- * @param :
- * @Return: List<Bucket>
- * @Author: DengYinzhe
- * @Description: 列出所有存储桶
- * @Date: 2023/1/29 15:58
- */
+    /**
+     * @param :
+     * @Return: List<Bucket>
+     * @Author: DengYinzhe
+     * @Description: 列出所有存储桶
+     * @Date: 2023/1/29 15:58
+     */
     @SneakyThrows
     public List<Bucket> listBuckets() {
         return minioClient.listBuckets();
@@ -109,13 +108,13 @@ public class MinIOUtils {
         return listObjectNames;
     }
 
-/**
- * @param bucketName:
- * @Return: Iterable<Result<Item>>
- * @Author: DengYinzhe
- * @Description: 列出所有的对象
- * @Date: 2023/1/29 15:57
- */
+    /**
+     * @param bucketName:
+     * @Return: Iterable<Result < Item>>
+     * @Author: DengYinzhe
+     * @Description: 列出所有的对象
+     * @Date: 2023/1/29 15:57
+     */
     @SneakyThrows
     public Iterable<Result<Item>> listObjects(String bucketName) {
         if (bucketExists(bucketName)) {
@@ -126,17 +125,15 @@ public class MinIOUtils {
     }
 
 
-
-
-/**
- * @param bucketName:
- * @param objectName:
- * @param fileName:
- * @Return: boolean
- * @Author: DengYinzhe
- * @Description: 上传文件但不确认怎么用
- * @Date: 2023/1/29 17:16
- */
+    /**
+     * @param bucketName:
+     * @param objectName:
+     * @param fileName:
+     * @Return: boolean
+     * @Author: DengYinzhe
+     * @Description: 上传文件但不确认怎么用
+     * @Date: 2023/1/29 17:16
+     */
     @SneakyThrows
     public boolean putObject(String bucketName, String objectName, String fileName) {
         if (bucketExists(bucketName)) {
@@ -148,15 +145,15 @@ public class MinIOUtils {
         return false;
     }
 
-/**
- * @param bucketName:
- * @param multipartFile:
- * @param filename:
- * @Return: void
- * @Author: DengYinzhe
- * @Description: 接受MultipartFile的文件上传
- * @Date: 2023/1/29 17:14
- */
+    /**
+     * @param bucketName:
+     * @param multipartFile:
+     * @param filename:
+     * @Return: void
+     * @Author: DengYinzhe
+     * @Description: 接受MultipartFile的文件上传
+     * @Date: 2023/1/29 17:14
+     */
     @SneakyThrows
     public void putObject(String bucketName, MultipartFile multipartFile, String filename) {
         PutObjectArgs args = PutObjectArgs.builder()
@@ -167,7 +164,6 @@ public class MinIOUtils {
                 .build();
         minioClient.putObject(args);
     }
-
 
 
     /**
@@ -195,7 +191,7 @@ public class MinIOUtils {
      * @param bucketName 存储桶名称
      * @param objectName 存储桶里的对象名称
      * @param offset     起始字节的位置
-     * @param size     要读取的长度 (可选，如果无值则代表读到文件结尾)
+     * @param size       要读取的长度 (可选，如果无值则代表读到文件结尾)
      * @return
      */
     @SneakyThrows
@@ -231,14 +227,14 @@ public class MinIOUtils {
         return false;
     }
 
-/**
- * @param bucketName:
- * @param objectName:
- * @Return: boolean
- * @Author: DengYinzhe
- * @Description: 删除一个对象
- * @Date: 2023/1/29 15:56
- */
+    /**
+     * @param bucketName:
+     * @param objectName:
+     * @Return: boolean
+     * @Author: DengYinzhe
+     * @Description: 删除一个对象
+     * @Date: 2023/1/29 15:56
+     */
     @SneakyThrows
     public boolean removeObject(String bucketName, String objectName) {
         if (bucketExists(bucketName)) {
@@ -248,7 +244,6 @@ public class MinIOUtils {
         }
         return false;
     }
-
 
 
     /**
@@ -308,22 +303,21 @@ public class MinIOUtils {
         return url;
     }
 
-/**
- * @param bucketName:
- * @param objectName:
- * @Return: StatObjectResponse
- * @Author: DengYinzhe
- * @Description: 获取对象元数据
- * @Date: 2023/1/29 15:54
- */
+    /**
+     * @param bucketName:
+     * @param objectName:
+     * @Return: StatObjectResponse
+     * @Author: DengYinzhe
+     * @Description: 获取对象元数据
+     * @Date: 2023/1/29 15:54
+     */
     @SneakyThrows
     public StatObjectResponse statObject(String bucketName, String objectName) {
         if (bucketExists(bucketName)) {
-            return  minioClient.statObject(StatObjectArgs.builder().bucket(bucketName).object(objectName).build());
+            return minioClient.statObject(StatObjectArgs.builder().bucket(bucketName).object(objectName).build());
         }
         return null;
     }
-
 
 
     public boolean downloadFile(String bucketName, String filePath, String originalName, HttpServletResponse response) {

@@ -1,12 +1,9 @@
 package com.boot.controller;
 
 
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.boot.bo.WordPlan;
 import com.boot.common.result.Result;
-import com.boot.dao.WordModuleDao;
 import com.boot.entity.Plan;
 import com.boot.entity.WordModule;
 import com.boot.service.PlanService;
@@ -120,15 +117,16 @@ public class PlanController {
      * @Date: 2023/2/14 15:57
      */
     @PutMapping("plan/{planId}/{dayWord}")
-    public Result plan(@PathVariable Long planId,@PathVariable Integer dayWord){
+    public Result plan(@PathVariable Long planId, @PathVariable Integer dayWord) {
         UpdateWrapper<Plan> updateWrapper = new UpdateWrapper<>();
         updateWrapper.set("day_word", dayWord).eq("plan_id", planId);
         if (planService.update(updateWrapper)) {
             return Result.success("更改成功");
-        }else {
+        } else {
             return Result.error("更改失败");
         }
     }
+
     /**
      * @param oldPlanId:
      * @param newPlanId:
@@ -138,7 +136,7 @@ public class PlanController {
      * @Date: 2023/2/14 16:07
      */
     @PutMapping("mainPlan/{oldPlanId}/{newPlanId}")
-    public Result mainPlan(@PathVariable Long oldPlanId,@PathVariable Long newPlanId){
+    public Result mainPlan(@PathVariable Long oldPlanId, @PathVariable Long newPlanId) {
         Plan oldPlan = new Plan();
         Plan newPlan = new Plan();
         List<Plan> list = new ArrayList<>();
@@ -152,9 +150,9 @@ public class PlanController {
         System.out.println(newPlan.toString());
         log.info(oldPlan.toString());
         log.info(newPlan.toString());
-        if (planService.updateBatchById(list,2)) {
+        if (planService.updateBatchById(list, 2)) {
             return Result.success("更改成功");
-        }else {
+        } else {
             return Result.error("更改失败");
         }
     }
@@ -167,14 +165,14 @@ public class PlanController {
      * @Date: 2023/2/14 17:13
      */
     @PutMapping("finishPlan/{planId}")
-    public Result finishPlan(@PathVariable Long planId){
+    public Result finishPlan(@PathVariable Long planId) {
         UpdateWrapper<Plan> updateWrapper = new UpdateWrapper<>();
         updateWrapper.set("plan_status", 2).eq("plan_id", planId);
         if (!"1".equals(planService.getById(planId).getPlanStatus())) {
             return Result.error("无法设置非主计划的任务为已完成");
         } else if (planService.update(updateWrapper)) {
             return Result.success("更改成功");
-        }else {
+        } else {
             return Result.error("更改失败");
         }
     }

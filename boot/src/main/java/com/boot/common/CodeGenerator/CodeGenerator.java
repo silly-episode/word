@@ -27,10 +27,10 @@ public class CodeGenerator {
         tables.add("p_answer");
         tables.add("p_correct");
 
-        FastAutoGenerator.create("jdbc:mysql://localhost:3306/xpa","root","111111")
+        FastAutoGenerator.create("jdbc:mysql://localhost:3306/xpa", "root", "111111")
                 .globalConfig(builder -> {
                     builder.author("DengYinzhe")               //作者
-                            .outputDir(System.getProperty("user.dir")+"\\src\\main\\java")    //输出路径(写到java目录)
+                            .outputDir(System.getProperty("user.dir") + "\\src\\main\\java")    //输出路径(写到java目录)
                             .enableSwagger()           //开启swagger
                             .commentDate("yyyy-MM-dd")
                             .fileOverride();            //开启覆盖之前生成的文件
@@ -45,7 +45,7 @@ public class CodeGenerator {
                             .controller("controller")
                             .mapper("mapper")
                             .xml("mapper")
-                            .pathInfo(Collections.singletonMap(OutputFile.xml,System.getProperty("user.dir")+"\\src\\main\\resources\\mapper"));
+                            .pathInfo(Collections.singletonMap(OutputFile.xml, System.getProperty("user.dir") + "\\src\\main\\resources\\mapper"));
                 })
                 .strategyConfig(builder -> {
                     builder.addInclude(tables)

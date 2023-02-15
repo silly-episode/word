@@ -31,15 +31,15 @@ public class JwtUtils {
     private long expire;
     private String header;
 
-/**
- * @param token:
- * @param account:
- * @Return: boolean
- * @Author: DengYinzhe
- * @Description: TODO
- * @Date: 2023/2/3 16:37
- */
-    public  boolean verify(String token, String account) {
+    /**
+     * @param token:
+     * @param account:
+     * @Return: boolean
+     * @Author: DengYinzhe
+     * @Description: TODO
+     * @Date: 2023/2/3 16:37
+     */
+    public boolean verify(String token, String account) {
 
         try {
             Algorithm algorithm = Algorithm.HMAC256(secret);
@@ -53,22 +53,21 @@ public class JwtUtils {
         } catch (TokenExpiredException e) {
 //
             return false;
-        }
-        catch (IllegalArgumentException | JWTVerificationException e) {
+        } catch (IllegalArgumentException | JWTVerificationException e) {
             return false;
         }
 
 
     }
 
-/**
- * @param token:
- * @Return: String
- * @Author: DengYinzhe
- * @Description: 获得token中的信息无需secret解密也能获得
- * @Date: 2023/2/3 16:37
- */
-    public  String getAccount(String token) {
+    /**
+     * @param token:
+     * @Return: String
+     * @Author: DengYinzhe
+     * @Description: 获得token中的信息无需secret解密也能获得
+     * @Date: 2023/2/3 16:37
+     */
+    public String getAccount(String token) {
         try {
             DecodedJWT jwt = JWT.decode(token);
             return jwt.getClaim("account").asString();
@@ -77,16 +76,16 @@ public class JwtUtils {
         }
     }
 
-/**
- * @param account:账号
- * @Return: String
- * @Author: DengYinzhe
- * @Description: 根据payload信息生成JSON WEB TOKEN
- * @Date: 2023/2/3 16:34
- */
-    public  String sign(String account) {
+    /**
+     * @param account:账号
+     * @Return: String
+     * @Author: DengYinzhe
+     * @Description: 根据payload信息生成JSON WEB TOKEN
+     * @Date: 2023/2/3 16:34
+     */
+    public String sign(String account) {
         Date currentDate = new Date(System.currentTimeMillis());
-        Date expireDate = new Date(System.currentTimeMillis() + expire*1000);
+        Date expireDate = new Date(System.currentTimeMillis() + expire * 1000);
         Algorithm algorithm = Algorithm.HMAC256(secret);
 
         return JWT.create()

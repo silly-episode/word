@@ -1,7 +1,6 @@
 package com.boot.utils;
 
 
-
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.LockSupport;
 
@@ -16,95 +15,88 @@ public class SnowFlakeUtil {
 
     // ==============================Fields===========================================
     /**
+     * 最大容忍时间, 单位毫秒, 即如果时钟只是回拨了该变量指定的时间, 那么等待相应的时间即可;
+     * 考虑到sequence服务的高性能, 这个值不易过大
+     */
+    private static final long MAX_BACKWARD_MS = 3;
+    /**
+     * 使用双重校验获取实例对象
+     */
+    private volatile static SnowFlakeUtil snowflakeIdWorker;
+    /**
      * 开始时间截 (2021-01-19)
      */
     private final long twepoch = 1611043703161L;
-
     /**
      * 机器id所占的位数
      */
     private final long workerIdBits = 5L;
-
     /**
      * 数据标识id所占的位数
      */
     private final long dataCenterIdBits = 5L;
-
     /**
      * 支持的最大机器id，结果是31 (这个移位算法可以很快的计算出几位二进制数所能表示的最大十进制数)
      */
     private final long maxWorkerId = -1L ^ (-1L << workerIdBits);
-
     /**
      * 支持的最大数据标识id，结果是31
      */
     private final long maxDataCenterId = -1L ^ (-1L << dataCenterIdBits);
-
     /**
      * 序列在id中占的位数
      */
     private final long sequenceBits = 12L;
-
     /**
      * 机器ID向左移12位
      */
     private final long workerIdShift = sequenceBits;
-
     /**
      * 数据标识id向左移17位(12+5)
      */
     private final long dataCenterIdShift = sequenceBits + workerIdBits;
-
     /**
      * 时间截向左移22位(5+5+12)
      */
     private final long timestampLeftShift = sequenceBits + workerIdBits + dataCenterIdBits;
-
     /**
      * 生成序列的掩码，这里为4095 (0b111111111111=0xfff=4095)
      */
     private final long sequenceMask = -1L ^ (-1L << sequenceBits);
-
     /**
      * 工作机器ID(0~31)
      */
-    private long workerId;
-
+    private final long workerId;
     /**
      * 数据中心ID(0~31)
      */
-    private long dataCenterId;
-
+    private final long dataCenterId;
     /**
      * 备用的数据中心ID(0~31)，当时钟回拨时，为了不抛异常，启用备用ID
      */
-    private long standbyDatacenterId;
-
+    private final long standbyDatacenterId;
     /**
      * 毫秒内序列(0~4095)
      */
     private long sequence = 0L;
 
+
+    // ==============================Constructors=====================================
     /**
      * 上次生成ID的时间截
      */
     private long lastTimestamp = -1L;
-
     /**
      * 是否时钟回拨
      */
     private boolean isTimestampBack = false;
 
 
-    // ==============================Constructors=====================================
-    /**
-     * 最大容忍时间, 单位毫秒, 即如果时钟只是回拨了该变量指定的时间, 那么等待相应的时间即可;
-     * 考虑到sequence服务的高性能, 这个值不易过大
-     */
-    private static final long MAX_BACKWARD_MS = 3;
+    // ==============================Methods==========================================
 
     /**
      * 构造函数
+     *
      * @param workerId     工作ID (0~31)
      * @param datacenterId 数据中心ID (0~31)
      */
@@ -126,10 +118,29 @@ public class SnowFlakeUtil {
         this.standbyDatacenterId = standbyDatacenterId;
     }
 
+    public static SnowFlakeUtil getInstance() {
+        if (snowflakeIdWorker == null) {
+            synchronized (SnowFlakeUtil.class) {
+                if (snowflakeIdWorker == null) {
+                    snowflakeIdWorker = new SnowFlakeUtil(1, 0, 11);
+                }
+            }
+        }
+        return snowflakeIdWorker;
+    }
 
-    // ==============================Methods==========================================
     /**
      * 获得下一个ID (该方法是线程安全的)
+     *
+     * @return SnowflakeId
+     */
+    public static Long getNextId() {
+        return getInstance().nextId();
+    }
+
+    /**
+     * 获得下一个ID (该方法是线程安全的)
+     *
      * @return SnowflakeId
      */
     synchronized long nextId() {
@@ -145,14 +156,10 @@ public class SnowFlakeUtil {
 
                     timestamp = timeGen();
                     //如果当前时间还是小于上一次ID生成的时间戳，这时启用备用的datacenterId
-                    if (timestamp < lastTimestamp) {
-                        isTimestampBack = true;
-                        //服务器时钟被调整了
-                        //log.error(String.format("Clock moved backwards.  Refusing to generate id for %d milliseconds", lastTimestamp - timestamp));
-                        //throw new RuntimeException(String.format("Clock moved backwards.  Refusing to generate id for %d milliseconds", lastTimestamp - timestamp));
-                    } else {
-                        isTimestampBack = false;
-                    }
+                    //服务器时钟被调整了
+                    //log.error(String.format("Clock moved backwards.  Refusing to generate id for %d milliseconds", lastTimestamp - timestamp));
+                    //throw new RuntimeException(String.format("Clock moved backwards.  Refusing to generate id for %d milliseconds", lastTimestamp - timestamp));
+                    isTimestampBack = timestamp < lastTimestamp;
                 } catch (Exception e) {
                     //log.error(e);
                 }
@@ -188,6 +195,7 @@ public class SnowFlakeUtil {
 
     /**
      * 阻塞到下一个毫秒，直到获得新的时间戳
+     *
      * @param lastTimestamp 上次生成ID的时间截
      * @return 当前时间戳
      */
@@ -201,33 +209,11 @@ public class SnowFlakeUtil {
 
     /**
      * 返回以毫秒为单位的当前时间
+     *
      * @return 当前时间(毫秒)
      */
     protected long timeGen() {
         return System.currentTimeMillis();
-    }
-
-    /**
-     * 使用双重校验获取实例对象
-     */
-    private volatile static SnowFlakeUtil snowflakeIdWorker;
-    public static SnowFlakeUtil getInstance() {
-        if (snowflakeIdWorker == null) {
-            synchronized (SnowFlakeUtil.class) {
-                if (snowflakeIdWorker == null) {
-                    snowflakeIdWorker = new SnowFlakeUtil(1, 0,11);
-                }
-            }
-        }
-        return snowflakeIdWorker;
-    }
-
-    /**
-     * 获得下一个ID (该方法是线程安全的)
-     * @return SnowflakeId
-     */
-    public static Long getNextId() {
-        return getInstance().nextId();
     }
 }
 

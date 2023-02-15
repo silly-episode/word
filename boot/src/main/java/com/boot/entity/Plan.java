@@ -45,7 +45,6 @@ public class Plan extends Model<Plan> {
     private Integer dayWord;
 
 
-
     /**
      * 获取主键值
      *
@@ -55,5 +54,5 @@ public class Plan extends Model<Plan> {
     public Serializable pkVal() {
         return this.planId;
     }
-    }
+}
 

@@ -35,9 +35,9 @@ public class GlobalExceptionHandler {
      */
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(value = ShiroException.class)
-    public Result handler(ShiroException e){
-        log.error("运行时shiro异常:",e);
-        return Result.error(4003,e.getMessage());
+    public Result handler(ShiroException e) {
+        log.error("运行时shiro异常:", e);
+        return Result.error(4003, e.getMessage());
     }
 
     /**
@@ -50,7 +50,7 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(UnauthorizedException.class)
     public Result handle401() {
-        return  Result.error(401, "Unauthorized");
+        return Result.error(401, "Unauthorized");
     }
 
     /**
@@ -62,9 +62,9 @@ public class GlobalExceptionHandler {
      */
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(value = RuntimeErrorException.class)
-    public Result handler(RuntimeException e){
-        log.error("运行时异常:",e);
-        return Result.error(40008,e.getMessage());
+    public Result handler(RuntimeException e) {
+        log.error("运行时异常:", e);
+        return Result.error(40008, e.getMessage());
     }
 
     /**
@@ -76,11 +76,11 @@ public class GlobalExceptionHandler {
      */
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(value = MethodArgumentNotValidException.class)
-    public Result handler(MethodArgumentNotValidException e){
-        log.error("实体校验异常:}",e);
+    public Result handler(MethodArgumentNotValidException e) {
+        log.error("实体校验异常:}", e);
         BindingResult bindingResult = e.getBindingResult();
-        ObjectError objectError =  bindingResult.getAllErrors().stream().findFirst().get();
-        return Result.error(4007,objectError.getDefaultMessage());
+        ObjectError objectError = bindingResult.getAllErrors().stream().findFirst().get();
+        return Result.error(4007, objectError.getDefaultMessage());
     }
 
     /**
@@ -92,8 +92,8 @@ public class GlobalExceptionHandler {
      */
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(value = IllegalArgumentException.class)
-    public Result handler(IllegalArgumentException e){
-        log.error("Assert 断言异常:",e);
+    public Result handler(IllegalArgumentException e) {
+        log.error("Assert 断言异常:", e);
         return Result.error(e.getMessage());
     }
 
@@ -105,7 +105,7 @@ public class GlobalExceptionHandler {
      * @Date: 2023/2/12 21:11
      */
     @ExceptionHandler(CustomException.class)
-    public Result<String> exceptionHandler(CustomException ex){
+    public Result<String> exceptionHandler(CustomException ex) {
         return Result.error(ex.getMessage());
     }
 

@@ -49,7 +49,6 @@ public class WordModule extends Model<WordModule> {
     private String superiorModule;
 
 
-
     /**
      * 获取主键值
      *
@@ -59,5 +58,5 @@ public class WordModule extends Model<WordModule> {
     public Serializable pkVal() {
         return this.moduleId;
     }
-    }
+}
 

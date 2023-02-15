@@ -36,7 +36,6 @@ public class CommonUserRealm extends AuthorizingRealm {
     private UserService userService;
 
 
-
     /**
      * 大坑！，必须重写此方法，不然Shiro会报错
      */
@@ -79,7 +78,7 @@ public class CommonUserRealm extends AuthorizingRealm {
             throw new AuthenticationException("User didn't existed!");
         }
 
-        if (! jwtUtils.verify(token, userBean.getAccount())) {
+        if (!jwtUtils.verify(token, userBean.getAccount())) {
             throw new AuthenticationException("Username or password error");
         }
 

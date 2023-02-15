@@ -25,9 +25,7 @@ import org.springframework.stereotype.Component;
 public class SmsUtils {
 
 
-
-
-    public  boolean sendMessage(String phone,String code){
+    public boolean sendMessage(String phone, String code) {
 
         try {
             //这里是实例化一个Credential，也就是认证对象，参数是密钥对；你要使用肯定要进行认证
@@ -48,15 +46,15 @@ public class SmsUtils {
 
             //实例化request封装请求信息
             SendSmsRequest request = new SendSmsRequest();
-            String[] phoneNumber = {"+86"+phone};
+            String[] phoneNumber = {"+86" + phone};
             request.setPhoneNumberSet(phoneNumber);
             request.setSmsSdkAppid(SmsConfig.APP_ID);
             request.setSign(SmsConfig.SIGN_NAME);
             request.setTemplateID(SmsConfig.TEMPLATE_ID);
             //生成随机验证码和时间
             String verificationCode = code;
-            String time="5";
-            String[] templateParamSet = {verificationCode,time};
+            String time = "5";
+            String[] templateParamSet = {verificationCode, time};
             request.setTemplateParamSet(templateParamSet);
 
             //发送短信

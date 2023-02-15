@@ -61,7 +61,6 @@ public class User extends Model<User> {
     private Integer integration;
 
 
-
     /**
      * 获取主键值
      *
@@ -71,5 +70,5 @@ public class User extends Model<User> {
     public Serializable pkVal() {
         return this.userId;
     }
-    }
+}
 

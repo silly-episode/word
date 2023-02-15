@@ -37,7 +37,7 @@ public class BeanDtoVoUtils {
         }
         try {
             // 创建新的对象实例
-            E newInstance =newClass.getDeclaredConstructor().newInstance();
+            E newInstance = newClass.getDeclaredConstructor().newInstance();
 
             // 把原对象数据拷贝到新的对象
             BeanUtils.copyProperties(oldClass, newInstance);
@@ -54,7 +54,7 @@ public class BeanDtoVoUtils {
      * @param v:
      * @Return: Page<V>
      * @Author: DengYinzhe
-     * @Description:  Page<Entity> 分页对象转 Page<Vo>  ( list 循环)
+     * @Description: Page<Entity> 分页对象转 Page<Vo>  ( list 循环)
      * @Date: 2023/2/2 20:33
      */
     public static <T, V> Page<V> pageVo(Page<T> page, Class<V> v) {
@@ -78,10 +78,10 @@ public class BeanDtoVoUtils {
      * @param v:
      * @Return: Page<V>
      * @Author: DengYinzhe
-     * @Description:  Page<Entity> 分页对象转 Page<Vo> （Stream 方式）
+     * @Description: Page<Entity> 分页对象转 Page<Vo> （Stream 方式）
      * @Date: 2023/2/2 20:33
      */
-    public static  <T, V> Page<V> pageVoStream(Page<T> page, Class<V> v) {
+    public static <T, V> Page<V> pageVoStream(Page<T> page, Class<V> v) {
         List<V> voList = page.getContent().stream().map(item -> {
             try {
                 return (V) BeanDtoVoUtils.convert(item, v.getDeclaredConstructor().newInstance().getClass());
@@ -92,7 +92,6 @@ public class BeanDtoVoUtils {
         }).collect(Collectors.toList());
         return new PageImpl<>(voList, page.getPageable(), page.getTotalElements());
     }
-
 
 
 }
