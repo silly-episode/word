@@ -114,6 +114,7 @@ public class WordModuleController {
         }
 
 
+        BufferedReader bufferReader = null;
         try {
             //上传文件到minIo
             imageFileName = (bucketName + "_" + wordModule.getModuleName() + "_image_" + moduleId.toString() + imageFile.getOriginalFilename().substring(imageFile.getOriginalFilename().lastIndexOf(".")));
@@ -123,7 +124,7 @@ public class WordModuleController {
             log.info("存入minIO正常");
 //        存入ES
             InputStream inputStream = wordFile.getInputStream();
-            BufferedReader bufferReader = new BufferedReader(new InputStreamReader(inputStream));
+            bufferReader = new BufferedReader(new InputStreamReader(inputStream));
             while (word != null) {
                 word = bufferReader.readLine();
                 if (word != null) {
@@ -147,6 +148,9 @@ public class WordModuleController {
                     f.index(wordModule.getModuleName()));
             log.info("删除Es索引");
             return Result.error("error");
+
+        } finally {
+            bufferReader.close();
 
         }
         //        存入Mysql
