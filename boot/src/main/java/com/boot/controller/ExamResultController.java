@@ -1,19 +1,15 @@
 package com.boot.controller;
 
 
-
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.extension.api.ApiController;
-import com.baomidou.mybatisplus.extension.api.R;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.boot.common.result.Result;
 import com.boot.entity.ExamResult;
 import com.boot.service.ExamResultService;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import java.io.Serializable;
-import java.util.List;
+
+import java.time.LocalDateTime;
+
 
 /**
  * (ExamResult)表控制层
@@ -30,23 +26,31 @@ public class ExamResultController  {
     @Resource
     private ExamResultService examResultService;
 
+
+
     /**
-     * 分页查询所有数据
-     *
-     * @param page 分页对象
-     * @param examResult 查询实体
-     * @return 所有数据
+     * @param examResult:
+     * @Return: Result
+     * @Author: DengYinzhe
+     * @Description: TODO 录入成绩，传入grade和planId
+     * @Date: 2023/2/20 14:38
      */
-    @GetMapping
-    public Result selectAll(Page<ExamResult> page, ExamResult examResult) {
-        return success(this.examResultService.page(page, new QueryWrapper<>(examResult)));
-    }
-
     @PostMapping("examResult")
-    public Result examResult() {
-
-
+    public Result examResult(@RequestBody ExamResult examResult) {
+        examResult.setExamTime(LocalDateTime.now());
+        if (examResultService.save(examResult)) {
+            return Result.success("录入成绩成功");
+        }else {
+            return Result.error("录入成绩失败");
+        }
     }
+
+
+//    @GetMapping("examResult")
+//    public Result examResult(){
+//
+//    }
+
 
 
 }

@@ -86,6 +86,12 @@ tencent:
     appId: 1400772406
     signName: 邓胤喆比赛项目个人网
     templateId: 1678253
+  translate:
+    id: AKIDIPFsFLAk4LM6YmjQu75pPimcBSWXMvEI
+    secret: rRmrgEEDE6l9MJ1cy4tcFmwShfNr7ABD
+    endPoint: tmt.tencentcloudapi.com
+    projectId: 0
+    region: ap-guangzhou
 
 
 word:

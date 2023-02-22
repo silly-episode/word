@@ -21,7 +21,7 @@ public class SmsConfig implements InitializingBean {
     public static String SIGN_NAME;
     public static String TEMPLATE_ID;
     @Value("${tencent.msm.id}")
-    private String secretID;
+    private String secretId;
     @Value("${tencent.msm.secret}")
     private String secretKey;
     @Value("${tencent.msm.endPoint}")
@@ -35,7 +35,7 @@ public class SmsConfig implements InitializingBean {
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        SECRET_ID = secretID;
+        SECRET_ID = secretId;
         SECRET_KEY = secretKey;
         END_POINT = endPoint;
         APP_ID = appId;

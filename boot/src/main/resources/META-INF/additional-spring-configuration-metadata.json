@@ -64,5 +64,10 @@
       "name": "tencent.msm.templateId",
       "type": "java.lang.String",
       "description": "Description for tencent.msm.templateId."
+    },
+    {
+      "name": "tencent.msm.endPoint",
+      "type": "java.lang.String",
+      "description": "Description for tencent.msm.endPoint."
     }
   ] }

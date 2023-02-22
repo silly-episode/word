@@ -24,7 +24,14 @@ import org.springframework.stereotype.Component;
 @NoArgsConstructor
 public class SmsUtils {
 
-
+    /**
+     * @param phone:
+     * @param code:
+     * @Return: boolean
+     * @Author: DengYinzhe
+     * @Description: 发送短信
+     * @Date: 2023/2/22 21:51
+     */
     public boolean sendMessage(String phone, String code) {
 
         try {
