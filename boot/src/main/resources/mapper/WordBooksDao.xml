@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.boot.dao.WordBooksDao">
+
+    <resultMap type="com.boot.entity.WordBooks" id="WordBooksMap">
+        <result property="bookId" column="book_id" jdbcType="INTEGER"/>
+        <result property="bookName" column="book_name" jdbcType="VARCHAR"/>
+        <result property="userId" column="user_id" jdbcType="INTEGER"/>
+        <result property="bookCreateTime" column="book_create_time" jdbcType="TIMESTAMP"/>
+        <result property="bookUpdateTime" column="book_update_time" jdbcType="TIMESTAMP"/>
+        <result property="wordCount" column="word_count" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <!-- 批量插入 -->
+    <insert id="insertBatch" keyProperty="bookId" useGeneratedKeys="true">
+        insert into word.word_books(book_name, user_id, book_create_time, book_update_time, word_count)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+        (#{entity.bookName}, #{entity.userId}, #{entity.bookCreateTime}, #{entity.bookUpdateTime}, #{entity.wordCount})
+        </foreach>
+    </insert>
+    <!-- 批量插入或按主键更新 -->
+    <insert id="insertOrUpdateBatch" keyProperty="bookId" useGeneratedKeys="true">
+        insert into word.word_books(book_name, user_id, book_create_time, book_update_time, word_count)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.bookName}, #{entity.userId}, #{entity.bookCreateTime}, #{entity.bookUpdateTime}, #{entity.wordCount})
+        </foreach>
+        on duplicate key update
+         book_name = values(book_name) , user_id = values(user_id) , book_create_time = values(book_create_time) , book_update_time = values(book_update_time) , word_count = values(word_count)     </insert>
+
+</mapper>
+

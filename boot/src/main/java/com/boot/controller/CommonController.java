@@ -31,8 +31,8 @@ public class CommonController {
 
     /**
      * @param sourceText: 源文本
-     * @param source: 源语种
-     * @param target: 目标语种
+     * @param source:     源语种
+     * @param target:     目标语种
      * @Return: Result
      * @Author: DengYinzhe
      * @Description: 翻译
@@ -65,8 +65,8 @@ public class CommonController {
     public Result translate(
             @RequestParam String sourceText,
             @RequestParam String source,
-            @RequestParam String target)   {
-        String targetText= null;
+            @RequestParam String target) {
+        String targetText = null;
         try {
             targetText = translateUtils.translate(sourceText, source, target);
         } catch (TencentCloudSDKException e) {
