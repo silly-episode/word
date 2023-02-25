@@ -4,7 +4,7 @@ server:
 spring:
   datasource:
     username: root
-    password: DYZ2019ZB
+    password: 1
     url: jdbc:mysql://127.0.0.1:3306/word?useSSL=true&characterEncoding=UTF-8&allowMultiQuery=true&serverTimezone=UTC&zeroDateTimeBehavior=convertToNull
     driver-class-name: com.mysql.cj.jdbc.Driver
 
@@ -74,22 +74,22 @@ mybatis-plus:
 
 minio:
   endpoint: http://127.0.0.1:9000
-  accesskey: w0E0Bt2xLWe9WusX
-  secretKey: 3gTNaOQ9XoidyI6ui9tpa9lavV2TUAE0
+  accesskey: 1
+  secretKey: 1
 
 #腾讯云短信配置
 tencent:
   msm:
-    id: AKIDYv66wazCpPzQn085ppdCfMxMZcWDk6E9
-    secret: xiHj8b1Lgs565rQkpkT5VigPCoESTFpE
+    id: 1
+    secret: 1
     endPoint: sms.tencentcloudapi.com
-    appId: 1400772406
-    signName: 邓胤喆比赛项目个人网
-    templateId: 1678253
+    appId: 1
+    signName: 1
+    templateId: 1
   translate:
-    id: AKIDIPFsFLAk4LM6YmjQu75pPimcBSWXMvEI
-    secret: rRmrgEEDE6l9MJ1cy4tcFmwShfNr7ABD
-    endPoint: tmt.tencentcloudapi.com
+    id: 1
+    secret: 1
+    endPoint: 1
     projectId: 0
     region: ap-guangzhou
 
