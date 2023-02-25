@@ -77,16 +77,17 @@ public class PdfReport {
     public void generatePDF(Document document) throws Exception {
 
         // 表格
-        PdfPTable table = createTable(new float[] { 40, 120, 120, 120, 80,40, 120, 120, 120, 80 });
-        table.addCell(createCell("Word List", headfont, Element.ALIGN_LEFT, 6, false));
+        PdfPTable table = createTable(new float[] { 40, 100, 170, 50,40, 100, 170, 50 });
+        table.addCell(createCell("Title"+"收藏的单词", headfont, Element.ALIGN_LEFT, 6, false));
+        table.addCell(createCell("Date:             /        / ", headfont, Element.ALIGN_LEFT, 4, false));
         table.addCell(createCell("No.", keyfont, Element.ALIGN_CENTER));
         table.addCell(createCell("Word", keyfont, Element.ALIGN_CENTER));
         table.addCell(createCell("Meaning", keyfont, Element.ALIGN_CENTER));
-        table.addCell(createCell("", keyfont, Element.ALIGN_CENTER));
+        table.addCell(createCell(" √ ", keyfont, Element.ALIGN_CENTER));
         table.addCell(createCell("No.", keyfont, Element.ALIGN_CENTER));
         table.addCell(createCell("Word", keyfont, Element.ALIGN_CENTER));
         table.addCell(createCell("Meaning", keyfont, Element.ALIGN_CENTER));
-        table.addCell(createCell("", keyfont, Element.ALIGN_CENTER));
+        table.addCell(createCell(" √ ", keyfont, Element.ALIGN_CENTER));
         Integer totalQuantity = 0;
 
 
@@ -94,17 +95,14 @@ public class PdfReport {
         for (int i = 0; i < 50; i=i+2) {
             table.addCell(createCell(String.valueOf(i+1), textfont));
             table.addCell(createCell("word", textfont));
-            table.addCell(createCell("wode", textfont));
             table.addCell(createCell("单词", textfont));
             table.addCell(createCell("", textfont));
             table.addCell(createCell(String.valueOf(i+2), textfont));
             table.addCell(createCell("word", textfont));
-            table.addCell(createCell("wode", textfont));
             table.addCell(createCell("单词", textfont));
             table.addCell(createCell("", textfont));
             totalQuantity +=2;
         }
-        document.add(table);
         document.add(table);
 
     }
