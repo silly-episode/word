@@ -253,8 +253,17 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-aop</artifactId>
         </dependency>
-
-
+<!--导出数据为pdf-->
+        <dependency>
+            <groupId>com.itextpdf</groupId>
+            <artifactId>itextpdf</artifactId>
+            <version>5.5.13.3</version>
+        </dependency>
+        <dependency>
+            <groupId>com.itextpdf</groupId>
+            <artifactId>itext-asian</artifactId>
+            <version>5.2.0</version>
+        </dependency>
     </dependencies>
 
     <build>
