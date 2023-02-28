@@ -6,6 +6,7 @@ import com.itextpdf.text.pdf.*;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 
+import java.net.URL;
 import java.util.List;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -15,7 +16,7 @@ import java.io.FileOutputStream;
  * @Author: DengYinzhe
  * @Date: 2023/2/25 16:11
  * @FileName: PdfUtils
- * @Description:
+ * @Description: 单词本Pdf导出
  */
 
 @Component
@@ -39,7 +40,12 @@ public class PdfUtils {
         NoCell, WordOrMeaningCell,BlankCell
     }
 
-
+    //    实线类和虚线类
+    CustomCellRight customCellRight = new CustomCellRight();
+    CustomCellBottom customCellBottom = new CustomCellBottom();
+    CustomCellSolidBottom customCellSolidBottom = new CustomCellSolidBottom();
+    CustomCellSolidLeft customCellSolidLeft = new CustomCellSolidLeft();
+    CustomCellSolidRight customCellSolidRight = new CustomCellSolidRight();
     // 字体静态代码块
     static {
         try {
@@ -62,7 +68,7 @@ public class PdfUtils {
         }
     }
     //右测虚线
-    static class CustomCellRight implements PdfPCellEvent {
+    class CustomCellRight implements PdfPCellEvent {
         @Override
         public  void cellLayout(PdfPCell cell, Rectangle position,
                                 PdfContentByte[] canvases) {
@@ -78,7 +84,7 @@ public class PdfUtils {
         }
     }
     //底部虚线
-    static class CustomCellBottom implements PdfPCellEvent {
+    class CustomCellBottom implements PdfPCellEvent {
         @Override
         public void cellLayout(PdfPCell cell, Rectangle position,
                                PdfContentByte[] canvases) {
@@ -97,7 +103,7 @@ public class PdfUtils {
         }
     }
     //底部实线
-    static class CustomCellSolidBottom implements PdfPCellEvent {
+    class CustomCellSolidBottom implements PdfPCellEvent {
         @Override
         public  void cellLayout(PdfPCell cell, Rectangle position,
                                 PdfContentByte[] canvases) {
@@ -111,7 +117,7 @@ public class PdfUtils {
         }
     }
     //左侧实线
-    static class CustomCellSolidLeft implements PdfPCellEvent {
+    class CustomCellSolidLeft implements PdfPCellEvent {
         @Override
         public  void cellLayout(PdfPCell cell, Rectangle position,
                                 PdfContentByte[] canvases) {
@@ -125,7 +131,7 @@ public class PdfUtils {
         }
     }
     //右侧实线
-    static class CustomCellSolidRight implements PdfPCellEvent {
+    class CustomCellSolidRight implements PdfPCellEvent {
         @Override
         public  void cellLayout(PdfPCell cell, Rectangle position,
                                 PdfContentByte[] canvases) {
@@ -177,53 +183,68 @@ public class PdfUtils {
      * @Description: 绘制不同类型的单元格
      * @Date: 2023/2/27 17:47
      */
-    public PdfPCell createCell(String value, Font font, CellType type, Boolean Finalytype) {
+    public PdfPCell createCell(String value, Font font, CellType type, Boolean Finalytype,Image ... img) {
 
-        PdfPCell cell = new PdfPCell();
-        cell.setFixedHeight(25);
-        cell.setPaddingLeft(7);
-        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-        cell.setHorizontalAlignment(Element.ALIGN_MIDDLE);
-        if (type.equals(CellType.NoTitle)) {
-            cell.setFixedHeight(30);
-//            顶部、左侧、底部实线；右侧虚线
-            cell.setBorder(Rectangle.TOP);
-            cell.setCellEvent(new CustomCellRight());
-            cell.setCellEvent(new CustomCellSolidBottom());
-            cell.setCellEvent(new CustomCellSolidLeft());
-        } else if (type.equals(CellType.WordOrMeaningTitle)) {
-            cell.setFixedHeight(30);
-//            顶部，底部实线；右侧虚线
-            cell.setBorder(Rectangle.TOP);
-            cell.setCellEvent(new CustomCellRight());
-            cell.setCellEvent(new CustomCellSolidBottom());
-        } else if (type.equals(CellType.BlankTitle)) {
-            cell.setFixedHeight(30);
-//            顶部，底部，右侧实现；
-            cell.setBorder(Rectangle.TOP);
-            cell.setCellEvent(new CustomCellSolidRight());
-            cell.setCellEvent(new CustomCellSolidBottom());
-            cell.setPaddingLeft(2);
-        } else if (type.equals(CellType.NoCell)) {
-//             左边实线；右侧、底部虚线
-            cell.setBorder(Rectangle.LEFT);
-            cell.setCellEvent(new CustomCellRight());
-            cell.setCellEvent(new CustomCellBottom());
-        } else if (type.equals(CellType.WordOrMeaningCell)) {
-//            右侧、底部虚线
-            cell.setBorder(Rectangle.NO_BORDER);
-            cell.setCellEvent(new CustomCellRight());
-            cell.setCellEvent(new CustomCellBottom());
-        } else if (type.equals(CellType.BlankCell)) {
-//            右侧实线，底部虚线
+
+        PdfPCell cell = null;
+        if (type.equals(CellType.BlankCell)){
+            if (img.length == 0) {
+                cell = new PdfPCell();
+            }else {
+                cell = new PdfPCell(img[0],false);
+            }
+            cell.setFixedHeight(25);
+            cell.setPaddingLeft(7);
+            cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+            cell.setHorizontalAlignment(Element.ALIGN_MIDDLE);
+            //            右侧实线，底部虚线
             cell.setBorder(Rectangle.RIGHT);
-            cell.setCellEvent(new CustomCellBottom());
-            cell.setPaddingLeft(2);
+            cell.setCellEvent(customCellBottom);
+            cell.setPaddingLeft(5);
+        }else {
+            cell = new PdfPCell();
+            cell.setFixedHeight(25);
+            cell.setPaddingLeft(7);
+            cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+            cell.setHorizontalAlignment(Element.ALIGN_MIDDLE);
+            cell.setPhrase(new Phrase(value, font));
+            if (type.equals(CellType.NoTitle)) {
+                cell.setFixedHeight(30);
+    //            顶部、左侧、底部实线；右侧虚线
+                cell.setBorder(Rectangle.TOP);
+                cell.setCellEvent(customCellRight);
+                cell.setCellEvent(customCellSolidBottom);
+                cell.setCellEvent(customCellSolidLeft);
+            } else if (type.equals(CellType.WordOrMeaningTitle)) {
+                cell.setFixedHeight(30);
+    //            顶部，底部实线；右侧虚线
+                cell.setBorder(Rectangle.TOP);
+                cell.setCellEvent(customCellRight);
+                cell.setCellEvent(customCellSolidBottom);
+            } else if (type.equals(CellType.BlankTitle)) {
+                cell.setFixedHeight(30);
+//            顶部，底部，右侧实现；
+                cell.setBorder(Rectangle.TOP);
+                cell.setCellEvent(customCellSolidRight);
+                cell.setCellEvent(customCellSolidBottom);
+                cell.setPaddingLeft(2);
+            } else if (type.equals(CellType.NoCell)) {
+    //             左边实线；右侧、底部虚线
+                cell.setBorder(Rectangle.LEFT);
+                cell.setCellEvent(customCellRight);
+                cell.setCellEvent(customCellBottom);
+            } else if (type.equals(CellType.WordOrMeaningCell)) {
+    //            右侧、底部虚线
+                cell.setBorder(Rectangle.NO_BORDER);
+                cell.setCellEvent(customCellRight);
+                cell.setCellEvent(customCellBottom);
+            }
         }
+
         if (Finalytype) {
-            cell.setCellEvent(new CustomCellSolidBottom());
+            cell.setCellEvent(customCellSolidBottom);
         }
-        cell.setPhrase(new Phrase(value, font));
+
         return cell;
     }
 
@@ -262,7 +283,13 @@ public class PdfUtils {
     /*------------------------创建表格单元格的方法end----------------------------*/
 
     /*------------------------定义表头的方法begin----------------------------*/
-
+    /**
+     * @param :
+     * @Return: PdfPTable
+     * @Author: DengYinzhe
+     * @Description:
+     * @Date: 2023/2/28 12:50
+     */
     public  PdfPTable createHead(){
         Boolean Finalytype = false;
         // 8个单元格所占比例
@@ -290,6 +317,10 @@ public class PdfUtils {
     /*------------------------插入数据的方法begin----------------------------*/
 
     public void generatePDF(Document document,List<BookOfWords> bookOfWordsList) throws Exception {
+        Image img = Image.getInstance("src/main/resources/static/images/pdfBlank.jpg");
+        img.setAlignment(Image.ALIGN_CENTER);
+        img.scalePercent(10); //依照比例缩放
+
 //        页眉
         Chunk headerChunk = new Chunk("Word  List");
         // 设置字体，字体定宽
@@ -299,44 +330,56 @@ public class PdfUtils {
 //        headerChunk.setLineHeight(5);
         Paragraph headerChunkParagraph = new Paragraph(headerChunk);
         headerChunkParagraph.setAlignment(Element.ALIGN_CENTER);
-
-//        int totalWord = bookOfWordsList.size();
-        int totalWord = 100;
+//        总单词数量
+        int totalWord = bookOfWordsList.size();
+//        总页数
         int totalPage = (int) Math.ceil(totalWord / 50.0);
-        System.out.println(bookOfWordsList.size());
+//        当前页
         int currentPage = 0;
+//        是否封底格，即是否为最后一行
         Boolean Finalytype = false;
+//        获取table
         PdfPTable  table= createHead();
         int i = 0;
-        for (int j = 0; j < totalWord-1; j+=2) {
+        for (int j = 0; j <=totalWord; j+=2) {
             i+=2;
 //            当页结束时，设置最下方的单元格的底部为实线
-            if ((i)%50==0 || (j!=0&&j==totalWord-1)){
+            if ((i)%50==0 || (j==totalWord-2)||(totalWord%2!=0&&j==totalWord-1)){
                 Finalytype = true;
             } else {
                 Finalytype = false;
             }
-            table.addCell(createCell(String.valueOf(j+1), keyfont,CellType.NoCell,Finalytype));
-            table.addCell(createCell(bookOfWordsList.get(j).getWord(), keyfont,CellType.WordOrMeaningCell,Finalytype));
-            table.addCell(createCell(bookOfWordsList.get(j).getMeaning(), textfont,CellType.WordOrMeaningCell,Finalytype));
-            table.addCell(createCell("", keyfont,CellType.BlankCell,Finalytype));
-
-            table.addCell(createCell(String.valueOf(j+2), keyfont,CellType.NoCell,Finalytype));
-            table.addCell(createCell(bookOfWordsList.get(j+1).getWord(), keyfont,CellType.WordOrMeaningCell,Finalytype));
-            table.addCell(createCell(bookOfWordsList.get(j+1).getMeaning(), textfont,CellType.WordOrMeaningCell,Finalytype));
-            table.addCell(createCell("", keyfont, CellType.BlankCell,Finalytype));
-//            每页50个单词或总页不足50个单词结束当前页
-                if ((i)%50==0 || (j!=0&&j==totalWord-1)){
+//              如果j没有遍历到totalWord，即还有剩余单词则继续填入表格
+            if(j!=totalWord) {
+                table.addCell(createCell(String.valueOf(j + 1), keyfont, CellType.NoCell, Finalytype));
+                table.addCell(createCell(bookOfWordsList.get(j).getWord(), keyfont, CellType.WordOrMeaningCell, Finalytype));
+                table.addCell(createCell(bookOfWordsList.get(j).getMeaning(), textfont, CellType.WordOrMeaningCell, Finalytype));
+                table.addCell(createCell("", keyfont, CellType.BlankCell, Finalytype,img));
+//              如果是奇数单词数，则最好一行只显示左侧单词
+                if(totalWord-j!=1) {
+                    table.addCell(createCell(String.valueOf(j+2), keyfont,CellType.NoCell,Finalytype));
+                    table.addCell(createCell(bookOfWordsList.get(j+1).getWord(), keyfont,CellType.WordOrMeaningCell,Finalytype));
+                    table.addCell(createCell(bookOfWordsList.get(j+1).getMeaning(), textfont,CellType.WordOrMeaningCell,Finalytype));
+                    table.addCell(createCell("", keyfont, CellType.BlankCell,Finalytype,img));
+                } else {
+                    table.addCell(createCell("", keyfont,CellType.NoCell,Finalytype));
+                    table.addCell(createCell("", keyfont,CellType.WordOrMeaningCell,Finalytype));
+                    table.addCell(createCell("", textfont,CellType.WordOrMeaningCell,Finalytype));
+                    table.addCell(createCell("", keyfont, CellType.BlankCell,Finalytype));
+                }
+            }
+//            每页50个单词或当前页不足50个单词结束当前页，后者要分奇偶单词数量讨论
+                if ((i)%50==0 || (i!=2&&j==totalWord)||(totalWord%2!=0&&j==totalWord-1)){
                     i = 0;
-
+//                    定义页脚
                     Chunk chunkFooter = new Chunk(String.format("第 %d 页/共 %d 页",++currentPage,totalPage));
                     chunkFooter.setFont(footerfoot);
                     chunkFooter.setBackground(new BaseColor(255, 255, 255));
                     chunkFooter.setLineHeight(10);
                     Paragraph footerParagraph = new Paragraph(chunkFooter);
-
+//              定义页眉
                     footerParagraph.setAlignment(Element.ALIGN_CENTER);
-
+//              顺序插入页眉、表格、页脚和另起一页
                     document.add(headerChunkParagraph);
                     document.add(table);
                     document.add(footerParagraph);
@@ -354,7 +397,13 @@ public class PdfUtils {
     /*------------------------插入数据的方法end----------------------------*/
 
 
-
+/**
+ * @param bookOfWordsList:
+ * @Return: void
+ * @Author: DengYinzhe
+ * @Description:
+ * @Date: 2023/2/28 12:50
+ */
     public  void pdfExport(List<BookOfWords> bookOfWordsList) throws Exception {
         try {
             // 1.新建document对象
