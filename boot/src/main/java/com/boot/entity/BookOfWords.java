@@ -8,6 +8,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 /**
  * (BookOfWords)表实体类
  *
@@ -30,5 +32,6 @@ public class BookOfWords extends Model<BookOfWords> {
     //音标
     private String ukphone;
 
+    private LocalDateTime wordInsertTime;
 }
 

@@ -7,6 +7,7 @@ import com.boot.service.BookOfWordsService;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -59,6 +60,23 @@ public class BookOfWordsController {
     }
 
     /**
+     * @param bookOfWords:
+     * @Return: Result
+     * @Author: DengYinzhe
+     * @Description: TODO 收藏单词
+     * @Date: 2023/2/27 19:28
+     */
+    @PostMapping("word")
+    public Result word(@RequestBody BookOfWords bookOfWords) {
+        bookOfWords.setWordInsertTime(LocalDateTime.now());
+        if (bookOfWordsService.save(bookOfWords)) {
+            return Result.success("插入成功");
+        }else {
+            return Result.error("插入失败");
+        }
+    }
+
+    /**
      * @param bookId:
      * @Return: Result
      * @Author: DengYinzhe
@@ -67,7 +85,7 @@ public class BookOfWordsController {
      */
     @GetMapping("book/{bookId}")
     public Result book (@PathVariable Long bookId){
-        
+
         return Result.success();
     }
 
