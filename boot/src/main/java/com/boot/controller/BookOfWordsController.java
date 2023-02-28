@@ -4,6 +4,7 @@ package com.boot.controller;
 import com.boot.common.result.Result;
 import com.boot.entity.BookOfWords;
 import com.boot.service.BookOfWordsService;
+import com.boot.utils.PdfUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -27,6 +28,8 @@ public class BookOfWordsController {
     @Resource
     private BookOfWordsService bookOfWordsService;
 
+    @Resource
+    private PdfUtils pdfUtils;
 
     /**
      * @param wordId:
@@ -84,9 +87,11 @@ public class BookOfWordsController {
      * @Date: 2023/2/25 15:30
      */
     @GetMapping("book/{bookId}")
-    public Result book (@PathVariable Long bookId){
-
-        return Result.success();
+    public byte[] book (@PathVariable Long bookId) throws Exception {
+        Map<String,Object> map = new HashMap<>(10);
+        map.put("book_id", bookId);
+        List<BookOfWords> bookOfWords = bookOfWordsService.listByMap(map);
+        return pdfUtils.pdfExport(bookOfWords);
     }
 
 

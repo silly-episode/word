@@ -6,6 +6,7 @@ import com.itextpdf.text.pdf.*;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 
+import java.io.ByteArrayOutputStream;
 import java.net.URL;
 import java.util.List;
 import java.io.File;
@@ -317,7 +318,8 @@ public class PdfUtils {
     /*------------------------插入数据的方法begin----------------------------*/
 
     public void generatePDF(Document document,List<BookOfWords> bookOfWordsList) throws Exception {
-        Image img = Image.getInstance("src/main/resources/static/images/pdfBlank.jpg");
+//        Image img = Image.getInstance("src/main/resources/static/images/pdfBlank.jpg");
+        Image img = Image.getInstance("C:\\Users\\DYZ89\\Desktop\\项目\\word\\boot\\src\\main\\resources\\static\\images\\pdfBlank.jpg");
         img.setAlignment(Image.ALIGN_CENTER);
         img.scalePercent(10); //依照比例缩放
 
@@ -404,33 +406,43 @@ public class PdfUtils {
  * @Description:
  * @Date: 2023/2/28 12:50
  */
-    public  void pdfExport(List<BookOfWords> bookOfWordsList) throws Exception {
+    public  byte[] pdfExport(List<BookOfWords> bookOfWordsList) throws Exception {
+        byte[] content = new byte[0];
         try {
             // 1.新建document对象
             Document document = new Document(PageSize.A4);// 建立一个Document对象
 
             // 2.建立一个书写器(Writer)与document对象关联
-            File file = new File("D:\\PDFDemo.pdf");
-            file.createNewFile();
-            PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(file));
-
+//            File file = new File("D:\\PDFDemo.pdf");
+//            file.createNewFile();
+//            PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(file));
+//流
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            PdfWriter writer = PdfWriter.getInstance(document, baos);
 
             // 3.打开文档
             document.open();
-            document.addTitle("Title@PDF-Java");// 标题
-            document.addAuthor("Author@umiz");// 作者
-            document.addSubject("Subject@iText pdf sample");// 主题
-            document.addKeywords("Keywords@iTextpdf");// 关键字
-            document.addCreator("Creator@umiz`s");// 创建者
+            document.addTitle("WordList@PDF-Java");// 标题
+            document.addAuthor("DYZ");// 作者
+            document.addSubject("WordBook");// 主题
+            document.addKeywords("Word");// 关键字
+            document.addCreator("DYZ From Word");// 创建者
 
             // 4.向文档中添加内容
-            generatePDF(document,bookOfWordsList);
+            generatePDF(document, bookOfWordsList);
 
             // 5.关闭文档
             document.close();
+            //关闭书写器
+            writer.close();
+            //获取流里的数据
+            content = baos.toByteArray();
+
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return content;
+
     }
 
 
