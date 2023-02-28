@@ -4,6 +4,7 @@ import com.boot.entity.BookOfWords;
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.*;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
 import java.io.ByteArrayOutputStream;
@@ -318,8 +319,24 @@ public class PdfUtils {
     /*------------------------插入数据的方法begin----------------------------*/
 
     public void generatePDF(Document document,List<BookOfWords> bookOfWordsList) throws Exception {
-//        Image img = Image.getInstance("src/main/resources/static/images/pdfBlank.jpg");
-        Image img = Image.getInstance("C:\\Users\\DYZ89\\Desktop\\项目\\word\\boot\\src\\main\\resources\\static\\images\\pdfBlank.jpg");
+
+//        Resource resource = new ClassPathResource("pdfBlank.jpg");
+//        Image img = Image.getInstance(resource.getURL());
+
+//        String path = new ClassPathResource("static/images/pdfBlank.jpg").getPath();
+//        Image img = Image.getInstance(path);
+
+//        C:\Users\DYZ89\Desktop\项目\word\boot\src\main\resources\static\images
+//        C:\Users\DYZ89\Desktop\项目\word\static\images\
+//        C:\Users\DYZ89\Desktop\项目\word\src\main\resources\static\images
+//绝对路径
+//        Image img = Image.getInstance("C:\\Users\\DYZ89\\Desktop\\项目\\word\\boot\\src\\main\\resources\\static\\images\\pdfBlank.jpg");
+//        tartget中的绝对路径
+        String path = PdfUtils.class.getResource("").getPath().replace("com/boot/utils/", "static/images/pdfBlank.jpg").substring(1);
+//        内容根的绝对路径
+        String path2 = PdfUtils.class.getResource("").getPath().replace("target/classes/com/boot/utils/", "src/main/resources/static/images/pdfBlank.jpg").substring(1);
+
+        Image img = Image.getInstance(path);
         img.setAlignment(Image.ALIGN_CENTER);
         img.scalePercent(10); //依照比例缩放
 
