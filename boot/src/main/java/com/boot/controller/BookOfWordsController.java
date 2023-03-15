@@ -83,7 +83,7 @@ public class BookOfWordsController {
      * @param bookId:
      * @Return: Result
      * @Author: DengYinzhe
-     * @Description: TODO 单词本导出为pdf
+     * @Description:  单词本导出为pdf
      * @Date: 2023/2/25 15:30
      */
     @GetMapping("book/{bookId}")
