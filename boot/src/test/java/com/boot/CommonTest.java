@@ -1,6 +1,7 @@
 package com.boot;
 
 import com.boot.entity.Plan;
+import com.boot.entity.WordModule;
 import lombok.extern.slf4j.Slf4j;
 
 import org.junit.jupiter.api.Test;
@@ -175,5 +176,12 @@ public class CommonTest  {
 
     }
 
+//    测试@Accessors(chain = true)的用法
+    @Test
+    public void test5() {
+        WordModule wordModule = new WordModule().setModuleId(1L).setWordPath("123");
+        wordModule.setModuleImagePath("123").setRemark("123");
+        System.out.println(wordModule.toString());
+    }
 
 }
