@@ -44,10 +44,11 @@ public class WordBooksController {
      */
     @PostMapping("book")
     public Result wordBooks(@RequestParam String bookName, @RequestParam Long userId) {
-        WordBooks wordBooks = new WordBooks();
-        wordBooks.setBookName(bookName);
-        wordBooks.setBookCreateTime(LocalDateTime.now());
-        wordBooks.setUserId(userId);
+        WordBooks wordBooks = new WordBooks()
+                                    .setBookName(bookName)
+                                    .setBookCreateTime(LocalDateTime.now())
+                                    .setUserId(userId);
+
         if (wordBooksService.save(wordBooks)) {
             return Result.success("创建单词本成功");
         } else {

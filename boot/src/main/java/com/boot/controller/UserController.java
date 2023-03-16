@@ -220,9 +220,11 @@ public class UserController {
     @PostMapping("user")
     public Result user(@RequestBody RegisterMessage registerMessage) {
 
-        User user = BeanDtoVoUtils.convert(registerMessage, User.class);
-        user.setHeadImage("user_defalut_image.jpg");
-        user.setRegisterTime(LocalDateTime.now());
+        User user = BeanDtoVoUtils
+                .convert(registerMessage, User.class)
+                .setHeadImage("user_defalut_image.jpg")
+                .setRegisterTime(LocalDateTime.now());
+
         userService.save(user);
         return Result.success("注册成功");
     }

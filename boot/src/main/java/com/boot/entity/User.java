@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
@@ -20,6 +21,7 @@ import java.time.LocalDateTime;
  * @since 2023-02-01 11:31:13
  */
 @Accessors(chain = true)
+@EqualsAndHashCode(callSuper = true)
 @TableName("user")
 @Data
 @AllArgsConstructor

@@ -154,10 +154,10 @@ public class WordModuleController {
 
         }
         //        存入Mysql
-        wordModule.setModuleId(moduleId);
-        wordModule.setModuleImagePath(imageFileName);
-        wordModule.setWordPath(wordFileName);
-        wordModule.setWordModuleCreateTime(LocalDateTime.now());
+        wordModule.setModuleId(moduleId)
+                  .setModuleImagePath(imageFileName)
+                  .setWordPath(wordFileName)
+                  .setWordModuleCreateTime(LocalDateTime.now());
         wordModuleService.save(wordModule);
         log.info("存入mysql正常");
         return Result.success();

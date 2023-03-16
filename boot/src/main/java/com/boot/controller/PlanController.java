@@ -137,13 +137,10 @@ public class PlanController {
      */
     @PutMapping("mainPlan/{oldPlanId}/{newPlanId}")
     public Result mainPlan(@PathVariable Long oldPlanId, @PathVariable Long newPlanId) {
-        Plan oldPlan = new Plan();
-        Plan newPlan = new Plan();
+        Plan oldPlan = new Plan().setPlanId(oldPlanId).setPlanStatus("0");
+        Plan newPlan = new Plan().setPlanId(newPlanId).setPlanStatus("1");
         List<Plan> list = new ArrayList<>();
-        oldPlan.setPlanId(oldPlanId);
-        oldPlan.setPlanStatus("0");
-        newPlan.setPlanId(newPlanId);
-        newPlan.setPlanStatus("1");
+
         list.add(oldPlan);
         list.add(newPlan);
         System.out.println(oldPlan.toString());
