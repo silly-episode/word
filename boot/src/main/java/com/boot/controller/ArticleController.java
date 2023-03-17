@@ -1,6 +1,7 @@
 package com.boot.controller;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
+import co.elastic.clients.elasticsearch.core.DeleteRequest;
 import co.elastic.clients.elasticsearch.core.IndexResponse;
 import com.boot.common.result.Result;
 import com.boot.entity.Article;
@@ -51,9 +52,19 @@ public class ArticleController {
     }
 
 
+    /**
+     * @param articleId:
+     * @Return: Result
+     * @Author: DengYinzhe
+     * @Description: TODO 删除一个文章
+     * @Date: 2023/3/17 17:09
+     */
     @DeleteMapping("article/{articleId}")
-    public Result article(@PathVariable Long articleId) {
-
+    public Result article(@PathVariable String articleId) throws IOException {
+        DeleteRequest deleteRequest = DeleteRequest.of(s -> s
+                .index("article")
+                .id(articleId));
+        elasticsearchClient.delete(deleteRequest);
         return Result.success();
     }
 
