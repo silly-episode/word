@@ -1,6 +1,6 @@
 server:
-#  port: 8080
-  port: 9400
+  port: 8080
+#  port: 9400
 
 spring:
   datasource:
@@ -98,6 +98,6 @@ tencent:
 word:
   jwt:
     secret: f4e2e52034348f86b67ade581c0f9eb5
-    expire: 86400
+    expire: 864000000
     header: Authorization
 
