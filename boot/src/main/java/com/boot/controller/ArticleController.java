@@ -4,7 +4,6 @@ import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.elasticsearch.core.IndexResponse;
 import com.boot.common.result.Result;
 import com.boot.entity.Article;
-import com.boot.utils.SaltUtil;
 import com.boot.utils.SnowFlakeUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -45,9 +44,32 @@ public class ArticleController {
         log.info(response.result().jsonValue());
         if ("created".equals(response.result().jsonValue())) {
             return Result.success("插入成功");
-        }else {
+        } else {
             return Result.error("插入失败");
         }
 
+    }
+
+
+    @DeleteMapping("article/{articleId}")
+    public Result article(@PathVariable Long articleId) {
+
+        return Result.success();
+    }
+
+    @PutMapping("article")
+    public Result articleChange(@RequestBody Article article) throws IOException {
+
+        return Result.success();
+    }
+
+    @GetMapping("article/{pageNum}/{pageSize}/{countKind}/{title}")
+    public Result article(
+            @PathVariable Integer pageNum,
+            @PathVariable Integer pageSize,
+            @PathVariable(required = false) Integer countKind,
+            @PathVariable(required = false) String title) {
+
+        return Result.success();
     }
 }
