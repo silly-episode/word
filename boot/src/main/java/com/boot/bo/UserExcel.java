@@ -89,13 +89,14 @@ public class UserExcel {
     @ExcelProperty(value = "账号状态", index = 9)
     private String userStatus;
 
-    //    @DateTimeFormat("yyyy年MM月dd日 HH时mm分ss秒")
+//    不知道为什么这里的格式无用，设置后，单元格的时间会变成#############
+//    @DateTimeFormat("yyyy年MM月dd日 HH时mm分ss秒")
     @ContentStyle(horizontalAlignment = HorizontalAlignmentEnum.CENTER, verticalAlignment = VerticalAlignmentEnum.CENTER)
     @ColumnWidth(25)
     @ExcelProperty(value = "注册时间", index = 10)
     private LocalDateTime registerTime;
 
-    @DateTimeFormat("yyyy年MM月dd日 HH时mm分ss秒")
+//    @DateTimeFormat("yyyy年MM月dd日 HH时mm分ss秒")
     @ContentStyle(horizontalAlignment = HorizontalAlignmentEnum.CENTER, verticalAlignment = VerticalAlignmentEnum.CENTER)
     @ColumnWidth(25)
     @ExcelProperty(value = "锁定时间", index = 11)

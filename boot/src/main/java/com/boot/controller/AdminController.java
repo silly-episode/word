@@ -54,7 +54,7 @@ public class AdminController {
             }
             userExcelList.add(BeanDtoVoUtils.convert(user, UserExcel.class));
         }
-        log.info(JsonUtils.getBeanToJson(userExcelList));
+//        log.info(JsonUtils.getBeanToJson(userExcelList));
 
         try {
             response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
