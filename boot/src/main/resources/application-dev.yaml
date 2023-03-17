@@ -75,21 +75,21 @@ mybatis-plus:
 
 minio:
   endpoint: http://127.0.0.1:9000
-  accesskey: w0E0Bt2xLWe9WusX
-  secretKey: 3gTNaOQ9XoidyI6ui9tpa9lavV2TUAE0
+  accesskey:
+  secretKey:
 
 #腾讯云短信配置
 tencent:
   msm:
-    id: AKIDYv66wazCpPzQn085ppdCfMxMZcWDk6E9
-    secret: xiHj8b1Lgs565rQkpkT5VigPCoESTFpE
+    id:
+    secret:
     endPoint: sms.tencentcloudapi.com
     appId: 1400772406
     signName: 邓胤喆比赛项目个人网
     templateId: 1678253
   translate:
-    id: AKIDIPFsFLAk4LM6YmjQu75pPimcBSWXMvEI
-    secret: rRmrgEEDE6l9MJ1cy4tcFmwShfNr7ABD
+    id:
+    secret:
     endPoint: tmt.tencentcloudapi.com
     projectId: 0
     region: ap-guangzhou
@@ -97,7 +97,7 @@ tencent:
 
 word:
   jwt:
-    secret: f4e2e52034348f86b67ade581c0f9eb5
+    secret:
     expire: 864000000
     header: Authorization
 
