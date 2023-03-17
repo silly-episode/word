@@ -38,6 +38,14 @@ public class EsTest {
     @Autowired
     ElasticsearchClient elasticsearchClient;
 
+
+
+    @Test
+    public void createIndex() {
+
+    }
+
+
     @Test
     public void wordTest() throws IOException {
         File file = new File("src/main/resources/static/wordResources/test.json");

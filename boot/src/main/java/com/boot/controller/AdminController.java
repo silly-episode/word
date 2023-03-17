@@ -37,7 +37,13 @@ public class AdminController {
     @Resource
     private UserService userService;
 
-
+    /**
+     * @param response:
+     * @Return: void
+     * @Author: DengYinzhe
+     * @Description: 用户信息的导出（excel）
+     * @Date: 2023/3/17 14:13
+     */
     @GetMapping("userListExcel")
     public void userListExcel(HttpServletResponse response) throws IOException {
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
