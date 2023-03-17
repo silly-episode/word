@@ -16,7 +16,7 @@ import org.springframework.boot.test.context.SpringBootTest;
  */
 @SpringBootTest
 @Slf4j
-public class MpTest{
+public class MpTest {
 
     @Autowired
     private UserDao userDao;

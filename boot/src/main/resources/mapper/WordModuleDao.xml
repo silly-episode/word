@@ -16,26 +16,36 @@
 
     <!-- 批量插入 -->
     <insert id="insertBatch" keyProperty="moduleId" useGeneratedKeys="true">
-        insert into word.word_module(module_name, module_image_path, remark, word_path, word_module_create_time, word_module_status, study_number, superior_module)
+        insert into word.word_module(module_name, module_image_path, remark, word_path, word_module_create_time,
+        word_module_status, study_number, superior_module)
         values
         <foreach collection="entities" item="entity" separator=",">
-        (#{entity.moduleName}, #{entity.moduleImagePath}, #{entity.remark}, #{entity.wordPath}, #{entity.createTime}, #{entity.status}, #{entity.studyNumber}, #{entity.superiormodule})
+            (#{entity.moduleName}, #{entity.moduleImagePath}, #{entity.remark}, #{entity.wordPath},
+            #{entity.createTime}, #{entity.status}, #{entity.studyNumber}, #{entity.superiormodule})
         </foreach>
     </insert>
     <!-- 批量插入或按主键更新 -->
     <insert id="insertOrUpdateBatch" keyProperty="moduleId" useGeneratedKeys="true">
-        insert into word.word_module(module_name, module_image_path, remark, word_path, word_module_create_time, word_module_status, study_number, superior_module)
+        insert into word.word_module(module_name, module_image_path, remark, word_path, word_module_create_time,
+        word_module_status, study_number, superior_module)
         values
         <foreach collection="entities" item="entity" separator=",">
-            (#{entity.moduleName}, #{entity.moduleImagePath}, #{entity.remark}, #{entity.wordPath}, #{entity.createTime}, #{entity.status}, #{entity.studyNumber}, #{entity.superiormodule})
+            (#{entity.moduleName}, #{entity.moduleImagePath}, #{entity.remark}, #{entity.wordPath},
+            #{entity.createTime}, #{entity.status}, #{entity.studyNumber}, #{entity.superiormodule})
         </foreach>
         on duplicate key update
-         module_name = values(module_name) , module_image_path = values(module_image_path) , remark = values(remark) , word_path = values(word_path) , word_module_create_time = values(word_module_create_time) , word_module_status = values(word_module_status) , study_number = values(study_number) , superior_module = values(superior_module)     </insert>
+        module_name = values(module_name) , module_image_path = values(module_image_path) , remark = values(remark) ,
+        word_path = values(word_path) , word_module_create_time = values(word_module_create_time) , word_module_status =
+        values(word_module_status) , study_number = values(study_number) , superior_module = values(superior_module)
+    </insert>
 
 
     <select id="selectWordPlan" resultType="com.boot.bo.WordPlan">
-        select * from word.word_module w left join word.plan p on w.module_id = p.module_id
-        where p.user_id=#{userId} and p.plan_status=1
+        select *
+        from word.word_module w
+                 left join word.plan p on w.module_id = p.module_id
+        where p.user_id = #{userId}
+          and p.plan_status = 1
     </select>
 
 

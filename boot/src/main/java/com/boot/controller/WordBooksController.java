@@ -45,9 +45,9 @@ public class WordBooksController {
     @PostMapping("book")
     public Result wordBooks(@RequestParam String bookName, @RequestParam Long userId) {
         WordBooks wordBooks = new WordBooks()
-                                    .setBookName(bookName)
-                                    .setBookCreateTime(LocalDateTime.now())
-                                    .setUserId(userId);
+                .setBookName(bookName)
+                .setBookCreateTime(LocalDateTime.now())
+                .setUserId(userId);
 
         if (wordBooksService.save(wordBooks)) {
             return Result.success("创建单词本成功");
@@ -65,7 +65,7 @@ public class WordBooksController {
      * @Date: 2023/2/25 11:04
      */
     @PutMapping("book")
-    public Result wordBooks(@RequestParam Long bookId,@RequestParam String bookName) {
+    public Result wordBooks(@RequestParam Long bookId, @RequestParam String bookName) {
         UpdateWrapper<WordBooks> updateWrapper = new UpdateWrapper<>();
         updateWrapper.eq("book_id", bookId)
                 .set("book_name", bookName)
@@ -89,8 +89,8 @@ public class WordBooksController {
     public Result wordBooks(@PathVariable Long bookId) {
         Map<String, Object> map = new HashMap<>();
         map.put("book_id", bookId);
-        Boolean flag=wordBooksService.removeByMap(map);
-        Boolean flag2=bookOfWordsService.removeByMap(map);
+        Boolean flag = wordBooksService.removeByMap(map);
+        Boolean flag2 = bookOfWordsService.removeByMap(map);
         if (flag && flag2) {
             return Result.success("删除成功");
         }

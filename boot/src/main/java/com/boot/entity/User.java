@@ -59,7 +59,7 @@ public class User extends Model<User> {
     private String signature;
     //随机盐
     private String salt;
-//    用户积分
+    //    用户积分
     private Integer integration;
 
 

@@ -22,7 +22,7 @@ public class ShiroTest {
 
 
     @Test
-    public static void main(String[] args){
+    public static void main(String[] args) {
         // 1、创建安全管理器对象
         DefaultSecurityManager securityManager = new DefaultSecurityManager();
         // 2、给安全管理器设置realm
@@ -32,7 +32,7 @@ public class ShiroTest {
         // 4、拿到当前的subject
         Subject subject = SecurityUtils.getSubject();
         // 5、创建令牌
-        AuthenticationToken token = new UsernamePasswordToken("christy","123456");
+        AuthenticationToken token = new UsernamePasswordToken("christy", "123456");
 
 //        认证的几种状态
 //        UnknownAccountException：用户名错误
@@ -44,16 +44,16 @@ public class ShiroTest {
 
         try {
             // 6、用户认证
-            System.out.println("认证状态："+subject.isAuthenticated());
+            System.out.println("认证状态：" + subject.isAuthenticated());
             subject.login(token);
-            System.out.println("认证状态："+subject.isAuthenticated());
-        } catch (UnknownAccountException e){
+            System.out.println("认证状态：" + subject.isAuthenticated());
+        } catch (UnknownAccountException e) {
             e.printStackTrace();
             System.out.println("认证失败：用户不存在！");
-        } catch (IncorrectCredentialsException e){
+        } catch (IncorrectCredentialsException e) {
             e.printStackTrace();
             System.out.println("认证失败：密码不正确！");
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         System.out.println("测试完毕");

@@ -69,10 +69,9 @@ public class ShiroTest2 {
 //        ExpiredCredentialsException：凭证过期
 
 
-
         System.out.println("==============================================");
         //授权
-        if(subject.isAuthenticated()){
+        if (subject.isAuthenticated()) {
             //基于角色权限控制
             System.out.println(subject.hasRole("super"));
             System.out.println("==============================================");
@@ -88,8 +87,8 @@ public class ShiroTest2 {
             System.out.println("==============================================");
 
             //基于权限字符串的访问控制  资源标识符:操作:资源类型
-            System.out.println("权限:"+subject.isPermitted("user:update:01"));
-            System.out.println("权限:"+subject.isPermitted("product:create:02"));
+            System.out.println("权限:" + subject.isPermitted("user:update:01"));
+            System.out.println("权限:" + subject.isPermitted("product:create:02"));
 
             //分别具有那些权限
             boolean[] permitted = subject.isPermitted("user:*:01", "order:*:10");

@@ -5,7 +5,10 @@ import com.boot.common.result.Result;
 import com.boot.utils.TranslateUtils;
 import com.tencentcloudapi.common.exception.TencentCloudSDKException;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import java.util.Map;
@@ -60,7 +63,7 @@ public class CommonController {
     ar（阿拉伯语）：en（英语）
     hi（印地语）：en（英语）*/
     @PostMapping("translate")
-    public Result translate(@RequestBody Map<String,String> map) {
+    public Result translate(@RequestBody Map<String, String> map) {
         String targetText = null;
         try {
             targetText = translateUtils.translate(map.get("sourceText"), map.get("source"), map.get("target"));

@@ -3,13 +3,15 @@ package com.boot;
 import com.boot.entity.Plan;
 import com.boot.entity.WordModule;
 import lombok.extern.slf4j.Slf4j;
-
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.TreeSet;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Lock;
@@ -23,10 +25,13 @@ import java.util.concurrent.locks.ReentrantLock;
  * @Description: 普通test
  */
 @Slf4j
-public class CommonTest  {
+public class CommonTest {
 
 
-
+    //同步一个静态方法
+    public synchronized static void fun() {
+        // ...
+    }
 
     //    反射
     @Test
@@ -38,7 +43,7 @@ public class CommonTest  {
 
     }
 
-//    容器
+    //    容器
     @Test
     public void test2() {
 
@@ -59,27 +64,6 @@ public class CommonTest  {
         Collections.unmodifiableSet(treeSet);
 
     }
-
-    //    多线程
-    public class MyRun implements Runnable{
-        @Override
-        public void run() {
-
-        }
-    }
-    public class MyCall implements Callable<Integer>{
-        @Override
-        public Integer call() throws Exception {
-            return null;
-        }
-    }
-    public class Mythread extends Thread{
-        @Override
-        public void run() {
-
-        }
-    }
-
 
     @Test
     public void test3() throws InterruptedException {
@@ -148,27 +132,14 @@ public class CommonTest  {
         }
 
 
-
     }
-//    同步一个方法
-    public synchronized void func () {
+
+    //    同步一个方法
+    public synchronized void func() {
         // ...
     }
-    //同步一个静态方法
-    public synchronized static void fun() {
-        // ...
-    }
-//同步一个类
-    public class SynchronizedExample {
-        public void func2() {
-            synchronized (SynchronizedExample.class) {
 
-            }
-        }
-    }
-
-
-//    IO
+    //    IO
     @Test
     public void test4() {
 
@@ -176,12 +147,43 @@ public class CommonTest  {
 
     }
 
-//    测试@Accessors(chain = true)的用法
+    //    测试@Accessors(chain = true)的用法
     @Test
     public void test5() {
         WordModule wordModule = new WordModule().setModuleId(1L).setWordPath("123");
         wordModule.setModuleImagePath("123").setRemark("123");
-        System.out.println(wordModule.toString());
+        System.out.println(wordModule);
+    }
+
+    //    多线程
+    public class MyRun implements Runnable {
+        @Override
+        public void run() {
+
+        }
+    }
+
+    public class MyCall implements Callable<Integer> {
+        @Override
+        public Integer call() throws Exception {
+            return null;
+        }
+    }
+
+    public class Mythread extends Thread {
+        @Override
+        public void run() {
+
+        }
+    }
+
+    //同步一个类
+    public class SynchronizedExample {
+        public void func2() {
+            synchronized (SynchronizedExample.class) {
+
+            }
+        }
     }
 
 }

@@ -107,7 +107,7 @@
     <!--Logger节点用来单独指定日志的形式，比如要为指定包下的class指定不同的日志级别等。-->
     <!--然后定义loggers，只有定义了logger并引入的appender，appender才会生效-->
     <loggers>
-<!--        过滤掉spring和mybatis的一些无用的DEBUG信息-->
+        <!--        过滤掉spring和mybatis的一些无用的DEBUG信息-->
         <logger name="org.mybatis" level="info" additivity="false">
             <AppenderRef ref="Console"/>
         </logger>
@@ -141,11 +141,11 @@
             additivity="false"
             表示不继承rootlogger
         -->
-<!--        <AsyncLogger name="com.bjpowernode" level="trace"-->
-<!--                     includeLocation="false" additivity="false">-->
-<!--            &lt;!&ndash; 将控制台输出consoleAppender，设置为异步打印 &ndash;&gt;-->
-<!--            <AppenderRef ref="consoleAppender"/>-->
-<!--        </AsyncLogger>-->
+        <!--        <AsyncLogger name="com.bjpowernode" level="trace"-->
+        <!--                     includeLocation="false" additivity="false">-->
+        <!--            &lt;!&ndash; 将控制台输出consoleAppender，设置为异步打印 &ndash;&gt;-->
+        <!--            <AppenderRef ref="consoleAppender"/>-->
+        <!--        </AsyncLogger>-->
 
         <root level="info">
             <appender-ref ref="Console"/>

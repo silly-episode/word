@@ -16,7 +16,8 @@
         insert into word.word_books(book_name, user_id, book_create_time, book_update_time, word_count)
         values
         <foreach collection="entities" item="entity" separator=",">
-        (#{entity.bookName}, #{entity.userId}, #{entity.bookCreateTime}, #{entity.bookUpdateTime}, #{entity.wordCount})
+            (#{entity.bookName}, #{entity.userId}, #{entity.bookCreateTime}, #{entity.bookUpdateTime},
+            #{entity.wordCount})
         </foreach>
     </insert>
     <!-- 批量插入或按主键更新 -->
@@ -24,10 +25,13 @@
         insert into word.word_books(book_name, user_id, book_create_time, book_update_time, word_count)
         values
         <foreach collection="entities" item="entity" separator=",">
-            (#{entity.bookName}, #{entity.userId}, #{entity.bookCreateTime}, #{entity.bookUpdateTime}, #{entity.wordCount})
+            (#{entity.bookName}, #{entity.userId}, #{entity.bookCreateTime}, #{entity.bookUpdateTime},
+            #{entity.wordCount})
         </foreach>
         on duplicate key update
-         book_name = values(book_name) , user_id = values(user_id) , book_create_time = values(book_create_time) , book_update_time = values(book_update_time) , word_count = values(word_count)     </insert>
+        book_name = values(book_name) , user_id = values(user_id) , book_create_time = values(book_create_time) ,
+        book_update_time = values(book_update_time) , word_count = values(word_count)
+    </insert>
 
 </mapper>
 

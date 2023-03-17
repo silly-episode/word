@@ -19,27 +19,29 @@ import java.util.Date;
 
 public class JwtTest {
 
-    private final String secret="123";
-    private final long expire=10000000;
-    private final String header="Authorization";
+    private final String secret = "123";
+    private final long expire = 10000000;
+    private final String header = "Authorization";
 
     @Test
     public void signJwt() {
 
         System.out.println(sign("jack"));
     }
+
     @Test
     public void accountTest() {
         System.out.println(getAccount(""));
     }
+
     @Test
     public void verifyJwt() {
 
-        System.out.println(verify("",""));
+        System.out.println(verify("", ""));
     }
 
 
-    public  boolean verify(String token, String account) {
+    public boolean verify(String token, String account) {
         Algorithm algorithm = Algorithm.HMAC256(secret);
         JWTVerifier verifier = JWT.require(algorithm)
                 .withClaim("account", account)
@@ -50,7 +52,7 @@ public class JwtTest {
         return usernameInToken.equals(account);
     }
 
-    public  String getAccount(String token) {
+    public String getAccount(String token) {
         try {
             DecodedJWT jwt = JWT.decode(token);
             return jwt.getClaim("account").asString();
@@ -59,9 +61,9 @@ public class JwtTest {
         }
     }
 
-    public  String sign(String account) {
+    public String sign(String account) {
         Date currentDate = new Date(System.currentTimeMillis());
-        Date expireDate = new Date(System.currentTimeMillis() + expire*1000);
+        Date expireDate = new Date(System.currentTimeMillis() + expire * 1000);
         Algorithm algorithm = Algorithm.HMAC256(secret);
 
         return JWT.create()

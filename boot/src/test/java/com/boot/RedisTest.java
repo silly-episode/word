@@ -22,7 +22,7 @@ public class RedisTest {
 
     @Test
     public void insertTest() {
-        redisUtils.add("key","value");
+        redisUtils.add("key", "value");
         boolean exists = redisUtils.hasKey("key");
         log.info(String.valueOf(exists));
     }

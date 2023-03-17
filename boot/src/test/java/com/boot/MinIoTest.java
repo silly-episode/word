@@ -22,15 +22,7 @@ public class MinIoTest {
     @Qualifier("Client")
     private MinioClient minioClient;
 
-    @Test
-    public  void test() throws Exception {
-        System.out.println(123);
-
-        createBucket(minioClient);
-        System.out.println(123);
-    }
-
-    private static void createBucket(MinioClient minioClient) throws Exception{
+    private static void createBucket(MinioClient minioClient) throws Exception {
         boolean exists = minioClient
                 .bucketExists(BucketExistsArgs.builder().bucket("miniofile1").build());
         if (exists) {
@@ -39,6 +31,13 @@ public class MinIoTest {
         minioClient.makeBucket(MakeBucketArgs.builder().bucket("miniofile1").build());
     }
 
+    @Test
+    public void test() throws Exception {
+        System.out.println(123);
+
+        createBucket(minioClient);
+        System.out.println(123);
+    }
 
 
 }

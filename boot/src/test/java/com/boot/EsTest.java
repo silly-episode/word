@@ -39,7 +39,7 @@ public class EsTest {
     ElasticsearchClient elasticsearchClient;
 
     @Test
-    public void wordTest()throws IOException {
+    public void wordTest() throws IOException {
         File file = new File("src/main/resources/static/wordResources/test.json");
         ObjectMapper objectMapper = new ObjectMapper();
         System.out.println(objectMapper.readValue(file, Map.class));
@@ -47,7 +47,7 @@ public class EsTest {
     }
 
 
-        @Test
+    @Test
     public void test() throws IOException {
 
         //删除一个索引
@@ -87,7 +87,6 @@ public class EsTest {
         );
         System.out.println(search.toString());
     }
-
 
 
     @Test

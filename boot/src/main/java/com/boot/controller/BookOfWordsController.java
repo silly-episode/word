@@ -42,7 +42,7 @@ public class BookOfWordsController {
     public Result words(@PathVariable Long wordId) {
         if (bookOfWordsService.removeById(wordId)) {
             return Result.success("删除成功");
-        }else {
+        } else {
             return Result.error("删除失败");
         }
     }
@@ -74,7 +74,7 @@ public class BookOfWordsController {
         bookOfWords.setWordInsertTime(LocalDateTime.now());
         if (bookOfWordsService.save(bookOfWords)) {
             return Result.success("插入成功");
-        }else {
+        } else {
             return Result.error("插入失败");
         }
     }
@@ -83,12 +83,12 @@ public class BookOfWordsController {
      * @param bookId:
      * @Return: Result
      * @Author: DengYinzhe
-     * @Description:  单词本导出为pdf
+     * @Description: 单词本导出为pdf
      * @Date: 2023/2/25 15:30
      */
     @GetMapping("book/{bookId}")
-    public byte[] book (@PathVariable Long bookId) throws Exception {
-        Map<String,Object> map = new HashMap<>(10);
+    public byte[] book(@PathVariable Long bookId) throws Exception {
+        Map<String, Object> map = new HashMap<>(10);
         map.put("book_id", bookId);
         List<BookOfWords> bookOfWords = bookOfWordsService.listByMap(map);
         return pdfUtils.pdfExport(bookOfWords);

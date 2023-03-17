@@ -7,15 +7,10 @@ import com.alibaba.excel.annotation.write.style.*;
 import com.alibaba.excel.converters.longconverter.LongStringConverter;
 import com.alibaba.excel.enums.poi.HorizontalAlignmentEnum;
 import com.alibaba.excel.enums.poi.VerticalAlignmentEnum;
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-
 
 import java.time.LocalDateTime;
 
@@ -94,7 +89,7 @@ public class UserExcel {
     @ExcelProperty(value = "账号状态", index = 9)
     private String userStatus;
 
-//    @DateTimeFormat("yyyy年MM月dd日 HH时mm分ss秒")
+    //    @DateTimeFormat("yyyy年MM月dd日 HH时mm分ss秒")
     @ContentStyle(horizontalAlignment = HorizontalAlignmentEnum.CENTER, verticalAlignment = VerticalAlignmentEnum.CENTER)
     @ColumnWidth(25)
     @ExcelProperty(value = "注册时间", index = 10)
@@ -110,7 +105,6 @@ public class UserExcel {
     @ColumnWidth(40)
     @ExcelProperty(value = "备注", index = 12)
     private String remark;
-
 
 
 }

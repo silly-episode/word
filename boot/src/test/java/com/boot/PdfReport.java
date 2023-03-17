@@ -3,15 +3,10 @@ package com.boot;
 
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.*;
-import com.itextpdf.text.pdf.draw.DottedLineSeparator;
-import com.itextpdf.text.pdf.draw.LineSeparator;
 import org.springframework.core.io.ClassPathResource;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * @Project: word
@@ -21,6 +16,33 @@ import java.util.Map;
  * @Description:
  */
 public class PdfReport {
+
+    // 定义全局的字体静态变量
+    private static Font titlefont;
+    private static Font headfont;
+    private static Font keyfont;
+    private static Font textfont;
+    // 最大宽度
+    private static final int maxWidth = 525;
+
+    // 静态代码块
+    static {
+        try {
+            String frontPath = new ClassPathResource("static/fonts/simsun.ttc").getPath();
+            // 不同字体（这里定义为同一种字体：包含不同字号、不同style）
+            BaseFont chinese = BaseFont.createFont(frontPath + ",1", BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
+            BaseFont idea = BaseFont.createFont("static/fonts/JetBrainsMono-Light.ttf", BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
+            BaseFont bfChinese = BaseFont.createFont("STSong-Light", "UniGB-UCS2-H", BaseFont.NOT_EMBEDDED);
+            titlefont = new Font(bfChinese, 10, Font.BOLD);
+            headfont = new Font(chinese, 15, Font.BOLD);
+            keyfont = new Font(idea, 8, Font.NORMAL);
+            titlefont = new Font(idea, 10, Font.BOLD);
+            textfont = new Font(chinese, 7, Font.NORMAL);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     // main测试
     public static void main(String[] args) throws Exception {
@@ -52,111 +74,13 @@ public class PdfReport {
         }
     }
 
-    // 定义全局的字体静态变量
-    private static Font titlefont;
-    private static Font headfont;
-    private static Font keyfont;
-    private static Font textfont;
-    // 最大宽度
-    private static int maxWidth = 525;
-    // 静态代码块
-    static {
-        try {
-            String frontPath = new ClassPathResource("static/fonts/simsun.ttc").getPath();
-            // 不同字体（这里定义为同一种字体：包含不同字号、不同style）
-            BaseFont chinese = BaseFont.createFont(frontPath+",1", BaseFont.IDENTITY_H , BaseFont.EMBEDDED);
-            BaseFont idea = BaseFont.createFont("static/fonts/JetBrainsMono-Light.ttf", BaseFont.IDENTITY_H , BaseFont.EMBEDDED);
-            BaseFont bfChinese = BaseFont.createFont("STSong-Light", "UniGB-UCS2-H", BaseFont.NOT_EMBEDDED);
-            titlefont = new Font(bfChinese, 10, Font.BOLD);
-            headfont = new Font(chinese, 15, Font.BOLD);
-            keyfont = new Font(idea, 8, Font.NORMAL);
-            titlefont = new Font(idea, 10, Font.BOLD);
-            textfont = new Font(chinese, 7, Font.NORMAL);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-//右测虚线
-    static class CustomCellRight implements PdfPCellEvent {
-        public  void cellLayout(PdfPCell cell, Rectangle position,
-                               PdfContentByte[] canvases) {
-            PdfContentByte cb = canvases[PdfPTable.LINECANVAS];
-            cb.saveState();
-            cb.setLineWidth(0.5f);
-            cb.setLineDash(new float[] { 1.5f, 1.5f }, 0);
-            cb.setRGBColorStroke(156, 166, 184);
-            cb.moveTo(position.getRight(), position.getTop());
-            cb.lineTo(position.getRight(),position.getBottom());
-            cb.stroke();
-            cb.restoreState();
-        }
-    }
-    //虚线格式 底部
-    static class CustomCellBottom implements PdfPCellEvent {
-        public void cellLayout(PdfPCell cell, Rectangle position,
-                               PdfContentByte[] canvases) {
-            // TODO Auto-generated method stub
-            PdfContentByte cb = canvases[PdfPTable.LINECANVAS];
-            cb.saveState();
-            cb.setLineWidth(0.5f);
-            cb.setLineDash(new float[] { 1.5f, 1.5f }, 0);
-            cb.setRGBColorStroke(156, 166, 184);
-            cb.moveTo(position.getLeft(), position.getBottom());
-            cb.lineTo(position.getRight(), position.getBottom());
-            cb.stroke();
-            cb.restoreState();
-
-
-        }
-    }
-//    底部实线
-    static class CustomCellSolidBottom implements PdfPCellEvent {
-        public  void cellLayout(PdfPCell cell, Rectangle position,
-                                PdfContentByte[] canvases) {
-            PdfContentByte cb = canvases[PdfPTable.LINECANVAS];
-            cb.saveState();
-            cb.setLineWidth(0.5f);
-            cb.moveTo(position.getLeft(), position.getBottom());
-            cb.lineTo(position.getRight(), position.getBottom());
-            cb.stroke();
-            cb.restoreState();
-        }
-    }
-    //    左侧实线
-    static class CustomCellSolidLeft implements PdfPCellEvent {
-        public  void cellLayout(PdfPCell cell, Rectangle position,
-                                PdfContentByte[] canvases) {
-            PdfContentByte cb = canvases[PdfPTable.LINECANVAS];
-            cb.saveState();
-            cb.setLineWidth(0.5f);
-            cb.moveTo(position.getLeft(), position.getTop());
-            cb.lineTo(position.getLeft(),position.getBottom());
-            cb.stroke();
-            cb.restoreState();
-        }
-    }
-    //    右侧实线
-    static class CustomCellSolidRight implements PdfPCellEvent {
-        public  void cellLayout(PdfPCell cell, Rectangle position,
-                                PdfContentByte[] canvases) {
-            PdfContentByte cb = canvases[PdfPTable.LINECANVAS];
-            cb.saveState();
-            cb.setLineWidth(0.5f);
-            cb.moveTo(position.getRight(), position.getTop());
-            cb.lineTo(position.getRight(),position.getBottom());
-            cb.stroke();
-            cb.restoreState();
-        }
-    }
-
     // 生成PDF文件
     public void generatePDF(Document document) throws Exception {
 
         // 表格
-        PdfPTable table = createTable(new float[] { 50, 110, 170, 30,   50, 110, 170, 30 });
+        PdfPTable table = createTable(new float[]{50, 110, 170, 30, 50, 110, 170, 30});
 //        表格上方信息
-        table.addCell(createCell("Title: "+"收藏的单词", headfont, Element.ALIGN_LEFT, 6, false));
+        table.addCell(createCell("Title: " + "收藏的单词", headfont, Element.ALIGN_LEFT, 6, false));
         table.addCell(createCell("Date:    /    /  ", headfont, Element.ALIGN_LEFT, 4, false));
 
 //        表头
@@ -171,15 +95,14 @@ public class PdfReport {
         table.addCell(createBlankTitleCell(" √ ", titlefont));
 
 
-
 //表格主题
-        for (int i = 0; i < 50; i=i+2) {
-            table.addCell(createNoCell(String.valueOf(1000+1), keyfont));
+        for (int i = 0; i < 50; i = i + 2) {
+            table.addCell(createNoCell(String.valueOf(1000 + 1), keyfont));
             table.addCell(createWordCell("headmistress", keyfont));
             table.addCell(createWordCell("n. 女校长", textfont));
             table.addCell(createBlackCell("", keyfont));
 
-            table.addCell(createNoCell(String.valueOf(i+2), keyfont));
+            table.addCell(createNoCell(String.valueOf(i + 2), keyfont));
             table.addCell(createWordCell("platform", keyfont));
             table.addCell(createWordCell("n. 站台；平台，阵地；讲台；舞台；论坛；高台", textfont));
             table.addCell(createBlackCell("", keyfont));
@@ -187,10 +110,6 @@ public class PdfReport {
         document.add(table);
 
     }
-
-
-/**------------------------创建表格单元格的方法start----------------------------*/
-
 
     /**
      * @param value:
@@ -241,7 +160,6 @@ public class PdfReport {
         return cell;
     }
 
-
     /**
      * @param value:
      * @param font:
@@ -263,8 +181,6 @@ public class PdfReport {
         cell.setPhrase(new Phrase(value, font));
         return cell;
     }
-
-
 
     /**
      * @param value:
@@ -315,6 +231,8 @@ public class PdfReport {
     }
 
 
+/**------------------------创建表格单元格的方法start----------------------------*/
+
     /**
      * @param value:
      * @param font:
@@ -336,10 +254,6 @@ public class PdfReport {
         cell.setPhrase(new Phrase(value, font));
         return cell;
     }
-
-
-
-
 
     /**
      * @param value:
@@ -372,18 +286,9 @@ public class PdfReport {
         return cell;
     }
 
-/**------------------------创建表格单元格的方法end----------------------------*/
-
-
-
-
-
-
-
-
-/**--------------------------创建表格的方法start------------------- ---------*/
     /**
      * 创建指定列宽、列数的表格
+     *
      * @param widths
      * @return
      */
@@ -398,6 +303,88 @@ public class PdfReport {
             e.printStackTrace();
         }
         return table;
+    }
+
+    //右测虚线
+    static class CustomCellRight implements PdfPCellEvent {
+        public void cellLayout(PdfPCell cell, Rectangle position,
+                               PdfContentByte[] canvases) {
+            PdfContentByte cb = canvases[PdfPTable.LINECANVAS];
+            cb.saveState();
+            cb.setLineWidth(0.5f);
+            cb.setLineDash(new float[]{1.5f, 1.5f}, 0);
+            cb.setRGBColorStroke(156, 166, 184);
+            cb.moveTo(position.getRight(), position.getTop());
+            cb.lineTo(position.getRight(), position.getBottom());
+            cb.stroke();
+            cb.restoreState();
+        }
+    }
+
+    //虚线格式 底部
+    static class CustomCellBottom implements PdfPCellEvent {
+        public void cellLayout(PdfPCell cell, Rectangle position,
+                               PdfContentByte[] canvases) {
+            // TODO Auto-generated method stub
+            PdfContentByte cb = canvases[PdfPTable.LINECANVAS];
+            cb.saveState();
+            cb.setLineWidth(0.5f);
+            cb.setLineDash(new float[]{1.5f, 1.5f}, 0);
+            cb.setRGBColorStroke(156, 166, 184);
+            cb.moveTo(position.getLeft(), position.getBottom());
+            cb.lineTo(position.getRight(), position.getBottom());
+            cb.stroke();
+            cb.restoreState();
+
+
+        }
+    }
+
+    //    底部实线
+    static class CustomCellSolidBottom implements PdfPCellEvent {
+        public void cellLayout(PdfPCell cell, Rectangle position,
+                               PdfContentByte[] canvases) {
+            PdfContentByte cb = canvases[PdfPTable.LINECANVAS];
+            cb.saveState();
+            cb.setLineWidth(0.5f);
+            cb.moveTo(position.getLeft(), position.getBottom());
+            cb.lineTo(position.getRight(), position.getBottom());
+            cb.stroke();
+            cb.restoreState();
+        }
+    }
+
+    //    左侧实线
+    static class CustomCellSolidLeft implements PdfPCellEvent {
+        public void cellLayout(PdfPCell cell, Rectangle position,
+                               PdfContentByte[] canvases) {
+            PdfContentByte cb = canvases[PdfPTable.LINECANVAS];
+            cb.saveState();
+            cb.setLineWidth(0.5f);
+            cb.moveTo(position.getLeft(), position.getTop());
+            cb.lineTo(position.getLeft(), position.getBottom());
+            cb.stroke();
+            cb.restoreState();
+        }
+    }
+
+/**------------------------创建表格单元格的方法end----------------------------*/
+
+
+/**--------------------------创建表格的方法start------------------- ---------*/
+
+    //    右侧实线
+    static class CustomCellSolidRight implements PdfPCellEvent {
+        public void cellLayout(PdfPCell cell, Rectangle position,
+                               PdfContentByte[] canvases) {
+            PdfContentByte cb = canvases[PdfPTable.LINECANVAS];
+            cb.saveState();
+            cb.setLineWidth(0.5f);
+            cb.moveTo(position.getRight(), position.getTop());
+            cb.lineTo(position.getRight(), position.getBottom());
+            cb.stroke();
+            cb.restoreState();
+        }
     }
 /**--------------------------创建表格的方法end------------------- ---------*/
 

@@ -15,7 +15,7 @@
         insert into word.book_of_words(word_id, book_id, word, meaning, ukphone)
         values
         <foreach collection="entities" item="entity" separator=",">
-        (#{entity.wordId}, #{entity.bookId}, #{entity.word}, #{entity.meaning}, #{entity.ukphone})
+            (#{entity.wordId}, #{entity.bookId}, #{entity.word}, #{entity.meaning}, #{entity.ukphone})
         </foreach>
     </insert>
     <!-- 批量插入或按主键更新 -->
@@ -26,7 +26,9 @@
             (#{entity.wordId}, #{entity.bookId}, #{entity.word}, #{entity.meaning}, #{entity.ukphone})
         </foreach>
         on duplicate key update
-         word_id = values(word_id) , book_id = values(book_id) , word = values(word) , meaning = values(meaning) , ukphone = values(ukphone)     </insert>
+        word_id = values(word_id) , book_id = values(book_id) , word = values(word) , meaning = values(meaning) ,
+        ukphone = values(ukphone)
+    </insert>
 
 </mapper>
 

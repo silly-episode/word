@@ -33,7 +33,7 @@ public class PdfTest {
 
         Long bookId = 1L;
 
-        Map<String,Object> map = new HashMap<>();
+        Map<String, Object> map = new HashMap<>();
         map.put("book_id", bookId);
 
         List<BookOfWords> bookOfWords = bookOfWordsService.listByMap(map);

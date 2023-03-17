@@ -18,20 +18,15 @@ import org.springframework.boot.test.context.SpringBootTest;
 public class SmsTest {
 
 
-
     @Autowired
     private SmsUtils smsUtils;
 
 
-
-
-
     @Test
-    public void smsTest(){
+    public void smsTest() {
         boolean result = smsUtils.sendMessage("13142397682", RandomUtils.getSixBitRandom());
         System.out.println(result);
     }
-
 
 
 }

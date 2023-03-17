@@ -14,7 +14,7 @@
         insert into word.exam_result(grade, exam_time, plan_id)
         values
         <foreach collection="entities" item="entity" separator=",">
-        (#{entity.grade}, #{entity.examTime}, #{entity.planId})
+            (#{entity.grade}, #{entity.examTime}, #{entity.planId})
         </foreach>
     </insert>
     <!-- 批量插入或按主键更新 -->
@@ -25,7 +25,8 @@
             (#{entity.grade}, #{entity.examTime}, #{entity.planId})
         </foreach>
         on duplicate key update
-         grade = values(grade) , exam_time = values(exam_time) , plan_id = values(plan_id)     </insert>
+        grade = values(grade) , exam_time = values(exam_time) , plan_id = values(plan_id)
+    </insert>
 
 </mapper>
 
