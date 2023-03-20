@@ -1,15 +1,11 @@
 package com.boot.entity;
 
-import co.elastic.clients.elasticsearch._types.mapping.FieldType;
-import com.fasterxml.jackson.annotation.JsonFormat;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
-
-import java.text.DateFormat;
-import java.time.LocalDateTime;
 
 /**
  * @Project: word
@@ -18,7 +14,7 @@ import java.time.LocalDateTime;
  * @FileName: Article
  * @Description: 文章实体（Es）
  */
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
 @Data
 @AllArgsConstructor
@@ -26,14 +22,14 @@ import java.time.LocalDateTime;
 @SuppressWarnings("all")
 public class Article {
     //    文章id
-    private Long articleId;
+    private String articleId;
     //    文章内容
     private String content;
     //    文章创建时间
-    @JsonFormat(shape = JsonFormat.Shape.STRING,
-            pattern = "yyyy-MM-dd HH:mm:ss",
-            timezone = "GMT+8")
-    private LocalDateTime articleCreateTime;
+//    @JsonFormat(shape = JsonFormat.Shape.STRING,
+//            pattern = "yyyy-MM-dd HH:mm:ss",
+//            timezone = "GMT+8")
+    private Long articleCreateTime;
     //    文章标题
     private String articleTitle;
     //    文章单词字数
