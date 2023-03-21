@@ -11,7 +11,6 @@ import org.apache.shiro.authc.AuthenticationToken;
  */
 public class JwtToken implements AuthenticationToken {
 
-
     private final String token;
 
     public JwtToken(String token) {

@@ -37,7 +37,9 @@ public class CommonUserRealm extends AuthorizingRealm {
 
 
     /**
-     * 大坑！，必须重写此方法，不然Shiro会报错
+     * 多重写一个support
+     * 标识这个Realm是专门用来验证JwtToken，不负责验证其他的token（UsernamePasswordToken）
+     * 必须重写此方法，不然Shiro会报错
      */
     @Override
     public boolean supports(AuthenticationToken token) {
@@ -50,7 +52,7 @@ public class CommonUserRealm extends AuthorizingRealm {
         System.out.println("MyRealm doGetAuthorizationInfo() 方法授权 ");
         String token = principals.toString();
         String userId = jwtUtils.getUserId(token);
-        User user = userService.getById(Long.valueOf(userId));
+//        User user = userService.getById(Long.valueOf(userId));
         if (StringUtils.isBlank(userId)) {
             throw new AuthenticationException("token认证失败");
         }
@@ -64,25 +66,33 @@ public class CommonUserRealm extends AuthorizingRealm {
         return info;
     }
 
+
+    /**
+     * 默认使用此方法进行用户名正确与否验证, 如果没有权限注解的话就不会去走上面的方法只会走这个方法
+     * 其实就是 过滤器传过来的token 然后进行 验证 authenticationToken.toString() 获取的就是
+     * 你的token字符串,然后你在里面做逻辑验证就好了,没通过的话直接抛出异常就可以了
+     */
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken auth) throws AuthenticationException {
         String token = (String) auth.getCredentials();
         // 解密获得userId，用于和数据库进行对比
         String userId = jwtUtils.getUserId(token);
-        if (userId == null) {
+//        解密获取的userId为空，则表示token不是我的
+        if (userId.isEmpty()) {
             throw new AuthenticationException("token invalid");
         }
-
+//        根据userId获取user
         User userBean = userService.getById(Long.valueOf(userId));
+//        查询不到则用户不存在
         if (userBean == null) {
-            throw new AuthenticationException("User didn't existed!");
+            throw new AuthenticationException("用户不存在");
         }
-
+//        将解密从数据库查询的userId与token进行校验，不一样则表示不安全
         if (!jwtUtils.verify(token, String.valueOf(userBean.getUserId()))) {
 
             throw new AuthenticationException("Username or password error");
         }
-
-        return new SimpleAuthenticationInfo(token, token, "my_realm");
+// ？？？？？？？？？？？？？？？
+        return new SimpleAuthenticationInfo(token, token, "CommonUserRealm");
     }
 }

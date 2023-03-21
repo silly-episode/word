@@ -55,7 +55,6 @@ public class ShiroConfig {
         Map<String, Filter> filterMap = new HashMap<>();
         filterMap.put("jwt", new JwtFilter());
         factoryBean.setFilters(filterMap);
-
         factoryBean.setSecurityManager(securityManager);
         factoryBean.setUnauthorizedUrl("/401");
 
@@ -65,12 +64,16 @@ public class ShiroConfig {
          */
         Map<String, String> filterRuleMap = new HashMap<>();
         // 所有请求通过我们自己的JWT Filter
+//        登录接口和获取短信的接口不需要认证
         filterRuleMap.put("/loginPassword", "anon");
         filterRuleMap.put("/loginSms", "anon");
+//
         filterRuleMap.put("/guest/**", "anon");
-        filterRuleMap.put("/**", "jwt");
         // 访问401和404页面不通过我们的Filter
         filterRuleMap.put("/401", "anon");
+        filterRuleMap.put("/404", "anon");
+        filterRuleMap.put("/**", "jwt");
+
         factoryBean.setFilterChainDefinitionMap(filterRuleMap);
         return factoryBean;
     }

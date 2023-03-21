@@ -26,13 +26,13 @@ spring:
       maxFileSize: 10MB
       maxRequestSize: 30MB
 
-#配置RestFul
+  #配置RestFul
   mvc:
     hiddenmethod:
       filter:
         enabled: true   #默认是关闭的
 
-#  redis配置信息
+  #  redis配置信息
   redis:
     # Redis服务器地址
     host: 127.0.0.1
@@ -43,7 +43,7 @@ spring:
     # 连接超时时间
     timeout: 1800000
     # 设置密码
-#    password: "123456"
+    #    password: "123456"
     lettuce:
       pool:
         # 最大阻塞等待时间，负数表示没有限制
@@ -75,21 +75,21 @@ mybatis-plus:
 
 minio:
   endpoint: http://127.0.0.1:9000
-  accesskey:
-  secretKey:
+  accesskey: w0E0Bt2xLWe9WusX
+  secretKey: 3gTNaOQ9XoidyI6ui9tpa9lavV2TUAE0
 
 #腾讯云短信配置
 tencent:
   msm:
-    id:
-    secret:
+    id: AKIDYv66wazCpPzQn085ppdCfMxMZcWDk6E9
+    secret: xiHj8b1Lgs565rQkpkT5VigPCoESTFpE
     endPoint: sms.tencentcloudapi.com
     appId: 1400772406
     signName: 邓胤喆比赛项目个人网
     templateId: 1678253
   translate:
-    id:
-    secret:
+    id: AKIDIPFsFLAk4LM6YmjQu75pPimcBSWXMvEI
+    secret: rRmrgEEDE6l9MJ1cy4tcFmwShfNr7ABD
     endPoint: tmt.tencentcloudapi.com
     projectId: 0
     region: ap-guangzhou
@@ -97,7 +97,7 @@ tencent:
 
 word:
   jwt:
-    secret:
+    secret: f4e2e52034348f86b67ade581c0f9eb5
     expire: 864000000
     header: Authorization
 

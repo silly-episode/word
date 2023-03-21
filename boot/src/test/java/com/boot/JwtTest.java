@@ -1,13 +1,10 @@
 package com.boot;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.exceptions.JWTDecodeException;
-import com.auth0.jwt.interfaces.DecodedJWT;
-import com.auth0.jwt.interfaces.JWTVerifier;
+import com.boot.utils.JwtUtils;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
 
-import java.util.Date;
+import javax.annotation.Resource;
 
 /**
  * @Project: word
@@ -17,60 +14,36 @@ import java.util.Date;
  * @Description:
  */
 
+@SpringBootTest
 public class JwtTest {
 
-    private final String secret = "123";
-    private final long expire = 10000000;
-    private final String header = "Authorization";
+    @Resource
+    private JwtUtils jwtUtils;
+
+    private String token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjI1NDMzNzgyODEsInVzZXJJZCI6IjEyMyIsImlhdCI6MTY3OTM3ODI4MX0.eE98TOhDDEdCe61zbvQZUdAB7ua1ThwA2U1DFepia1M";
 
     @Test
     public void signJwt() {
+        this.token = jwtUtils.sign("123");
+        System.out.println(token);
 
-        System.out.println(sign("jack"));
     }
 
     @Test
     public void accountTest() {
-        System.out.println(getAccount(""));
+        System.out.println(jwtUtils.getUserId(token));
     }
 
     @Test
     public void verifyJwt() {
-
-        System.out.println(verify("", ""));
+        System.out.println(jwtUtils.verify(this.token,
+                "123"));
+        System.out.println(jwtUtils.verify(this.token,
+                "456"));
     }
 
 
-    public boolean verify(String token, String account) {
-        Algorithm algorithm = Algorithm.HMAC256(secret);
-        JWTVerifier verifier = JWT.require(algorithm)
-                .withClaim("account", account)
-                .build();
-        DecodedJWT decodeJwt = verifier.verify(token);
-        // verify account
-        String usernameInToken = decodeJwt.getClaim("account").asString();
-        return usernameInToken.equals(account);
-    }
 
-    public String getAccount(String token) {
-        try {
-            DecodedJWT jwt = JWT.decode(token);
-            return jwt.getClaim("account").asString();
-        } catch (JWTDecodeException e) {
-            return null;
-        }
-    }
 
-    public String sign(String account) {
-        Date currentDate = new Date(System.currentTimeMillis());
-        Date expireDate = new Date(System.currentTimeMillis() + expire * 1000);
-        Algorithm algorithm = Algorithm.HMAC256(secret);
 
-        return JWT.create()
-                .withClaim("account", account)
-                .withIssuedAt(currentDate)
-                .withExpiresAt(expireDate)
-                .sign(algorithm);
-
-    }
 }

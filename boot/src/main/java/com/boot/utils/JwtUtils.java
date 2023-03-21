@@ -4,7 +4,6 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
-import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.auth0.jwt.interfaces.JWTVerifier;
 import lombok.Data;
@@ -36,28 +35,24 @@ public class JwtUtils {
      * @param userId:
      * @Return: boolean
      * @Author: DengYinzhe
-     * @Description: TODO
+     * @Description: 验证
      * @Date: 2023/2/3 16:37
      */
     public boolean verify(String token, String userId) {
 
         try {
+//            解密获取token中的userId
             Algorithm algorithm = Algorithm.HMAC256(secret);
             JWTVerifier verifier = JWT.require(algorithm)
                     .withClaim("userId", userId)
                     .build();
             DecodedJWT decodeJwt = verifier.verify(token);
-            // verify account
-            String usernameInToken = decodeJwt.getClaim("userId").asString();
-            return usernameInToken.equals(userId);
-        } catch (TokenExpiredException e) {
-//
-            return false;
+            // verify userId
+            String userIdInToken = decodeJwt.getClaim("userId").asString();
+            return userIdInToken.equals(userId);
         } catch (IllegalArgumentException | JWTVerificationException e) {
             return false;
         }
-
-
     }
 
     /**
@@ -87,7 +82,6 @@ public class JwtUtils {
         Date currentDate = new Date(System.currentTimeMillis());
         Date expireDate = new Date(System.currentTimeMillis() + expire * 1000);
         Algorithm algorithm = Algorithm.HMAC256(secret);
-
         return JWT.create()
                 .withClaim("userId", userId)
                 .withIssuedAt(currentDate)
