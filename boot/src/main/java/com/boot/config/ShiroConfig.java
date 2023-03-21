@@ -65,8 +65,10 @@ public class ShiroConfig {
         Map<String, String> filterRuleMap = new HashMap<>();
         // 所有请求通过我们自己的JWT Filter
 //        登录接口和获取短信的接口不需要认证
-        filterRuleMap.put("/loginPassword", "anon");
-        filterRuleMap.put("/loginSms", "anon");
+        filterRuleMap.put("/user/loginPassword", "anon");
+        filterRuleMap.put("/user/loginSms", "anon");
+        filterRuleMap.put("/user/sms", "anon");
+        filterRuleMap.put("/user/user", "anon");
 //
         filterRuleMap.put("/guest/**", "anon");
         // 访问401和404页面不通过我们的Filter

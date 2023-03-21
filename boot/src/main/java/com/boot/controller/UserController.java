@@ -12,6 +12,8 @@ import com.boot.entity.User;
 import com.boot.service.UserService;
 import com.boot.utils.*;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresGuest;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -56,6 +58,7 @@ public class UserController {
      * @Date: 2023/2/9 10:43
      */
     @GetMapping("sms")
+    @RequiresGuest
     public Result getCode(@RequestParam("phone") String phone) {
         User userBean = userService.getUserByTel(phone);
         if (userBean == null) {
@@ -79,6 +82,7 @@ public class UserController {
      * @Date: 2023/2/9 10:44
      */
     @PostMapping("loginPassword")
+    @RequiresGuest
     public Result loginPassword(@RequestBody LoginMessage loginMessage) {
 
         User userBean = userService.getUserByAccount(loginMessage.getLoginAccount());
@@ -101,6 +105,7 @@ public class UserController {
      * @Date: 2023/2/9 10:45
      */
     @PostMapping("loginSms")
+    @RequiresGuest
     public Result loginSms(@RequestBody LoginMessage loginMessage) {
         User userBean = userService.getUserByTel(loginMessage.getLoginAccount());
         if (null == userBean) {
@@ -126,6 +131,7 @@ public class UserController {
      * @Date: 2023/2/9 10:53
      */
     @PutMapping("userImage")
+    @RequiresAuthentication
     public Result userImage(@RequestParam MultipartFile file, @RequestParam("userId") Long userId) {
         User user = userService.getById(userId);
         String fileName = "user_image_" + userId.toString() + file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."));
@@ -155,6 +161,7 @@ public class UserController {
      * @Date: 2023/2/9 11:44
      */
     @GetMapping("userImage/{userId}")
+    @RequiresAuthentication
     public byte[] userImage(@PathVariable("userId") Long userId) throws IOException, CustomException {
         String bucketName = "word";
         String objectName = userService.getById(userId).getHeadImage();
@@ -175,6 +182,7 @@ public class UserController {
      * @Date: 2023/2/9 11:44
      */
     @PutMapping("user")
+    @RequiresAuthentication
     public Result user(@RequestBody UserMsgDto userMsgDto) {
         if (userService.updateById(BeanDtoVoUtils.convert(userMsgDto, User.class))) {
             return Result.success();
@@ -191,6 +199,7 @@ public class UserController {
      * @Date: 2023/2/9 11:44
      */
     @GetMapping("user/{userId}")
+    @RequiresAuthentication
     public Result<UserMsgDto> user(@PathVariable("userId") Long userId) {
         User user = userService.getById(userId);
         UserMsgDto userMsgDto = BeanDtoVoUtils.convert(user, UserMsgDto.class);
@@ -205,6 +214,7 @@ public class UserController {
      * @Date: 2023/2/9 14:27
      */
     @DeleteMapping("user/{userId}")
+    @RequiresAuthentication
     public Result userDelete(@PathVariable("userId") Long userId) {
         UpdateWrapper<User> wrapper = new UpdateWrapper<>();
         wrapper.set("user_status", '2').eq("user_id", userId);
@@ -224,6 +234,7 @@ public class UserController {
      * @Date: 2023/2/10 13:08
      */
     @PostMapping("user")
+    @RequiresGuest
     public Result user(@RequestBody RegisterMessage registerMessage) {
 
         User user = BeanDtoVoUtils
@@ -244,6 +255,7 @@ public class UserController {
      * @Date: 2023/2/14 20:09
      */
     @PutMapping("password")
+    @RequiresAuthentication
     public Result password(@RequestParam Long userId, @RequestParam String password) {
         UpdateWrapper<User> updateWrapper = new UpdateWrapper<>();
         updateWrapper.set("password", password).eq("user_id", userId);
@@ -264,6 +276,7 @@ public class UserController {
      * @Date: 2023/2/14 20:36
      */
     @PostMapping("tel")
+    @RequiresAuthentication
     public Result tel(@RequestParam Long userId, @RequestParam String tel, @RequestParam String code) {
 
         if (null != userService.getUserByTel(tel)) {
@@ -292,6 +305,7 @@ public class UserController {
      * @Date: 2023/2/14 20:48
      */
     @GetMapping("tel/{tel}/{code}")
+    @RequiresGuest
     public Result tel(@PathVariable String tel, @PathVariable String code) {
 
         if (code.equals(redisUtils.get(codePre + tel))) {
@@ -310,6 +324,7 @@ public class UserController {
      * @Date: 2023/2/14 20:58
      */
     @PutMapping("password/{tel}/{password}")
+    @RequiresAuthentication
     public Result password(@PathVariable String tel, @PathVariable String password) {
         UpdateWrapper<User> updateWrapper = new UpdateWrapper<>();
         updateWrapper.set("password", password).eq("tel", tel);
