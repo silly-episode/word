@@ -49,9 +49,9 @@ public class CommonUserRealm extends AuthorizingRealm {
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
         System.out.println("MyRealm doGetAuthorizationInfo() 方法授权 ");
         String token = principals.toString();
-        String username = jwtUtils.getAccount(token);
-        User user = userService.getUserByAccount(username);
-        if (StringUtils.isBlank(username)) {
+        String userId = jwtUtils.getUserId(token);
+        User user = userService.getById(Long.valueOf(userId));
+        if (StringUtils.isBlank(userId)) {
             throw new AuthenticationException("token认证失败");
         }
         //查询当前
@@ -67,18 +67,19 @@ public class CommonUserRealm extends AuthorizingRealm {
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken auth) throws AuthenticationException {
         String token = (String) auth.getCredentials();
-        // 解密获得username，用于和数据库进行对比
-        String username = jwtUtils.getAccount(token);
-        if (username == null) {
+        // 解密获得userId，用于和数据库进行对比
+        String userId = jwtUtils.getUserId(token);
+        if (userId == null) {
             throw new AuthenticationException("token invalid");
         }
 
-        User userBean = userService.getUserByAccount(username);
+        User userBean = userService.getById(Long.valueOf(userId));
         if (userBean == null) {
             throw new AuthenticationException("User didn't existed!");
         }
 
-        if (!jwtUtils.verify(token, userBean.getAccount())) {
+        if (!jwtUtils.verify(token, String.valueOf(userBean.getUserId()))) {
+
             throw new AuthenticationException("Username or password error");
         }
 

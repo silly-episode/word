@@ -33,23 +33,23 @@ public class JwtUtils {
 
     /**
      * @param token:
-     * @param account:
+     * @param userId:
      * @Return: boolean
      * @Author: DengYinzhe
      * @Description: TODO
      * @Date: 2023/2/3 16:37
      */
-    public boolean verify(String token, String account) {
+    public boolean verify(String token, String userId) {
 
         try {
             Algorithm algorithm = Algorithm.HMAC256(secret);
             JWTVerifier verifier = JWT.require(algorithm)
-                    .withClaim("account", account)
+                    .withClaim("userId", userId)
                     .build();
             DecodedJWT decodeJwt = verifier.verify(token);
             // verify account
-            String usernameInToken = decodeJwt.getClaim("account").asString();
-            return usernameInToken.equals(account);
+            String usernameInToken = decodeJwt.getClaim("userId").asString();
+            return usernameInToken.equals(userId);
         } catch (TokenExpiredException e) {
 //
             return false;
@@ -67,29 +67,29 @@ public class JwtUtils {
      * @Description: 获得token中的信息无需secret解密也能获得
      * @Date: 2023/2/3 16:37
      */
-    public String getAccount(String token) {
+    public String getUserId(String token) {
         try {
             DecodedJWT jwt = JWT.decode(token);
-            return jwt.getClaim("account").asString();
+            return jwt.getClaim("userId").asString();
         } catch (JWTDecodeException e) {
             return null;
         }
     }
 
     /**
-     * @param account:账号
+     * @param userId:用户id
      * @Return: String
      * @Author: DengYinzhe
      * @Description: 根据payload信息生成JSON WEB TOKEN
      * @Date: 2023/2/3 16:34
      */
-    public String sign(String account) {
+    public String sign(String userId) {
         Date currentDate = new Date(System.currentTimeMillis());
         Date expireDate = new Date(System.currentTimeMillis() + expire * 1000);
         Algorithm algorithm = Algorithm.HMAC256(secret);
 
         return JWT.create()
-                .withClaim("account", account)
+                .withClaim("userId", userId)
                 .withIssuedAt(currentDate)
                 .withExpiresAt(expireDate)
                 .sign(algorithm);

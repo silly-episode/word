@@ -12,7 +12,6 @@ import com.boot.entity.User;
 import com.boot.service.UserService;
 import com.boot.utils.*;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.shiro.authz.UnauthorizedException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -57,19 +56,19 @@ public class UserController {
      * @Date: 2023/2/9 10:43
      */
     @GetMapping("sms")
-    public String getCode(@RequestParam("phone") String phone) {
+    public Result getCode(@RequestParam("phone") String phone) {
         User userBean = userService.getUserByTel(phone);
         if (userBean == null) {
-            return "400";
+//            该手机号的用户不存在，所以不发送短信
+            return Result.error(CodeMsg.ACCOUNT_NOT_FOUND);
         }
         String code = RandomUtils.getSixBitRandom();
         if (smsUtils.sendMessage(phone, code)) {
             redisUtils.add(codePre + phone, code, 5L, TimeUnit.MINUTES);
-            return "200";
+            return Result.success("发送短信成功");
         } else {
-            return "400";
+            return Result.error("发送短信失败");
         }
-
     }
 
     /**
@@ -80,15 +79,17 @@ public class UserController {
      * @Date: 2023/2/9 10:44
      */
     @PostMapping("loginPassword")
-    public String loginPassword(@RequestBody LoginMessage loginMessage) {
+    public Result loginPassword(@RequestBody LoginMessage loginMessage) {
 
         User userBean = userService.getUserByAccount(loginMessage.getLoginAccount());
         if (null == userBean) {
-            return JsonUtils.getBeanToJson(Result.error(CodeMsg.BAD_CREDENTIAL));
+//            该账号对应的用户不存在
+            return Result.error(CodeMsg.ACCOUNT_NOT_FOUND);
         } else if (userBean.getPassword().equals(loginMessage.getLoginPassword())) {
-            return JsonUtils.getBeanToJson(Result.success(jwtUtils.sign(loginMessage.getLoginAccount())));
+            return Result.success(jwtUtils.sign(String.valueOf(userBean.getUserId())));
         } else {
-            throw new UnauthorizedException();
+//            密码错误
+            return Result.error(CodeMsg.BAD_CREDENTIAL);
         }
     }
 
@@ -100,14 +101,19 @@ public class UserController {
      * @Date: 2023/2/9 10:45
      */
     @PostMapping("loginSms")
-    public String loginSms(@RequestBody LoginMessage loginMessage) {
+    public Result loginSms(@RequestBody LoginMessage loginMessage) {
         User userBean = userService.getUserByTel(loginMessage.getLoginAccount());
         if (null == userBean) {
-            return JsonUtils.getBeanToJson(Result.error(CodeMsg.BAD_CREDENTIAL));
+//            该手机号对应的用户不存在
+            return Result.error(CodeMsg.BAD_CREDENTIAL);
+        } else if (redisUtils.get(codePre + loginMessage.getLoginAccount()).isEmpty()) {
+//            验证码过期或验证码不存在
+            return Result.error(CodeMsg.CAPTCHA_EXPIRED);
         } else if (loginMessage.getLoginPassword().equals(redisUtils.get(codePre + loginMessage.getLoginAccount()))) {
-            return JsonUtils.getBeanToJson(Result.success(jwtUtils.sign(userBean.getAccount())));
+            return Result.success(jwtUtils.sign(String.valueOf(userBean.getUserId())));
         } else {
-            throw new UnauthorizedException();
+//            验证码错误
+            return Result.error(CodeMsg.CAPTCHA_INVALID);
         }
     }
 
