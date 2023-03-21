@@ -165,12 +165,13 @@ public class UserController {
      * @Date: 2023/2/9 11:44
      */
     @GetMapping("userImage/{userId}")
-//    @RequiresAuthentication
+    @RequiresAuthentication
     public byte[] userImage(@PathVariable("userId") Long userId) throws IOException, CustomException {
         String bucketName = "word";
         String objectName = userService.getById(userId).getHeadImage();
         InputStream inputStream = minIOUtils.getObject(bucketName, objectName);
         if (inputStream != null) {
+            System.out.println(123);
             return IoUtils.toByteArray(inputStream);
         } else {
             throw new CustomException("头像获取失败");

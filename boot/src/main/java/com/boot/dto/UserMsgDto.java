@@ -32,4 +32,6 @@ public class UserMsgDto {
     private String signature;
 
     private Integer integration;
+    //登录账号
+    private String account;
 }
