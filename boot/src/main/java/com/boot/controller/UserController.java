@@ -21,6 +21,7 @@ import javax.annotation.Resource;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.concurrent.TimeUnit;
 
 
@@ -134,9 +135,12 @@ public class UserController {
     @RequiresAuthentication
     public Result userImage(@RequestParam MultipartFile file, @RequestParam("userId") Long userId) {
         User user = userService.getById(userId);
-        String fileName = "user_image_" + userId.toString() + file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."));
+        String fileName = "user_image_" + userId.toString() + "_"
+                + String.valueOf(LocalDateTime.now().toEpochSecond(ZoneOffset.of("+8"))
+                + file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf(".")));
         try {
             if (0 != file.getSize() && "image/jpeg".equals(file.getContentType())) {
+                // 上传用户头像
                 minIOUtils.putObject("word", file, fileName);
             }
         } catch (Exception e) {
@@ -144,7 +148,7 @@ public class UserController {
             minIOUtils.removeObject("word", fileName);
             return Result.error("上传头像失败");
         }
-//        如果用户不是默认头像则删除头像文件
+        // 如果用户不是默认头像则删除头像文件
         if (!"user_defalut_image.jpg".equals(user.getHeadImage())) {
             minIOUtils.removeObject("word", user.getHeadImage());
         }
@@ -161,7 +165,7 @@ public class UserController {
      * @Date: 2023/2/9 11:44
      */
     @GetMapping("userImage/{userId}")
-    @RequiresAuthentication
+//    @RequiresAuthentication
     public byte[] userImage(@PathVariable("userId") Long userId) throws IOException, CustomException {
         String bucketName = "word";
         String objectName = userService.getById(userId).getHeadImage();
