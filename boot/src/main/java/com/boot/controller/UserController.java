@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDateTime;
@@ -166,15 +168,37 @@ public class UserController {
      */
     @GetMapping("userImage/{userId}")
     @RequiresAuthentication
-    public byte[] userImage(@PathVariable("userId") Long userId) throws IOException, CustomException {
-        String bucketName = "word";
-        String objectName = userService.getById(userId).getHeadImage();
-        InputStream inputStream = minIOUtils.getObject(bucketName, objectName);
-        if (inputStream != null) {
-            System.out.println(123);
-            return IoUtils.toByteArray(inputStream);
-        } else {
+    public void userImage(@PathVariable("userId") Long userId, HttpServletResponse response) throws IOException {
+        ServletOutputStream outputStream = null;
+        InputStream inputStream = null;
+
+        try {
+            //输出流，通过输出流将文件写回浏览器
+            outputStream = response.getOutputStream();
+            response.setContentType("image/jpeg");
+            //从MinIo中获取用户头像
+            String bucketName = "word";
+            String objectName = userService.getById(userId).getHeadImage();
+            inputStream = minIOUtils.getObject(bucketName, objectName);
+
+            if (inputStream != null) {
+                int len;
+                byte[] bytes = new byte[1024 * 4];
+                while ((len = inputStream.read(bytes)) != -1) {
+                    outputStream.write(bytes, 0, len);
+                    outputStream.flush();
+                }
+            } else {
+                throw new CustomException("头像获取失败");
+            }
+        } catch (IOException e) {
             throw new CustomException("头像获取失败");
+        } catch (CustomException e) {
+            throw new CustomException("头像获取失败");
+        } finally {
+            //关闭资源
+            outputStream.close();
+            inputStream.close();
         }
 
     }
