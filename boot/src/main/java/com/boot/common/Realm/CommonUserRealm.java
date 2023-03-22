@@ -80,7 +80,7 @@ public class CommonUserRealm extends AuthorizingRealm {
 //        解密获取的userId为空，则表示token不是我的
         System.out.println("================");
         System.out.println(userId);
-        if (userId.isEmpty()) {
+        if (userId == null) {
 
             throw new AuthenticationException("token invalid");
         }
