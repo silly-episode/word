@@ -78,10 +78,7 @@ public class CommonUserRealm extends AuthorizingRealm {
         // 解密获得userId，用于和数据库进行对比
         String userId = jwtUtils.getUserId(token);
 //        解密获取的userId为空，则表示token不是我的
-        System.out.println("================");
-        System.out.println(userId);
         if (userId == null) {
-
             throw new AuthenticationException("token invalid");
         }
 //        根据userId获取user

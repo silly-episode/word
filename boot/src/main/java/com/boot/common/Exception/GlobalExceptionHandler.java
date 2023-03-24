@@ -41,6 +41,7 @@ public class GlobalExceptionHandler {
         return Result.error(401, "Unauthorized");
     }
 
+
     /**
      * @param :
      * @Return: Result
@@ -120,6 +121,7 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(CustomException.class)
     public Result<String> exceptionHandler(CustomException ex) {
+
         return Result.error(ex.getMessage());
     }
 
