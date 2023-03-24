@@ -1,9 +1,11 @@
 package com.boot.common.Exception;
 
+import com.boot.common.result.CodeMsg;
 import com.boot.common.result.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.ShiroException;
 import org.apache.shiro.authc.AuthenticationException;
+import org.apache.shiro.authz.UnauthenticatedException;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
@@ -65,6 +67,20 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(value = ShiroException.class)
     public Result handler(ShiroException e) {
+        return Result.error(CodeMsg.SHIRO_ERROR);
+    }
+
+
+    /**
+     * @param e:
+     * @Return: Result
+     * @Author: DengYinzhe
+     * @Description: shiro 异常
+     * @Date: 2023/2/12 21:10
+     */
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ExceptionHandler(value = UnauthenticatedException.class)
+    public Result handler(UnauthenticatedException e) {
         return Result.error(4010, "当前用户未通过认证");
     }
 
