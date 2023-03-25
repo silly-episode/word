@@ -97,7 +97,6 @@ public class BookOfWordsController {
         Map<String, Object> map = new HashMap<>(10);
         map.put("book_id", bookId);
         List<BookOfWords> bookOfWords = bookOfWordsService.listByMap(map);
-
         QueryWrapper<WordBooks> queryWrapper = new QueryWrapper<>();
         queryWrapper.select("book_name").eq("book_id", bookId);
         String title = wordBooksService.getOne(queryWrapper).getBookName();
