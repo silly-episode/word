@@ -30,6 +30,8 @@ public class PdfUtils {
     private static Font footerfoot;
     // 最大宽度
     private static int maxWidth = 530;
+    //  标题
+    private String title = "收藏的单词";
 
     // 字体静态代码块
     static {
@@ -201,7 +203,7 @@ public class PdfUtils {
         // 8个单元格所占比例
         PdfPTable table = createTable(new float[]{0.069f, 0.152f, 0.236f, 0.04f, 0.069f, 0.152f, 0.236f, 0.04f});
 //        表格上方信息
-        table.addCell(createCell("Title: " + "收藏的单词", headfont, Element.ALIGN_LEFT, 6, false));
+        table.addCell(createCell("Title: " + this.title, headfont, Element.ALIGN_LEFT, 6, false));
         table.addCell(createCell("Date:    /    /  ", headfont, Element.ALIGN_LEFT, 4, false));
 
 //        表头
@@ -316,10 +318,13 @@ public class PdfUtils {
      * @Return: void
      * @Author: DengYinzhe
      * @Description:
-     * @Date: 2023/2/28 12:50
+     * @Date: 2023/2/28 12:50 收藏的单词
      */
-    public byte[] pdfExport(List<BookOfWords> bookOfWordsList) throws Exception {
+    public byte[] pdfExport(List<BookOfWords> bookOfWordsList, String title) throws Exception {
         byte[] content = new byte[0];
+        if (null != title) {
+            this.title = title;
+        }
         try {
             // 1.新建document对象
             Document document = new Document(PageSize.A4);// 建立一个Document对象

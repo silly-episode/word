@@ -1,9 +1,12 @@
 package com.boot.controller;
 
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.boot.common.result.Result;
 import com.boot.entity.BookOfWords;
+import com.boot.entity.WordBooks;
 import com.boot.service.BookOfWordsService;
+import com.boot.service.WordBooksService;
 import com.boot.utils.PdfUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.web.bind.annotation.*;
@@ -29,7 +32,8 @@ public class BookOfWordsController {
      */
     @Resource
     private BookOfWordsService bookOfWordsService;
-
+    @Resource
+    private WordBooksService wordBooksService;
     @Resource
     private PdfUtils pdfUtils;
 
@@ -93,7 +97,11 @@ public class BookOfWordsController {
         Map<String, Object> map = new HashMap<>(10);
         map.put("book_id", bookId);
         List<BookOfWords> bookOfWords = bookOfWordsService.listByMap(map);
-        return pdfUtils.pdfExport(bookOfWords);
+
+        QueryWrapper<WordBooks> queryWrapper = new QueryWrapper<>();
+        queryWrapper.select("book_name").eq("book_id", bookId);
+        String title = wordBooksService.getOne(queryWrapper).getBookName();
+        return pdfUtils.pdfExport(bookOfWords, title);
     }
 
 
