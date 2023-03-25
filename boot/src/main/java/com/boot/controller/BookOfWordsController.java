@@ -5,6 +5,7 @@ import com.boot.common.result.Result;
 import com.boot.entity.BookOfWords;
 import com.boot.service.BookOfWordsService;
 import com.boot.utils.PdfUtils;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -21,6 +22,7 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("bookOfWords")
+@RequiresAuthentication
 public class BookOfWordsController {
     /**
      * 服务对象

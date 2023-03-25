@@ -76,6 +76,9 @@ public class ShiroConfig {
         filterRuleMap.put("/404", "anon");
         filterRuleMap.put("/**", "jwt");
 
+//        测试拦截
+        filterRuleMap.put("/test/test", "jwt");
+
         factoryBean.setFilterChainDefinitionMap(filterRuleMap);
         return factoryBean;
     }

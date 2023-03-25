@@ -10,6 +10,7 @@ import com.boot.service.PlanService;
 import com.boot.service.WordModuleService;
 import com.boot.vo.PlanVo;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -29,7 +30,7 @@ import java.util.Map;
 @Slf4j
 @RequestMapping("plan")
 @SuppressWarnings("all")
-//@RequiresAuthentication
+@RequiresAuthentication
 public class PlanController {
 
 
@@ -48,6 +49,7 @@ public class PlanController {
      * @Date: 2023/2/14 14:49
      */
     @GetMapping("plan/{userId}")
+
     public Result plan(@PathVariable Long userId) {
         Map map = new HashMap<>();
         List<PlanVo> list = planService.selectAll(userId);

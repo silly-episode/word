@@ -22,6 +22,7 @@ import com.boot.utils.MinIOUtils;
 import com.boot.utils.SnowFlakeUtil;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -45,6 +46,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Slf4j
 @RequestMapping("word")
 @SuppressWarnings("all")
+@RequiresAuthentication
 public class WordModuleController {
 
     @Resource

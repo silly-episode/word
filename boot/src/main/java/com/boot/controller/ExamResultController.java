@@ -4,6 +4,7 @@ package com.boot.controller;
 import com.boot.common.result.Result;
 import com.boot.entity.ExamResult;
 import com.boot.service.ExamResultService;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -19,6 +20,7 @@ import java.time.LocalDateTime;
  */
 @RestController
 @RequestMapping("examResult")
+@RequiresAuthentication
 public class ExamResultController {
     /**
      * 服务对象

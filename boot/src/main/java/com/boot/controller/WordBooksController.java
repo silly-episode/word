@@ -7,6 +7,7 @@ import com.boot.common.result.Result;
 import com.boot.entity.WordBooks;
 import com.boot.service.BookOfWordsService;
 import com.boot.service.WordBooksService;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,6 +25,7 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("wordBooks")
+@RequiresAuthentication
 public class WordBooksController {
     /**
      * 服务对象
