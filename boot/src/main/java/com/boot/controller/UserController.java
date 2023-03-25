@@ -8,7 +8,9 @@ import com.boot.common.result.Result;
 import com.boot.dto.LoginMessage;
 import com.boot.dto.RegisterMessage;
 import com.boot.dto.UserMsgDto;
+import com.boot.entity.LoginLog;
 import com.boot.entity.User;
+import com.boot.service.LoginLogService;
 import com.boot.service.UserService;
 import com.boot.utils.*;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
@@ -52,6 +55,22 @@ public class UserController {
     private RedisUtils redisUtils;
     @Resource
     private MinIOUtils minIOUtils;
+    /*登录方式*/
+    private final String loginBySm = "sms";
+    private final String loginByPwd = "pwd";
+    /*用户状态*/
+    private final String normalUserStatus = "0";
+    private final String lockUserStatus = "1";
+    private final String deleteUserStatus = "2";
+    /*登录日志结果类型*/
+    private final String successResult = "0";
+    private final String nullUserResult = "1";
+    private final String smsOverdueResult = "2";
+    private final String smsErrorResult = "3";
+    private final String pwdErrorResult = "4";
+    private final String lockResult = "5";
+    @Resource
+    private LoginLogService loginLogService;
 
     /**
      * @param phone: 中国手机号码
@@ -81,48 +100,67 @@ public class UserController {
      * @param loginMessage: 登录信息
      * @Return: String
      * @Author: DengYinzhe
-     * @Description: 密码登录 已测试
+     * @Description: 登录 todo
      * @Date: 2023/2/9 10:44
      */
-    @PostMapping("loginPassword")
+    @PostMapping("login")
     @RequiresGuest
-    public Result loginPassword(@RequestBody LoginMessage loginMessage) {
-
-        User userBean = userService.getUserByAccount(loginMessage.getLoginAccount());
+    public Result login(@RequestBody LoginMessage loginMessage, HttpServletRequest request) {
+        User userBean = null;
+        boolean flag = false;
+        String smsCode = null;
+        LoginLog loginLog = new LoginLog();
+        //获取用户真实的IP地址
+        loginLog.setIp(HttpUtils.getIpAddress(request));
+        //获取用户信息
+        if (loginBySm.equals(loginMessage.getType())) {
+            loginLog.setLoginType("短信登录").setTel(loginMessage.getLoginAccount());
+            userBean = userService.getUserByTel(loginMessage.getLoginAccount());
+        } else if (loginByPwd.equals(loginMessage.getType())) {
+            loginLog.setLoginType("账号登录").setAccount(loginMessage.getLoginAccount());
+            userBean = userService.getUserByAccount(loginMessage.getLoginAccount());
+        }
+        // 该账号对应的用户不存在或用户封禁
         if (null == userBean) {
-//            该账号对应的用户不存在
+            loginLog.setResult(nullUserResult).setLogRemark("尝试登录的账户并不存在");
             return Result.error(CodeMsg.ACCOUNT_NOT_FOUND);
-        } else if (userBean.getPassword().equals(loginMessage.getLoginPassword())) {
-            return Result.success(jwtUtils.sign(String.valueOf(userBean.getUserId())));
-        } else {
-//            密码错误
-            return Result.error(CodeMsg.BAD_CREDENTIAL);
+        } else if (lockUserStatus.equals(userBean.getUserStatus())) {
+            loginLog = BeanDtoVoUtils.convert(userBean, LoginLog.class);
+            loginLog.setResult(lockResult).setLogRemark("该账户已锁定");
+            return Result.error(CodeMsg.ACCOUNT_NOT_ACTIVATED);
         }
-    }
-
-    /**
-     * @param loginMessage: 登录信息
-     * @Return: String
-     * @Author: DengYinzhe
-     * @Description: 短信登录 已测试
-     * @Date: 2023/2/9 10:45
-     */
-    @PostMapping("loginSms")
-    @RequiresGuest
-    public Result loginSms(@RequestBody LoginMessage loginMessage) {
-        User userBean = userService.getUserByTel(loginMessage.getLoginAccount());
-        if (null == userBean) {
-//            该手机号对应的用户不存在
-            return Result.error(CodeMsg.BAD_CREDENTIAL);
-        } else if (redisUtils.get(codePre + loginMessage.getLoginAccount()).isEmpty()) {
-//            验证码过期或验证码不存在
-            return Result.error(CodeMsg.CAPTCHA_EXPIRED);
-        } else if (loginMessage.getLoginPassword().equals(redisUtils.get(codePre + loginMessage.getLoginAccount()))) {
-            return Result.success(jwtUtils.sign(String.valueOf(userBean.getUserId())));
-        } else {
-//            验证码错误
-            return Result.error(CodeMsg.CAPTCHA_INVALID);
+        // 用户存在则将用户信息转与loginLog
+        loginLog = BeanDtoVoUtils.convert(userBean, LoginLog.class);
+        //  登录逻辑判断，登录成功则放行，错误则返回对应的错误信息
+        if (loginBySm.equals(loginMessage.getType())) {
+            smsCode = redisUtils.get(codePre + loginMessage.getLoginAccount());
+            if (null == smsCode) {
+                loginLog.setResult(smsOverdueResult).setLogRemark("验证码过期或验证码不存在");
+                return Result.error(CodeMsg.CAPTCHA_EXPIRED);
+            } else if (loginMessage.getLoginPassword().equals(smsCode)) {
+                flag = true;
+            } else {
+                loginLog.setResult(smsErrorResult).setLogRemark("验证码错误");
+                return Result.error(CodeMsg.CAPTCHA_INVALID);
+            }
+        } else if (loginByPwd.equals(loginMessage.getType())) {
+            if (userBean.getPassword().equals(loginMessage.getLoginPassword())) {
+                flag = true;
+            } else {
+                loginLog.setResult(pwdErrorResult).setLogRemark("密码错误");
+                return Result.error(CodeMsg.BAD_CREDENTIAL);
+            }
         }
+        //  登录成功后的行为：重置删除状态、登录日志、返回签名token
+        if (flag) {
+            if (deleteUserStatus.equals(userBean.getUserStatus())) {
+                userBean.setUserStatus(normalUserStatus);
+                userService.updateById(userBean);
+            }
+            loginLog.setResult(successResult).setLogRemark("用户登录成功");
+            return Result.success(jwtUtils.sign(String.valueOf(userBean.getUserId())));
+        }
+        return Result.error("系统异常");
     }
 
     /**
@@ -146,7 +184,7 @@ public class UserController {
                 minIOUtils.putObject("word", file, fileName);
             }
         } catch (Exception e) {
-            log.error("上传头像失败");
+//            log.error("上传头像失败");
             minIOUtils.removeObject("word", fileName);
             return Result.error("上传头像失败");
         }
@@ -171,7 +209,6 @@ public class UserController {
     public void userImage(@PathVariable("userId") Long userId, HttpServletResponse response) throws IOException {
         ServletOutputStream outputStream = null;
         InputStream inputStream = null;
-
         try {
             //输出流，通过输出流将文件写回浏览器
             outputStream = response.getOutputStream();

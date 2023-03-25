@@ -19,4 +19,6 @@ public class LoginMessage {
     private String loginAccount;
 
     private String loginPassword;
+
+    private String type;
 }

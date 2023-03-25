@@ -47,7 +47,7 @@ public class CodeMsg {
      */
     public static final CodeMsg BAD_CREDENTIAL = new CodeMsg(4003, "用户名或密码错误");
     public static final CodeMsg ACCOUNT_NOT_FOUND = new CodeMsg(4004, "账号不存在");
-    public static final CodeMsg ACCOUNT_NOT_ACTIVATED = new CodeMsg(4005, "账号未激活");
+    public static final CodeMsg ACCOUNT_NOT_ACTIVATED = new CodeMsg(4005, "账号已锁定");
     public static final CodeMsg SHIRO_ERROR = new CodeMsg(4006, "服务器Shiro运行错误");
     /**
      * @Author: DengYinzhe
