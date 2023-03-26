@@ -47,5 +47,8 @@ public class TestController {
         return Result.success();
     }
 
-
+    @GetMapping("a")
+    public Result a(@RequestBody Map<String, String> map) {
+        return Result.success(map);
+    }
 }

@@ -6,6 +6,7 @@ import co.elastic.clients.elasticsearch.core.*;
 import co.elastic.clients.elasticsearch.core.search.Hit;
 import co.elastic.clients.json.JsonData;
 import com.boot.common.result.Result;
+import com.boot.dto.ArticleSearchDto;
 import com.boot.entity.Article;
 import com.boot.utils.JsonUtils;
 import com.boot.utils.SnowFlakeUtil;
@@ -111,28 +112,15 @@ public class ArticleController {
     }
 
     /**
-     * @param pageNum:
-     * @param pageSize:
-     * @param countUp:
-     * @param countLow:
-     * @param title:
-     * @Return: Result
+     * @param articleSearchDto:
+     * @Return: null
      * @Author: DengYinzhe
-     * @Description: 文章查询，如果countLow和up没有写值，就传99999和0
-     * @Date: 2023/3/20 17:14
+     * @Description: TODO
+     * @Date: 2023/3/26 19:22
      */
-    @GetMapping("article/{pageNum}/{pageSize}/{countUp}/{countLow}/{title}")
-    public Result article(
-            @PathVariable Integer pageNum,
-            @PathVariable Integer pageSize,
-            @PathVariable(required = false) Integer countUp,
-            @PathVariable(required = false) Integer countLow,
-            @PathVariable(required = false) String title) throws IOException {
-//        log.info(title);
-//        log.info(String.valueOf(countLow));
-//        log.info(String.valueOf(countUp));
-//        log.info(String.valueOf(pageSize));
-//        log.info(String.valueOf(pageNum));
+    @PostMapping("articleSearch")
+    public Result article(@RequestBody ArticleSearchDto articleSearchDto) throws IOException {
+        log.info(articleSearchDto.toString());
         SearchRequest request = new SearchRequest.Builder()
                 //去哪个索引里搜索
                 .index("article")
@@ -141,27 +129,26 @@ public class ArticleController {
                                         QueryBuilders
                                                 .wildcard()
                                                 .field("articleTitle")
-                                                .value(String.format("*%s*", title))
+                                                .value(String.format("*%s*", articleSearchDto.getTitle()))
                                                 .build()._toQuery(),
                                         QueryBuilders
                                                 .range()
                                                 .field("wordNumber")
-                                                .gte(JsonData.fromJson(String.valueOf(countLow)))
-                                                .lte(JsonData.fromJson(String.valueOf(countUp)))
+                                                .gte(JsonData.fromJson(String.valueOf(articleSearchDto.getCountLow())))
+                                                .lte(JsonData.fromJson(String.valueOf(articleSearchDto.getCountUp())))
                                                 .build()._toQuery()
                                 )
                                 .build()
                                 ._toQuery()
                 )
-                .from((pageNum - 1) * pageSize)
-                .size(pageSize)
+                .from((articleSearchDto.getPageNum() - 1) * articleSearchDto.getPageSize())
+                .size(articleSearchDto.getPageSize())
                 .build();
         List<Article> list = new ArrayList<>();
         List<Hit<Article>> hits = elasticsearchClient.search(request, Article.class).hits().hits();
         for (Hit<Article> Hit : hits) {
             list.add(Hit.source());
         }
-        System.out.println(JsonUtils.getBeanToJson(list));
         return Result.success(list);
     }
 }

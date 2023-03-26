@@ -95,5 +95,9 @@ public class AdminController {
         }
     }
 
+//    @GetMapping("commonUserLog/{pageNum/{pageSize}/{title}/{}")
+//    public Result commonUserLog(@PathVariable Integer pageNum){
+//        return Result.success();
+//    }
 
 }
