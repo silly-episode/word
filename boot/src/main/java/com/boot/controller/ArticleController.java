@@ -41,7 +41,7 @@ public class ArticleController {
      * @param article:
      * @Return: Result
      * @Author: DengYinzhe
-     * @Description: 创建文章
+     * @Description: 发布文章
      * @Date: 2023/3/17 16:27
      */
     @PostMapping("article")

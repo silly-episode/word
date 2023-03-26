@@ -5,15 +5,13 @@ import com.alibaba.excel.util.MapUtils;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.boot.bo.UserExcel;
 import com.boot.common.result.Result;
+import com.boot.dto.LoginMessage;
 import com.boot.entity.User;
 import com.boot.service.UserService;
 import com.boot.utils.BeanDtoVoUtils;
 import com.boot.utils.JsonUtils;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
@@ -39,9 +37,15 @@ public class AdminController {
     @Resource
     private UserService userService;
 
-
+    /**
+     * @param loginMessage:
+     * @Return: Result
+     * @Author: DengYinzhe
+     * @Description: TODO 管理员登录
+     * @Date: 2023/3/26 17:36
+     */
     @PostMapping("login")
-    public Result adminLogin() {
+    public Result adminLogin(@RequestBody LoginMessage loginMessage) {
 
         return Result.success();
     }
@@ -70,8 +74,6 @@ public class AdminController {
             }
             userExcelList.add(BeanDtoVoUtils.convert(user, UserExcel.class));
         }
-//        log.info(JsonUtils.getBeanToJson(userExcelList));
-
         try {
             response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
             response.setCharacterEncoding("utf-8");
@@ -91,8 +93,6 @@ public class AdminController {
             map.put("message", "下载文件失败" + e.getMessage());
             response.getWriter().println(JsonUtils.getBeanToJson(map));
         }
-
-//       return Result.success();
     }
 
 

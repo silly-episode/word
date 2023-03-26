@@ -284,7 +284,7 @@ public class UserController {
     public Result userDelete(@PathVariable("userId") Long userId) {
         UpdateWrapper<User> wrapper = new UpdateWrapper<>();
         wrapper.set("user_status", '2').eq("user_id", userId);
-        boolean result = userService.update(null, wrapper);
+        boolean result = userService.update(wrapper);
         if (result) {
             return Result.success("注销成功");
         } else {

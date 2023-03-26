@@ -19,6 +19,6 @@ public class LoginMessage {
     private String loginAccount;
 
     private String loginPassword;
-
+    //手机号登录还是密码登录
     private String type;
 }
