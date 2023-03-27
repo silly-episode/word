@@ -4,12 +4,14 @@ import com.alibaba.excel.EasyExcel;
 import com.alibaba.excel.util.MapUtils;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.boot.bo.LoginLogExcel;
 import com.boot.bo.UserExcel;
 import com.boot.common.result.Result;
 import com.boot.dto.LoginLogSearchDto;
 import com.boot.dto.LoginMessage;
+import com.boot.dto.UserMsgDto2;
 import com.boot.dto.UserSearchDto;
 import com.boot.entity.LoginLog;
 import com.boot.entity.User;
@@ -45,6 +47,7 @@ public class AdminController {
     private UserService userService;
     @Resource
     private LoginLogService loginLogService;
+    /*重置的密码*/
 
     /**
      * @param loginMessage:
@@ -60,11 +63,28 @@ public class AdminController {
     }
 
 
+    @PutMapping("password")
+    public Result password(@RequestBody Map<String, Long> map) {
+        String userResetPassword = "123456";
+
+        UpdateWrapper<User> updateWrapper = new UpdateWrapper<>();
+        updateWrapper
+                .eq("user_id", map.get("userId"))
+                .set("password", map.get("password"));
+        if (userService.update(updateWrapper)) {
+            return Result.success("重置密码失败");
+        } else {
+            return Result.error("重置密码成功");
+        }
+    }
+
     @PostMapping("userSearch")
-    public Result userSearch(@RequestBody UserSearchDto userSearchDto) {
-        Page<LoginLog> pageInfo = new Page(userSearchDto.getPageNum(), userSearchDto.getPageSize());
+    public Result<Page<UserMsgDto2>> userSearch(@RequestBody UserSearchDto userSearchDto) {
+        Page<User> pageInfo = new Page<>(userSearchDto.getPageNum(), userSearchDto.getPageSize());
         LambdaQueryWrapper<User> wrapper = new LambdaQueryWrapper<>();
         String oftenParam = userSearchDto.getAccountOrTelOrNickNameOrUserId();
+        boolean flag = null != userSearchDto.getIntegrationOrderByAsc();
+        String userStatus;
         wrapper
                 .ge(null != userSearchDto.getBeginTime(), User::getRegisterTime, userSearchDto.getBeginTime())
                 .le(null != userSearchDto.getEndTime(), User::getRegisterTime, userSearchDto.getEndTime())
@@ -76,8 +96,21 @@ public class AdminController {
                                 .or().eq(User::getUserId, oftenParam)
                 )
                 .orderByDesc(User::getRegisterTime)
-                .orderBy(null != userSearchDto.getIntegrationOrder(), userSearchDto.getIntegrationOrder(), User::getIntegration);
-        return Result.success();
+                .orderByDesc(flag && !userSearchDto.getIntegrationOrderByAsc(), User::getIntegration)
+                .orderByAsc(flag && userSearchDto.getIntegrationOrderByAsc(), User::getIntegration);
+        userService.page(pageInfo, wrapper);
+        for (User record : pageInfo.getRecords()) {
+            userStatus = record.getUserStatus();
+            if ("0".equals(userStatus)) {
+                record.setUserStatus("正常");
+            } else if ("1".equals(userStatus)) {
+                record.setUserStatus("锁定");
+            } else if ("2".equals(userStatus)) {
+                record.setUserStatus("待删除");
+            }
+        }
+        Page<UserMsgDto2> pageInfoDto = BeanDtoVoUtils.pageVo(pageInfo, UserMsgDto2.class);
+        return Result.success(pageInfoDto);
     }
 
     /**
@@ -132,12 +165,12 @@ public class AdminController {
      * @Date: 2023/3/27 10:03
      */
     @PostMapping("commonUserLog")
-    public Result commonUserLog(@RequestBody LoginLogSearchDto logSearch, HttpServletResponse response) throws IOException {
+    public Result<Page<LoginLog>> commonUserLog(@RequestBody LoginLogSearchDto logSearch, HttpServletResponse response) throws IOException {
         /*查询信息*/
-        Page<LoginLog> pageInfo = new Page(logSearch.getPageNum(), logSearch.getPageSize());
+        Page<LoginLog> pageInfo = new Page<>(logSearch.getPageNum(), logSearch.getPageSize());
         LambdaQueryWrapper<LoginLog> wrapper = new LambdaQueryWrapper<>();
         String oftenParam = logSearch.getAccountOrTelOrNickNameOrUserId();
-        String userStatus = "";
+        String userStatus;
         wrapper
                 .ge(null != logSearch.getBeginTime(), LoginLog::getLoginTime, logSearch.getBeginTime())
                 .le(null != logSearch.getEndTime(), LoginLog::getLoginTime, logSearch.getEndTime())

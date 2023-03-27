@@ -26,6 +26,6 @@ public class UserSearchDto extends PageDto {
     private String accountOrTelOrNickNameOrUserId;
     /*用户状态*/
     private String userStatus;
-    /*积分升序或降序*/
-    private Boolean integrationOrder;
+    /*积分升序或降序,*/
+    private Boolean integrationOrderByAsc;
 }

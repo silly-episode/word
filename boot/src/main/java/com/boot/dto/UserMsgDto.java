@@ -4,12 +4,14 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 /**
  * @Project: word
  * @Author: DengYinzhe
  * @Date: 2023/2/9 11:32
  * @FileName: userMsgDto
- * @Description: 用户基础信息
+ * @Description: 用户基础信息（个人）
  */
 
 @Data
@@ -34,4 +36,6 @@ public class UserMsgDto {
     private Integer integration;
     //登录账号
     private String account;
+
+    private LocalDateTime registerTime;
 }

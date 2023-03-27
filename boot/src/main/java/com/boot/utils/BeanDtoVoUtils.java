@@ -1,14 +1,11 @@
 package com.boot.utils;
 
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.springframework.beans.BeanUtils;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * @Project: word
@@ -71,22 +68,33 @@ public class BeanDtoVoUtils {
     }
 
     /**
-     * @param page:
      * @param v:
      * @Return: Page<V>
      * @Author: DengYinzhe
      * @Description: Page<Entity> 分页对象转 Page<Vo>  ( list 循环)
      * @Date: 2023/2/2 20:33
      */
-    public static <T, V> Page<V> pageVo(Page<T> page, Class<V> v) {
+    public static <T, V> Page<V> pageVo(Page<T> oldPage, Class<V> v) {
         try {
-            List<T> tList = page.getContent();
+            List<T> tList = oldPage.getRecords();
             List<V> voList = new ArrayList<>();
             for (T t : tList) {
                 V temp = (V) BeanDtoVoUtils.convert(t, v.getDeclaredConstructor().newInstance().getClass());
                 voList.add(temp);
             }
-            return new PageImpl<>(voList, page.getPageable(), page.getTotalElements());
+            Page<V> newPage = new Page<V>(
+                    oldPage.getCurrent(),
+                    oldPage.getSize(),
+                    oldPage.getTotal(),
+                    oldPage.searchCount());
+            newPage.setCountId(oldPage.getCountId());
+            newPage.setRecords(voList);
+            newPage.setMaxLimit(oldPage.getMaxLimit());
+            newPage.setPages(oldPage.getPages());
+            newPage.setOptimizeCountSql(oldPage.optimizeCountSql());
+            newPage.setOrders(oldPage.getOrders());
+            newPage.setOptimizeJoinOfCountSql(oldPage.optimizeJoinOfCountSql());
+            return newPage;
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -94,25 +102,25 @@ public class BeanDtoVoUtils {
     }
 
 
-    /**
-     * @param page:
-     * @param v:
-     * @Return: Page<V>
-     * @Author: DengYinzhe
-     * @Description: Page<Entity> 分页对象转 Page<Vo> （Stream 方式）
-     * @Date: 2023/2/2 20:33
-     */
-    public static <T, V> Page<V> pageVoStream(Page<T> page, Class<V> v) {
-        List<V> voList = page.getContent().stream().map(item -> {
-            try {
-                return (V) BeanDtoVoUtils.convert(item, v.getDeclaredConstructor().newInstance().getClass());
-            } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
-                e.printStackTrace();
-            }
-            return null;
-        }).collect(Collectors.toList());
-        return new PageImpl<>(voList, page.getPageable(), page.getTotalElements());
-    }
+//    /**
+//     * @param page:
+//     * @param v:
+//     * @Return: Page<V>
+//     * @Author: DengYinzhe
+//     * @Description: Page<Entity> 分页对象转 Page<Vo> （Stream 方式）
+//     * @Date: 2023/2/2 20:33
+//     */
+//    public static <T, V> Page<V> pageVoStream(Page<T> page, Class<V> v) {
+//        List<V> voList = page.getContent().stream().map(item -> {
+//            try {
+//                return (V) BeanDtoVoUtils.convert(item, v.getDeclaredConstructor().newInstance().getClass());
+//            } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
+//                e.printStackTrace();
+//            }
+//            return null;
+//        }).collect(Collectors.toList());
+//        return new PageImpl<>(voList, page.getPageable(), page.getTotalElements());
+//    }
 
 
 }
