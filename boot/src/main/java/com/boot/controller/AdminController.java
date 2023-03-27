@@ -112,22 +112,34 @@ public class AdminController {
      */
     @PostMapping("commonUserLog")
     public Result commonUserLog(@RequestBody LoginLogSearch logSearch, HttpServletResponse response) throws IOException {
-        log.info(logSearch.toString());
         /*查询信息*/
         Page<LoginLog> pageInfo = new Page(logSearch.getPageNum(), logSearch.getPageSize());
         LambdaQueryWrapper<LoginLog> wrapper = new LambdaQueryWrapper<>();
+        String oftenParam = logSearch.getAccountOrTelOrNickNameOrUserId();
+        String userStatus = "";
         wrapper
                 .ge(null != logSearch.getBeginTime(), LoginLog::getLoginTime, logSearch.getBeginTime())
                 .le(null != logSearch.getEndTime(), LoginLog::getLoginTime, logSearch.getEndTime())
                 .eq(null != logSearch.getLoginType(), LoginLog::getLoginType, logSearch.getLoginType())
                 .eq(null != logSearch.getResult(), LoginLog::getResult, logSearch.getResult())
-                .and(
-                        e -> e.like(null != logSearch.getAccountOrTelOrNickNameOrUserId(), LoginLog::getNickName, logSearch.getAccountOrTelOrNickNameOrUserId())
-                                .or().eq(null != logSearch.getAccountOrTelOrNickNameOrUserId(), LoginLog::getAccount, logSearch.getAccountOrTelOrNickNameOrUserId())
-                                .or().eq(null != logSearch.getAccountOrTelOrNickNameOrUserId(), LoginLog::getTel, logSearch.getAccountOrTelOrNickNameOrUserId())
-                                .or().eq(null != logSearch.getAccountOrTelOrNickNameOrUserId(), LoginLog::getUserId, logSearch.getAccountOrTelOrNickNameOrUserId())
+                .and(null != oftenParam,
+                        e -> e.like(LoginLog::getNickName, oftenParam)
+                                .or().eq(LoginLog::getAccount, oftenParam)
+                                .or().eq(LoginLog::getTel, oftenParam)
+                                .or().eq(LoginLog::getUserId, oftenParam)
                 );
         loginLogService.page(pageInfo, wrapper);
+
+        for (LoginLog record : pageInfo.getRecords()) {
+            userStatus = record.getUserStatus();
+            if ("0".equals(userStatus)) {
+                record.setUserStatus("正常");
+            } else if ("1".equals(userStatus)) {
+                record.setUserStatus("锁定");
+            } else if ("2".equals(userStatus)) {
+                record.setUserStatus("待删除");
+            }
+        }
         /*是否导出的逻辑*/
         if (logSearch.getExport() != null && logSearch.getExport()) {
             List<LoginLogExcel> list = BeanDtoVoUtils.convertList(pageInfo.getRecords(), LoginLogExcel.class);
@@ -150,12 +162,10 @@ public class AdminController {
                 map.put("message", "下载文件失败" + e.getMessage());
                 response.getWriter().println(JsonUtils.getBeanToJson(map));
             }
-            return Result.success("导出成功");
+            return null;
         } else {
             return Result.success(pageInfo);
         }
-
-
     }
 
 }

@@ -39,13 +39,13 @@ public class LoginLogExcel {
 
 
     //登录账户
-    @ColumnWidth(25)
+    @ColumnWidth(20)
     @ExcelProperty(value = "账号", index = 2)
     private String account;
 
 
     //ip
-    @ColumnWidth(15)
+    @ColumnWidth(25)
     @ExcelProperty(value = "IP地址", index = 7)
     private String ip;
 
@@ -53,26 +53,25 @@ public class LoginLogExcel {
     //    避免科学计数法
     @NumberFormat(value = "#")
 //    设置单元格宽度
-    @ColumnWidth(30)
+    @ColumnWidth(25)
 // 转换器设置为long和string的转换防止精度丢失
     @ExcelProperty(value = "用户ID", index = 1, converter = LongStringConverter.class)
     private Long userId;
 
 
     //用户名
-    @ColumnWidth(30)
+    @ColumnWidth(20)
     @ExcelProperty(value = "昵称", index = 3)
     private String nickName;
 
 
     //电话
-    @ColumnWidth(25)
+    @ColumnWidth(20)
     @ExcelProperty(value = "手机号", index = 4)
     private String tel;
 
 
     //结果的描述
-    @ContentStyle(horizontalAlignment = HorizontalAlignmentEnum.LEFT, verticalAlignment = VerticalAlignmentEnum.CENTER)
     @ColumnWidth(40)
     @ExcelProperty(value = "登录结果", index = 8)
     private String logRemark;
@@ -85,7 +84,7 @@ public class LoginLogExcel {
 
 
     //登录方式：账号登录，短信登录
-    @ColumnWidth(15)
+    @ColumnWidth(17)
     @ExcelProperty(value = "登录方式", index = 6)
     private String loginType;
 

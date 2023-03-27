@@ -69,6 +69,11 @@
       "name": "tencent.msm.endPoint",
       "type": "java.lang.String",
       "description": "Description for tencent.msm.endPoint."
+    },
+    {
+      "name": "mybatis-plus.map-underscore-to-camel-case",
+      "type": "java.lang.String",
+      "description": "Description for mybatis-plus.map-underscore-to-camel-case."
     }
   ]
 }
