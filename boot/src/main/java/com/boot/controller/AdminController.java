@@ -8,8 +8,9 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.boot.bo.LoginLogExcel;
 import com.boot.bo.UserExcel;
 import com.boot.common.result.Result;
-import com.boot.dto.LoginLogSearch;
+import com.boot.dto.LoginLogSearchDto;
 import com.boot.dto.LoginMessage;
+import com.boot.dto.UserSearchDto;
 import com.boot.entity.LoginLog;
 import com.boot.entity.User;
 import com.boot.service.LoginLogService;
@@ -59,6 +60,26 @@ public class AdminController {
     }
 
 
+    @PostMapping("userSearch")
+    public Result userSearch(@RequestBody UserSearchDto userSearchDto) {
+        Page<LoginLog> pageInfo = new Page(userSearchDto.getPageNum(), userSearchDto.getPageSize());
+        LambdaQueryWrapper<User> wrapper = new LambdaQueryWrapper<>();
+        String oftenParam = userSearchDto.getAccountOrTelOrNickNameOrUserId();
+        wrapper
+                .ge(null != userSearchDto.getBeginTime(), User::getRegisterTime, userSearchDto.getBeginTime())
+                .le(null != userSearchDto.getEndTime(), User::getRegisterTime, userSearchDto.getEndTime())
+                .eq(null != userSearchDto.getUserStatus(), User::getUserStatus, userSearchDto.getUserStatus())
+                .and(null != oftenParam,
+                        e -> e.like(User::getNickName, oftenParam)
+                                .or().eq(User::getAccount, oftenParam)
+                                .or().eq(User::getTel, oftenParam)
+                                .or().eq(User::getUserId, oftenParam)
+                )
+                .orderByDesc(User::getRegisterTime)
+                .orderBy(null != userSearchDto.getIntegrationOrder(), userSearchDto.getIntegrationOrder(), User::getIntegration);
+        return Result.success();
+    }
+
     /**
      * @param response:
      * @Return: void
@@ -107,11 +128,11 @@ public class AdminController {
      * @param logSearch:
      * @Return: Result
      * @Author: DengYinzhe
-     * @Description: TODO 登录日志分页查询和日志导出
+     * @Description: 登录日志分页查询和日志导出
      * @Date: 2023/3/27 10:03
      */
     @PostMapping("commonUserLog")
-    public Result commonUserLog(@RequestBody LoginLogSearch logSearch, HttpServletResponse response) throws IOException {
+    public Result commonUserLog(@RequestBody LoginLogSearchDto logSearch, HttpServletResponse response) throws IOException {
         /*查询信息*/
         Page<LoginLog> pageInfo = new Page(logSearch.getPageNum(), logSearch.getPageSize());
         LambdaQueryWrapper<LoginLog> wrapper = new LambdaQueryWrapper<>();
