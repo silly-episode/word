@@ -48,6 +48,27 @@ public class BeanDtoVoUtils {
         }
     }
 
+    /**
+     * @param oldList:
+     * @param v:
+     * @Return: List<V>
+     * @Author: DengYinzhe
+     * @Description: list转换
+     * @Date: 2023/3/27 13:04
+     */
+    public static <T, V> List<V> convertList(List<T> oldList, Class<V> v) {
+        try {
+            List<V> newList = new ArrayList<>();
+            for (T t : oldList) {
+                V temp = (V) BeanDtoVoUtils.convert(t, v.getDeclaredConstructor().newInstance().getClass());
+                newList.add(temp);
+            }
+            return newList;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
     /**
      * @param page:

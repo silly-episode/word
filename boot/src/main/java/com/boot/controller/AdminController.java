@@ -2,11 +2,17 @@ package com.boot.controller;
 
 import com.alibaba.excel.EasyExcel;
 import com.alibaba.excel.util.MapUtils;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.boot.bo.LoginLogExcel;
 import com.boot.bo.UserExcel;
 import com.boot.common.result.Result;
+import com.boot.dto.LoginLogSearch;
 import com.boot.dto.LoginMessage;
+import com.boot.entity.LoginLog;
 import com.boot.entity.User;
+import com.boot.service.LoginLogService;
 import com.boot.service.UserService;
 import com.boot.utils.BeanDtoVoUtils;
 import com.boot.utils.JsonUtils;
@@ -36,6 +42,8 @@ public class AdminController {
 
     @Resource
     private UserService userService;
+    @Resource
+    private LoginLogService loginLogService;
 
     /**
      * @param loginMessage:
@@ -81,7 +89,7 @@ public class AdminController {
             String fileName = URLEncoder.encode("word-用户信息表", StandardCharsets.UTF_8).replaceAll("\\+", "%20");
             response.setHeader("Content-disposition", "attachment;filename*=utf-8''" + fileName + ".xlsx");
             // 这里需要设置不关闭流
-            EasyExcel.write(response.getOutputStream(), UserExcel.class).autoCloseStream(Boolean.FALSE).sheet("模板")
+            EasyExcel.write(response.getOutputStream(), UserExcel.class).autoCloseStream(Boolean.FALSE).sheet()
                     .doWrite(userExcelList);
         } catch (Exception e) {
             // 重置response
@@ -95,9 +103,58 @@ public class AdminController {
         }
     }
 
-//    @GetMapping("commonUserLog/{pageNum/{pageSize}/{title}/{}")
-//    public Result commonUserLog(@PathVariable Integer pageNum){
-//        return Result.success();
-//    }
+    /**
+     * @param logSearch:
+     * @Return: Result
+     * @Author: DengYinzhe
+     * @Description: TODO 登录日志分页查询和日志导出
+     * @Date: 2023/3/27 10:03
+     */
+    @PostMapping("commonUserLog")
+    public Result commonUserLog(@RequestBody LoginLogSearch logSearch, HttpServletResponse response) throws IOException {
+        /*查询信息*/
+        Page<LoginLog> pageInfo = new Page(logSearch.getPageNum(), logSearch.getPageSize());
+        LambdaQueryWrapper<LoginLog> wrapper = new LambdaQueryWrapper<>();
+        wrapper
+                .ge(null != logSearch.getBeginTime(), LoginLog::getLoginTime, logSearch.getBeginTime())
+                .le(null != logSearch.getEndTime(), LoginLog::getLoginTime, logSearch.getEndTime())
+                .eq(null != logSearch.getLoginType(), LoginLog::getLoginType, logSearch.getLoginType())
+                .eq(null != logSearch.getResult(), LoginLog::getResult, logSearch.getResult())
+                .and(
+                        e -> e.like(null != logSearch.getAccountOrTelOrNickNameOrUserId(), LoginLog::getNickName, logSearch.getAccountOrTelOrNickNameOrUserId())
+                                .or().eq(null != logSearch.getAccountOrTelOrNickNameOrUserId(), LoginLog::getAccount, logSearch.getAccountOrTelOrNickNameOrUserId())
+                                .or().eq(null != logSearch.getAccountOrTelOrNickNameOrUserId(), LoginLog::getTel, logSearch.getAccountOrTelOrNickNameOrUserId())
+                                .or().eq(null != logSearch.getAccountOrTelOrNickNameOrUserId(), LoginLog::getUserId, logSearch.getAccountOrTelOrNickNameOrUserId())
+                );
+        loginLogService.page(pageInfo, wrapper);
+        /*是否导出的逻辑*/
+        if (logSearch.getExport()) {
+            List<LoginLogExcel> list = BeanDtoVoUtils.convertList(pageInfo.getRecords(), LoginLogExcel.class);
+            try {
+                response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+                response.setCharacterEncoding("utf-8");
+                // 这里URLEncoder.encode可以防止中文乱码 当然和easyexcel没有关系
+                String fileName = URLEncoder.encode("word-用户登录日志表", StandardCharsets.UTF_8).replaceAll("\\+", "%20");
+                response.setHeader("Content-disposition", "attachment;filename*=utf-8''" + fileName + ".xlsx");
+                // 这里需要设置不关闭流
+                EasyExcel.write(response.getOutputStream(), LoginLogExcel.class).autoCloseStream(Boolean.FALSE).sheet()
+                        .doWrite(list);
+            } catch (Exception e) {
+                // 重置response
+                response.reset();
+                response.setContentType("application/json");
+                response.setCharacterEncoding("utf-8");
+                Map<String, String> map = MapUtils.newHashMap();
+                map.put("status", "failure");
+                map.put("message", "下载文件失败" + e.getMessage());
+                response.getWriter().println(JsonUtils.getBeanToJson(map));
+            }
+            return Result.success("导出成功");
+        } else {
+            return Result.success(pageInfo);
+        }
+
+
+    }
 
 }

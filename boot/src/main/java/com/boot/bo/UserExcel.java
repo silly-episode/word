@@ -1,7 +1,6 @@
 package com.boot.bo;
 
 import com.alibaba.excel.annotation.ExcelProperty;
-import com.alibaba.excel.annotation.format.DateTimeFormat;
 import com.alibaba.excel.annotation.format.NumberFormat;
 import com.alibaba.excel.annotation.write.style.*;
 import com.alibaba.excel.converters.longconverter.LongStringConverter;
@@ -41,7 +40,7 @@ public class UserExcel {
 //    设置单元格宽度
     @ColumnWidth(30)
 // 转换器设置为long和string的转换防止精度丢失
-    @ExcelProperty(value = "Id", index = 0, converter = LongStringConverter.class)
+    @ExcelProperty(value = "用户ID", index = 0, converter = LongStringConverter.class)
     private Long userId;
 
     @ContentStyle(horizontalAlignment = HorizontalAlignmentEnum.CENTER, verticalAlignment = VerticalAlignmentEnum.CENTER)
