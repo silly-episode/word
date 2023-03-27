@@ -112,6 +112,7 @@ public class AdminController {
      */
     @PostMapping("commonUserLog")
     public Result commonUserLog(@RequestBody LoginLogSearch logSearch, HttpServletResponse response) throws IOException {
+        log.info(logSearch.toString());
         /*查询信息*/
         Page<LoginLog> pageInfo = new Page(logSearch.getPageNum(), logSearch.getPageSize());
         LambdaQueryWrapper<LoginLog> wrapper = new LambdaQueryWrapper<>();
@@ -128,7 +129,7 @@ public class AdminController {
                 );
         loginLogService.page(pageInfo, wrapper);
         /*是否导出的逻辑*/
-        if (logSearch.getExport()) {
+        if (logSearch.getExport() != null && logSearch.getExport()) {
             List<LoginLogExcel> list = BeanDtoVoUtils.convertList(pageInfo.getRecords(), LoginLogExcel.class);
             try {
                 response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");

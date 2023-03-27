@@ -3,6 +3,7 @@ package com.boot.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.boot.dao.UserDao;
+import com.boot.entity.LoginLog;
 import com.boot.entity.User;
 import com.boot.service.UserService;
 import org.springframework.stereotype.Service;
@@ -33,6 +34,18 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements UserS
         QueryWrapper<User> query = new QueryWrapper<User>();
         query.eq("tel", phone);
         return userDao.selectOne(query);
+    }
+
+
+    @Override
+    public LoginLog userToLoginLog(User userBean, LoginLog loginLog) {
+        loginLog
+                .setTel(userBean.getTel())
+                .setUserId(userBean.getUserId())
+                .setAccount(userBean.getAccount())
+                .setNickName(userBean.getNickName())
+                .setUserStatus(userBean.getUserStatus());
+        return loginLog;
     }
 }
 

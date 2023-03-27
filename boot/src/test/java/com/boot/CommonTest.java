@@ -1,5 +1,6 @@
 package com.boot;
 
+import com.boot.entity.LoginLog;
 import com.boot.entity.Plan;
 import com.boot.entity.WordModule;
 import lombok.extern.slf4j.Slf4j;
@@ -152,6 +153,9 @@ public class CommonTest {
     public void test5() {
         WordModule wordModule = new WordModule().setModuleId(1L).setWordPath("123");
         wordModule.setModuleImagePath("123").setRemark("123");
+
+        LoginLog loginLog = new LoginLog();
+//        loginLog
         System.out.println(wordModule);
     }
 
@@ -193,6 +197,11 @@ public class CommonTest {
         System.out.println(a.isBlank());
         System.out.println(a.isEmpty());
 
+
+    }
+
+    @Test
+    public void testNull() {
 
     }
 

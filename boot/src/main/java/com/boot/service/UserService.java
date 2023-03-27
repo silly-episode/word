@@ -1,6 +1,7 @@
 package com.boot.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.boot.entity.LoginLog;
 import com.boot.entity.User;
 
 /**
@@ -14,5 +15,7 @@ public interface UserService extends IService<User> {
     User getUserByAccount(String account);
 
     User getUserByTel(String phone);
+
+    LoginLog userToLoginLog(User userBean, LoginLog loginLog);
 }
 

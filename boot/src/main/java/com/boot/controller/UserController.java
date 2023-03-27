@@ -10,7 +10,6 @@ import com.boot.dto.RegisterMessage;
 import com.boot.dto.UserMsgDto;
 import com.boot.entity.LoginLog;
 import com.boot.entity.User;
-import com.boot.service.LoginLogService;
 import com.boot.service.UserService;
 import com.boot.utils.*;
 import lombok.extern.slf4j.Slf4j;
@@ -69,9 +68,8 @@ public class UserController {
     private final String smsErrorResult = "3";
     private final String pwdErrorResult = "4";
     private final String lockResult = "5";
-    @Resource
-    private LoginLogService loginLogService;
 
+    private LoginLog loginLog = new LoginLog();
     /**
      * @param phone: 中国手机号码
      * @Return: String 短信验证码
@@ -109,9 +107,10 @@ public class UserController {
         User userBean = null;
         boolean flag = false;
         String smsCode = null;
-        LoginLog loginLog = new LoginLog();
-        //获取用户真实的IP地址
-        loginLog.setIp(HttpUtils.getIpAddress(request));
+        //获取用户真实的IP地址并设置登录时间
+        loginLog
+                .setIp(HttpUtils.getIpAddress(request))
+                .setLoginTime(LocalDateTime.now());
         //获取用户信息
         if (loginBySm.equals(loginMessage.getType())) {
             loginLog.setLoginType("短信登录").setTel(loginMessage.getLoginAccount());
@@ -125,12 +124,12 @@ public class UserController {
             loginLog.setResult(nullUserResult).setLogRemark("尝试登录的账户并不存在");
             return Result.error(CodeMsg.ACCOUNT_NOT_FOUND);
         } else if (lockUserStatus.equals(userBean.getUserStatus())) {
-            loginLog = BeanDtoVoUtils.convert(userBean, LoginLog.class);
+            loginLog = userService.userToLoginLog(userBean, loginLog);
             loginLog.setResult(lockResult).setLogRemark("该账户已锁定");
             return Result.error(CodeMsg.ACCOUNT_NOT_ACTIVATED);
         }
         // 用户存在则将用户信息转与loginLog
-        loginLog = BeanDtoVoUtils.convert(userBean, LoginLog.class);
+        loginLog = userService.userToLoginLog(userBean, loginLog);
         //  登录逻辑判断，登录成功则放行，错误则返回对应的错误信息
         if (loginBySm.equals(loginMessage.getType())) {
             smsCode = redisUtils.get(codePre + loginMessage.getLoginAccount());
@@ -158,6 +157,7 @@ public class UserController {
                 userService.updateById(userBean);
             }
             loginLog.setResult(successResult).setLogRemark("用户登录成功");
+            System.out.println(loginLog.toString());
             return Result.success(jwtUtils.sign(String.valueOf(userBean.getUserId())));
         }
         return Result.error("系统异常");

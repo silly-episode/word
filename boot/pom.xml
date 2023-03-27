@@ -264,11 +264,23 @@
             <artifactId>itext-asian</artifactId>
             <version>5.2.0</version>
         </dependency>
-<!--    excel的导入和导出    easyExcel-->
+        <!--    excel的导入和导出    easyExcel-->
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>easyexcel</artifactId>
             <version>3.2.0</version>
+        </dependency>
+        <!--        获取系统的信息-->
+        <dependency>
+            <groupId>io.klib.tools</groupId>
+            <artifactId>org.hyperic.sigar</artifactId>
+            <version>1.6.4</version>
+        </dependency>
+        <!--创建、操作、分析class文件-->
+        <dependency>
+            <groupId>org.apache.bcel</groupId>
+            <artifactId>bcel</artifactId>
+            <version>6.7.0</version>
         </dependency>
 
     </dependencies>
