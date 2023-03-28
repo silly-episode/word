@@ -27,6 +27,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -62,11 +64,17 @@ public class AdminController {
         return Result.success();
     }
 
-
+    /**
+     * @param map:
+     * @Return: Result<String>
+     * @Author: DengYinzhe
+     * @Description: TODO 管理员重置密码
+     * @Date: 2023/3/28 9:28
+     */
     @PutMapping("password")
-    public Result password(@RequestBody Map<String, Long> map) {
+    public Result<String> password(@RequestBody Map<String, Long> map) {
+        // todo 这里的密码要从数据库中查询出来
         String userResetPassword = "123456";
-
         UpdateWrapper<User> updateWrapper = new UpdateWrapper<>();
         updateWrapper
                 .eq("user_id", map.get("userId"))
@@ -78,6 +86,54 @@ public class AdminController {
         }
     }
 
+    /**
+     * @param map:
+     * @Return: Result<String>
+     * @Author: DengYinzhe
+     * @Description: TODO 管理员修改描述
+     * @Date: 2023/3/28 9:29
+     */
+    @PutMapping("remark")
+    public Result<String> remark(@RequestBody Map<String, Long> map) {
+        UpdateWrapper<User> updateWrapper = new UpdateWrapper<>();
+        updateWrapper
+                .eq("user_id", map.get("userId"))
+                .set("password", map.get("remark"));
+        if (userService.update(updateWrapper)) {
+            return Result.success("修改描述成功");
+        } else {
+            return Result.error("修改描述失败");
+        }
+    }
+
+    /**
+     * @param map:
+     * @Return: Result<String>
+     * @Author: DengYinzhe
+     * @Description: TODO 锁定用户
+     * @Date: 2023/3/28 9:43
+     */
+    @PutMapping("lockUser")
+    public Result<String> lockUser(@RequestBody Map<String, String> map) {
+        UpdateWrapper<User> updateWrapper = new UpdateWrapper<>();
+        updateWrapper
+                .eq("user_id", map.get("userId"))
+                .set("user_status", "1")
+                .set("lock_time", LocalDate.parse(map.get("lockTime"), DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+        if (userService.update(updateWrapper)) {
+            return Result.success("修改描述成功");
+        } else {
+            return Result.error("修改描述失败");
+        }
+    }
+
+    /**
+     * @param userSearchDto:
+     * @Return: Result<Page < UserMsgDto2>>
+     * @Author: DengYinzhe
+     * @Description: 多条件查询用户列表
+     * @Date: 2023/3/28 9:02
+     */
     @PostMapping("userSearch")
     public Result<Page<UserMsgDto2>> userSearch(@RequestBody UserSearchDto userSearchDto) {
         Page<User> pageInfo = new Page<>(userSearchDto.getPageNum(), userSearchDto.getPageSize());
@@ -221,5 +277,6 @@ public class AdminController {
             return Result.success(pageInfo);
         }
     }
+
 
 }

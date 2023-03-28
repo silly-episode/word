@@ -25,6 +25,13 @@ public class LogAspect {
     @Resource
     private LoginLogService loginLogService;
 
+    /**
+     * @param joinPoint:
+     * @Return: void
+     * @Author: DengYinzhe
+     * @Description: 登录后录入登录日志
+     * @Date: 2023/3/28 8:59
+     */
     @After("execution(* com.boot.controller.UserController.login(..))")
     public void saveCommonUserLoginLog(JoinPoint joinPoint) {
         try {

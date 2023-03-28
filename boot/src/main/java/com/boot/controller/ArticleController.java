@@ -1,6 +1,8 @@
 package com.boot.controller;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
+import co.elastic.clients.elasticsearch._types.SortOptionsBuilders;
+import co.elastic.clients.elasticsearch._types.SortOrder;
 import co.elastic.clients.elasticsearch._types.query_dsl.QueryBuilders;
 import co.elastic.clients.elasticsearch.core.*;
 import co.elastic.clients.elasticsearch.core.search.Hit;
@@ -115,7 +117,7 @@ public class ArticleController {
      * @param articleSearchDto:
      * @Return: null
      * @Author: DengYinzhe
-     * @Description: TODO
+     * @Description: TODO 文章查询
      * @Date: 2023/3/26 19:22
      */
     @PostMapping("articleSearch")
@@ -141,13 +143,17 @@ public class ArticleController {
                                 .build()
                                 ._toQuery()
                 )
+                .sort(
+                        SortOptionsBuilders.field(f -> f.field("articleCreateTime").order(SortOrder.Desc)),
+                        SortOptionsBuilders.field(f -> f.field("wordNumber").order(SortOrder.Desc)))
+                .source(SourceConfigBuilders -> SourceConfigBuilders.filter().excludes("content").build())
                 .from((articleSearchDto.getPageNum() - 1) * articleSearchDto.getPageSize())
                 .size(articleSearchDto.getPageSize())
                 .build();
         List<Article> list = new ArrayList<>();
         List<Hit<Article>> hits = elasticsearchClient.search(request, Article.class).hits().hits();
-        for (Hit<Article> Hit : hits) {
-            list.add(Hit.source());
+        for (Hit<Article> hit : hits) {
+            list.add(hit.source());
         }
         return Result.success(list);
     }

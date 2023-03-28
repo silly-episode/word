@@ -11,6 +11,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 /**
@@ -85,10 +86,10 @@ public class UserExcel {
     @ExcelProperty(value = "注册时间", index = 10)
     private LocalDateTime registerTime;
 
-//    @DateTimeFormat("yyyy年MM月dd日 HH时mm分ss秒")
+    //    @DateTimeFormat("yyyy年MM月dd日 HH时mm分ss秒")
     @ColumnWidth(25)
     @ExcelProperty(value = "锁定时间", index = 11)
-    private LocalDateTime lockTime;
+    private LocalDate lockTime;
 
     @ContentStyle(horizontalAlignment = HorizontalAlignmentEnum.LEFT, verticalAlignment = VerticalAlignmentEnum.CENTER)
     @ColumnWidth(40)

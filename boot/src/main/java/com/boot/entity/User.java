@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 /**
@@ -52,7 +53,7 @@ public class User extends Model<User> {
     //注册时间
     private LocalDateTime registerTime;
     //锁定时间
-    private LocalDateTime lockTime;
+    private LocalDate lockTime;
     //备注
     private String remark;
     //个性签名
