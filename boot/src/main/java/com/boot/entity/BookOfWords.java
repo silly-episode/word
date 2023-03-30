@@ -5,8 +5,6 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -29,10 +27,10 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @SuppressWarnings("all")
 public class BookOfWords extends Model<BookOfWords> {
-    @JsonSerialize(using = ToStringSerializer.class)
+
     @TableId(type = IdType.ASSIGN_ID)
     private Long wordId;
-    @JsonSerialize(using = ToStringSerializer.class)
+
     private Long bookId;
 
     private String word;

@@ -7,6 +7,7 @@ import co.elastic.clients.elasticsearch._types.query_dsl.QueryBuilders;
 import co.elastic.clients.elasticsearch.core.*;
 import co.elastic.clients.elasticsearch.core.search.Hit;
 import co.elastic.clients.json.JsonData;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.boot.common.result.Result;
 import com.boot.dto.ArticleSearchDto;
 import com.boot.entity.Article;
@@ -23,6 +24,7 @@ import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * @Project: word
@@ -117,12 +119,14 @@ public class ArticleController {
      * @param articleSearchDto:
      * @Return: null
      * @Author: DengYinzhe
-     * @Description: TODO 文章查询
+     * @Description: TODO 文章分页查询
      * @Date: 2023/3/26 19:22
      */
     @PostMapping("articleSearch")
-    public Result article(@RequestBody ArticleSearchDto articleSearchDto) throws IOException {
+    public Result<Page<Article>> article(@RequestBody ArticleSearchDto articleSearchDto) throws IOException {
         log.info(articleSearchDto.toString());
+        Integer pageNum = articleSearchDto.getPageNum();
+        Integer pageSize = articleSearchDto.getPageSize();
         SearchRequest request = new SearchRequest.Builder()
                 //去哪个索引里搜索
                 .index("article")
@@ -146,15 +150,51 @@ public class ArticleController {
                 .sort(
                         SortOptionsBuilders.field(f -> f.field("articleCreateTime").order(SortOrder.Desc)),
                         SortOptionsBuilders.field(f -> f.field("wordNumber").order(SortOrder.Desc)))
-                .source(SourceConfigBuilders -> SourceConfigBuilders.filter().excludes("content").build())
-                .from((articleSearchDto.getPageNum() - 1) * articleSearchDto.getPageSize())
-                .size(articleSearchDto.getPageSize())
+                .source(sourceConfigBuilders ->
+                        sourceConfigBuilders
+                                .filter(sourceFilterBuilder ->
+                                        sourceFilterBuilder
+                                                .excludes("content")
+                                )
+                )
+                .from((pageNum - 1) * pageSize)
+                .size(pageSize)
                 .build();
         List<Article> list = new ArrayList<>();
         List<Hit<Article>> hits = elasticsearchClient.search(request, Article.class).hits().hits();
         for (Hit<Article> hit : hits) {
             list.add(hit.source());
         }
-        return Result.success(list);
+        long total = Objects.requireNonNull(elasticsearchClient.search(request, Article.class).hits().total()).value();
+        Page<Article> pageInfo = new Page<>(pageNum, pageSize, total);
+        pageInfo.setRecords(list);
+        return Result.success(pageInfo);
     }
+
+    /**
+     * @param articleId:
+     * @Return: Result
+     * @Author: DengYinzhe
+     * @Description: TODO 根据文章id获取文章
+     * @Date: 2023/3/29 0:21
+     */
+    @GetMapping("article/{articleId}")
+    public Result<Article> article(@PathVariable Long articleId) throws IOException {
+        SearchRequest request = new SearchRequest.Builder()
+                //去哪个索引里搜索
+                .index("article")
+                .query(
+                        QueryBuilders
+                                .term()
+                                .field("articleId")
+                                .value(articleId)
+                                .build()._toQuery()
+                )
+                .size(1)
+                .build();
+        List<Hit<Article>> hits = elasticsearchClient.search(request, Article.class).hits().hits();
+        Article article = 1 == hits.size() ? hits.get(0).source() : null;
+        return Result.success(article);
+    }
+
 }
