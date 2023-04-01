@@ -20,7 +20,6 @@ import com.boot.entity.WordModule;
 import com.boot.service.PlanService;
 import com.boot.service.UserService;
 import com.boot.service.WordModuleService;
-import com.boot.utils.IoUtils;
 import com.boot.utils.MinIOUtils;
 import com.boot.utils.SnowFlakeUtil;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -31,6 +30,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.*;
 import java.time.LocalDateTime;
@@ -208,9 +209,31 @@ public class WordModuleController {
         return Result.success(pageInfo);
     }
 
+    /**
+     * @param file:
+     * @Return: Result
+     * @Author: DengYinzhe
+     * @Description: TODO 上传单词模块的图片
+     * @Date: 2023/4/1 9:21
+     */
+    @PostMapping("uploadImage")
+    public Result uploadImage(MultipartFile file) {
 
-//    @PostMapping("upload")
+        return Result.success();
+    }
 
+    /**
+     * @param moduleId:
+     * @Return: Result
+     * @Author: DengYinzhe
+     * @Description: TODO 删除一个单词模块
+     * @Date: 2023/4/1 9:25
+     */
+    @DeleteMapping("wordModule/{moduleId}")
+    public Result wordModule(@PathVariable Long moduleId) {
+
+        return Result.success();
+    }
 
     /**
      * @param userId: 用户id
@@ -249,14 +272,41 @@ public class WordModuleController {
      * @Date: 2023/2/9 11:44
      */
     @GetMapping("wordModuleImage/{wordModuleId}")
-    public byte[] wordImage(@PathVariable("wordModuleId") Long wordModuleId) throws IOException, CustomException {
-        String bucketName = "word";
-        String objectName = wordModuleService.getById(wordModuleId).getModuleImagePath();
-        InputStream inputStream = minIOUtils.getObject(bucketName, objectName);
-        if (inputStream != null) {
-            return IoUtils.toByteArray(inputStream);
-        } else {
+    public void wordImage(@PathVariable("wordModuleId") Long wordModuleId, HttpServletResponse response) throws IOException, CustomException {
+
+        ServletOutputStream outputStream = null;
+        InputStream inputStream = null;
+        try {
+            //输出流，通过输出流将文件写回浏览器
+            outputStream = response.getOutputStream();
+            response.setContentType("image/jpeg");
+            //从MinIo中获取用户头像
+            String bucketName = "word";
+            String objectName = wordModuleService.getById(wordModuleId).getModuleImagePath();
+            inputStream = minIOUtils.getObject(bucketName, objectName);
+
+            if (inputStream != null) {
+                int len;
+                byte[] bytes = new byte[1024 * 4];
+                while ((len = inputStream.read(bytes)) != -1) {
+                    outputStream.write(bytes, 0, len);
+                    outputStream.flush();
+                }
+            } else {
+                throw new CustomException("头像获取失败");
+            }
+        } catch (IOException e) {
             throw new CustomException("头像获取失败");
+        } catch (CustomException e) {
+            throw new CustomException("头像获取失败");
+        } finally {
+            //关闭资源
+            if (inputStream != null) {
+                inputStream.close();
+            }
+            if (inputStream != null) {
+                outputStream.close();
+            }
         }
 
     }

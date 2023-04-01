@@ -234,8 +234,12 @@ public class UserController {
             throw new CustomException("头像获取失败");
         } finally {
             //关闭资源
-            outputStream.close();
-            inputStream.close();
+            if (inputStream != null) {
+                inputStream.close();
+            }
+            if (inputStream != null) {
+                outputStream.close();
+            }
         }
 
     }
