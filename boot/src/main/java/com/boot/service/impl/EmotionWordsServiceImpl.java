@@ -6,6 +6,8 @@ import com.boot.entity.EmotionWords;
 import com.boot.service.EmotionWordsService;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
+
 /**
  * 激励语(EmotionWords)表服务实现类
  *
@@ -15,5 +17,13 @@ import org.springframework.stereotype.Service;
 @Service("emotionWordsService")
 public class EmotionWordsServiceImpl extends ServiceImpl<EmotionWordsDao, EmotionWords> implements EmotionWordsService {
 
+    @Resource
+    private EmotionWordsDao emotionWordsDao;
+
+    @Override
+    public EmotionWords selectOneByRand(String frequency) {
+        System.out.println("123");
+        return emotionWordsDao.selectOneByRand(frequency);
+    }
 }
 

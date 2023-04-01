@@ -1,37 +1,35 @@
 package com.boot.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.boot.entity.LoginLog;
+import com.boot.entity.Community;
 import org.apache.ibatis.annotations.Param;
-import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 /**
- * (LoginLog)表数据库访问层
+ * 社区运行状况（redis固化）(Community)表数据库访问层
  *
  * @author makejava
- * @since 2023-03-25 19:18:18
+ * @since 2023-03-31 16:57:21
  */
-@Repository
-public interface LoginLogDao extends BaseMapper<LoginLog> {
+public interface CommunityDao extends BaseMapper<Community> {
 
     /**
      * 批量新增数据（MyBatis原生foreach方法）
      *
-     * @param entities List<LoginLog> 实例对象列表
+     * @param entities List<Community> 实例对象列表
      * @return 影响行数
      */
-    int insertBatch(@Param("entities") List<LoginLog> entities);
+    int insertBatch(@Param("entities") List<Community> entities);
 
     /**
      * 批量新增或按主键更新数据（MyBatis原生foreach方法）
      *
-     * @param entities List<LoginLog> 实例对象列表
+     * @param entities List<Community> 实例对象列表
      * @return 影响行数
      * @throws org.springframework.jdbc.BadSqlGrammarException 入参是空List的时候会抛SQL语句错误的异常，请自行校验入参
      */
-    int insertOrUpdateBatch(@Param("entities") List<LoginLog> entities);
+    int insertOrUpdateBatch(@Param("entities") List<Community> entities);
 
 }
 

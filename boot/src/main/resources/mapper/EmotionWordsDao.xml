@@ -9,7 +9,7 @@
         <result property="orderId" column="order_id" jdbcType="INTEGER"/>
         <result property="emoCreateTime" column="emo_create_time" jdbcType="TIMESTAMP"/>
         <result property="emoAuthor" column="emo_author" jdbcType="VARCHAR"/>
-        <result property="frequency" column="frequency" jdbcType="INTEGER"/>
+        <result property="frequency" column="frequency" jdbcType="VARCHAR"/>
     </resultMap>
 
     <!-- 批量插入 -->

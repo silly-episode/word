@@ -11,5 +11,7 @@ import com.boot.entity.EmotionWords;
  */
 public interface EmotionWordsService extends IService<EmotionWords> {
 
+
+    EmotionWords selectOneByRand(String frequency);
 }
 

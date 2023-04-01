@@ -7,10 +7,13 @@ import co.elastic.clients.elasticsearch.core.IndexResponse;
 import co.elastic.clients.elasticsearch.core.SearchRequest;
 import co.elastic.clients.elasticsearch.core.search.Hit;
 import co.elastic.clients.elasticsearch.indices.DeleteIndexResponse;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.boot.bo.WordPlan;
 import com.boot.common.Exception.CustomException;
 import com.boot.common.result.CodeMsg;
 import com.boot.common.result.Result;
+import com.boot.dto.WordModuleSearchDto;
 import com.boot.entity.Plan;
 import com.boot.entity.User;
 import com.boot.entity.WordModule;
@@ -79,7 +82,6 @@ public class WordModuleController {
      */
     @PostMapping("wordModule")
     @Transactional
-    @SuppressWarnings("all")
     public Result wordModule(@RequestParam MultipartFile[] file, @Valid WordModule wordModule) throws IOException {
 
         MultipartFile imageFile = null;
@@ -166,6 +168,48 @@ public class WordModuleController {
 
 
     }
+
+
+    /**
+     * @param wordModule:
+     * @Return: Result<String>
+     * @Author: DengYinzhe
+     * @Description: TODO 更新单词模块
+     * @Date: 2023/3/31 17:29
+     */
+    @PutMapping("wordModule")
+    public Result<String> wordModule(@RequestBody WordModule wordModule) {
+        if (wordModuleService.updateById(wordModule)) {
+            return Result.success("更新成功");
+        } else {
+            return Result.error("更新失败");
+        }
+    }
+
+    /**
+     * @param wordModuleSearchDto:
+     * @Return: Result
+     * @Author: DengYinzhe
+     * @Description: TODO 分页条件搜索
+     * @Date: 2023/3/31 18:00
+     */
+    @PostMapping("wordModuleSearch")
+    public Result wordModuleSearch(@RequestBody WordModuleSearchDto wordModuleSearchDto) {
+        Page<WordModule> pageInfo = new Page<>(wordModuleSearchDto.getPageNum(), wordModuleSearchDto.getPageSize());
+        LambdaQueryWrapper<WordModule> wrapper = new LambdaQueryWrapper<>();
+        wrapper
+                .ge(null != wordModuleSearchDto.getBeginTime(), WordModule::getWordModuleCreateTime, wordModuleSearchDto.getBeginTime())
+                .le(null != wordModuleSearchDto.getEndTime(), WordModule::getWordModuleCreateTime, wordModuleSearchDto.getEndTime())
+                .like(null != wordModuleSearchDto.getModuleName(), WordModule::getModuleName, wordModuleSearchDto.getModuleName())
+                .eq(null != wordModuleSearchDto.getSuperiorModule(), WordModule::getSuperiorModule, wordModuleSearchDto.getSuperiorModule())
+                .orderBy(null != wordModuleSearchDto.getStudyNumberOrderByAsc(), wordModuleSearchDto.getStudyNumberOrderByAsc(), WordModule::getStudyNumber)
+                .orderByDesc(WordModule::getWordModuleCreateTime);
+        wordModuleService.page(pageInfo, wrapper);
+        return Result.success(pageInfo);
+    }
+
+
+//    @PostMapping("upload")
 
 
     /**

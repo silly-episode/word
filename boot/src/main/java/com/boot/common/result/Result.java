@@ -23,6 +23,12 @@ public class Result<T> {
         this.msg = msg;
     }
 
+    private Result(Integer code, String msg, T data) {
+        this.code = code;
+        this.msg = msg;
+        this.data = data;
+    }
+
     private Result(T data, CodeMsg codeMsg) {
         this.data = data;
         if (codeMsg != null) {
@@ -57,6 +63,16 @@ public class Result<T> {
      */
     public static <T> Result<T> success() {
         return new Result<>(CodeMsg.SUCCESS);
+    }
+
+    /**
+     * @Return: String
+     * @Author: DengYinzhe
+     * @Description: 自定义结果
+     * @Date: 2023/2/6 21:10
+     */
+    public static <T> Result<T> result(Integer code, String msg, T data) {
+        return new Result<>(code, msg, data);
     }
 
     /**

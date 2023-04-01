@@ -152,8 +152,7 @@ public class AdminController {
                                 .or().eq(User::getUserId, oftenParam)
                 )
                 .orderByDesc(User::getRegisterTime)
-                .orderByDesc(flag && !userSearchDto.getIntegrationOrderByAsc(), User::getIntegration)
-                .orderByAsc(flag && userSearchDto.getIntegrationOrderByAsc(), User::getIntegration);
+                .orderBy(flag, userSearchDto.getIntegrationOrderByAsc(), User::getIntegration);
         userService.page(pageInfo, wrapper);
         for (User record : pageInfo.getRecords()) {
             userStatus = record.getUserStatus();
@@ -237,7 +236,8 @@ public class AdminController {
                                 .or().eq(LoginLog::getAccount, oftenParam)
                                 .or().eq(LoginLog::getTel, oftenParam)
                                 .or().eq(LoginLog::getUserId, oftenParam)
-                );
+                )
+                .orderByDesc(LoginLog::getLoginTime);
         loginLogService.page(pageInfo, wrapper);
 
         for (LoginLog record : pageInfo.getRecords()) {

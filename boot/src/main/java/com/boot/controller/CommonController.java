@@ -1,14 +1,14 @@
 package com.boot.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.boot.common.Exception.CustomException;
 import com.boot.common.result.Result;
+import com.boot.entity.Community;
+import com.boot.service.CommunityService;
 import com.boot.utils.TranslateUtils;
 import com.tencentcloudapi.common.exception.TencentCloudSDKException;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.Map;
@@ -23,17 +23,29 @@ import java.util.Map;
 
 @RestController
 @Slf4j
-@SuppressWarnings("all")
 @RequestMapping("common")
 public class CommonController {
 
     @Resource
     private TranslateUtils translateUtils;
 
+    @Resource
+    private CommunityService communityService;
+
     /**
-     * @param sourceText: 源文本
-     * @param source:     源语种
-     * @param target:     目标语种
+     * @Return: Result<Community>
+     * @Author: DengYinzhe
+     * @Description: TODO 获取社区基础信息
+     * @Date: 2023/3/31 17:02
+     */
+    @GetMapping("community")
+    public Result<Community> community() {
+        QueryWrapper<Community> queryWrapper = new QueryWrapper<>();
+        Community community = communityService.getOne(queryWrapper);
+        return Result.success(community);
+    }
+
+    /**
      * @Return: Result
      * @Author: DengYinzhe
      * @Description: 翻译
