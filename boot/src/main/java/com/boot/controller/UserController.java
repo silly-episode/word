@@ -182,6 +182,8 @@ public class UserController {
             if (0 != file.getSize() && "image/jpeg".equals(file.getContentType())) {
                 // 上传用户头像
                 minIOUtils.putObject("word", file, fileName);
+            } else {
+                return Result.error("文件不是jpg图片或内容为空");
             }
         } catch (Exception e) {
 //            log.error("上传头像失败");

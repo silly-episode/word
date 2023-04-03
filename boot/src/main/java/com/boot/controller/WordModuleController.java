@@ -1,6 +1,7 @@
 package com.boot.controller;
 
 
+import cn.hutool.core.lang.Snowflake;
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.elasticsearch._types.query_dsl.QueryBuilders;
 import co.elastic.clients.elasticsearch.core.IndexResponse;
@@ -35,6 +36,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.*;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -72,6 +74,9 @@ public class WordModuleController {
 
     @Resource
     private PlanService planService;
+
+    @Resource
+    private Snowflake snowflake;
 
     /**
      * @param file:       词源和模块头像文件
@@ -218,8 +223,22 @@ public class WordModuleController {
      */
     @PostMapping("uploadImage")
     public Result uploadImage(MultipartFile file) {
-
-        return Result.success();
+        String fileName = "module_image_" + snowflake.nextIdStr() + "_"
+                + String.valueOf(LocalDateTime.now().toEpochSecond(ZoneOffset.of("+8"))
+                + file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf(".")));
+        try {
+            if (0 != file.getSize() && "image/jpeg".equals(file.getContentType())) {
+                // 上传用户头像
+                minIOUtils.putObject("word", file, fileName);
+            } else {
+                return Result.error("文件格式不是jpg或内容为空");
+            }
+        } catch (Exception e) {
+//            log.error("上传头像失败");
+            minIOUtils.removeObject("word", fileName);
+            return Result.error("上传头像失败");
+        }
+        return Result.success(fileName);
     }
 
     /**
