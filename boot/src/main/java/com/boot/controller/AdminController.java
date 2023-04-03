@@ -15,6 +15,7 @@ import com.boot.dto.UserMsgDto2;
 import com.boot.dto.UserSearchDto;
 import com.boot.entity.LoginLog;
 import com.boot.entity.User;
+import com.boot.service.AdminService;
 import com.boot.service.LoginLogService;
 import com.boot.service.UserService;
 import com.boot.utils.BeanDtoVoUtils;
@@ -49,6 +50,8 @@ public class AdminController {
     private UserService userService;
     @Resource
     private LoginLogService loginLogService;
+    @Resource
+    private AdminService adminService;
     /*重置的密码*/
 
     /**
@@ -110,16 +113,41 @@ public class AdminController {
      * @param map:
      * @Return: Result<String>
      * @Author: DengYinzhe
-     * @Description: TODO 锁定用户
+     * @Description: TODO 锁定和解锁用户
      * @Date: 2023/3/28 9:43
      */
-    @PutMapping("lockUser")
+    @PutMapping("lockOrUnLockUser")
     public Result<String> lockUser(@RequestBody Map<String, String> map) {
+
+        String lockType = null;
+        Long userId = null;
+        LocalDate lockTime = null;
+        try {
+            lockType = map.get("lockType");
+            String lockTimeStr = map.get("lockTime");
+            userId = Long.valueOf(map.get("userId"));
+
+            if (lockTimeStr != null) {
+                lockTime = LocalDate.parse(map.get("lockTime"), DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+            }
+            if (lockType == null || userId == null || (userId == null && lockTimeStr == null)) {
+                return Result.error("参数错误");
+            }
+        } catch (NumberFormatException e) {
+            return Result.error("参数错误");
+        }
         UpdateWrapper<User> updateWrapper = new UpdateWrapper<>();
         updateWrapper
-                .eq("user_id", map.get("userId"))
-                .set("user_status", "1")
-                .set("lock_time", LocalDate.parse(map.get("lockTime"), DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+                .eq("user_id", userId);
+        if ("lock".equals(lockType)) {
+            updateWrapper
+                    .set("user_status", "1")
+                    .set("lock_time", lockTime);
+        } else {
+            updateWrapper
+                    .set("user_status", "1")
+                    .set("lock_time", LocalDate.now());
+        }
         if (userService.update(updateWrapper)) {
             return Result.success("修改描述成功");
         } else {

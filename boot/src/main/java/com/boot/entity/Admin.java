@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 /**
@@ -43,6 +44,12 @@ public class Admin extends Model<Admin> {
     private LocalDateTime addCreateTime;
     //持有人
     private String keepName;
+
+    private LocalDate lockTime;
+
+    private String userStatus;
+
+    private String salt;
 
 
     /**

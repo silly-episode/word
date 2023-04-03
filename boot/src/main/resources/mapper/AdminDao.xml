@@ -11,28 +11,34 @@
         <result property="role" column="role" jdbcType="INTEGER"/>
         <result property="addCreateTime" column="add_create_time" jdbcType="TIMESTAMP"/>
         <result property="keepName" column="keep_name" jdbcType="VARCHAR"/>
+        <result property="salt" column="salt" jdbcType="VARCHAR"/>
+        <result property="userStatus" column="user_status" jdbcType="VARCHAR"/>
+        <result property="lockTime" column="lock_time" jdbcType="TIMESTAMP"/>
     </resultMap>
 
     <!-- 批量插入 -->
     <insert id="insertBatch" keyProperty="adminId" useGeneratedKeys="true">
-        insert into word.admin(account, password, tel, remark, role, add_create_time, keep_name)
+        insert into word.admin(account, password, tel, remark, role, add_create_time, keep_name, salt, user_status,
+        lock_time)
         values
         <foreach collection="entities" item="entity" separator=",">
             (#{entity.account}, #{entity.password}, #{entity.tel}, #{entity.remark}, #{entity.role},
-            #{entity.addCreateTime}, #{entity.keepName})
+            #{entity.addCreateTime}, #{entity.keepName}, #{entity.salt}, #{entity.userStatus}, #{entity.lockTime})
         </foreach>
     </insert>
     <!-- 批量插入或按主键更新 -->
     <insert id="insertOrUpdateBatch" keyProperty="adminId" useGeneratedKeys="true">
-        insert into word.admin(account, password, tel, remark, role, add_create_time, keep_name)
+        insert into word.admin(account, password, tel, remark, role, add_create_time, keep_name, salt, user_status,
+        lock_time)
         values
         <foreach collection="entities" item="entity" separator=",">
             (#{entity.account}, #{entity.password}, #{entity.tel}, #{entity.remark}, #{entity.role},
-            #{entity.addCreateTime}, #{entity.keepName})
+            #{entity.addCreateTime}, #{entity.keepName}, #{entity.salt}, #{entity.userStatus}, #{entity.lockTime})
         </foreach>
         on duplicate key update
         account = values(account) , password = values(password) , tel = values(tel) , remark = values(remark) , role =
-        values(role) , add_create_time = values(add_create_time) , keep_name = values(keep_name)
+        values(role) , add_create_time = values(add_create_time) , keep_name = values(keep_name) , salt = values(salt) ,
+        user_status = values(user_status) , lock_time = values(lock_time)
     </insert>
 
 </mapper>

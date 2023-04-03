@@ -17,34 +17,38 @@
         <result property="lockTime" column="lock_time" jdbcType="TIMESTAMP"/>
         <result property="remark" column="remark" jdbcType="VARCHAR"/>
         <result property="signature" column="signature" jdbcType="VARCHAR"/>
+        <result property="salt" column="salt" jdbcType="VARCHAR"/>
+        <result property="integration" column="integration" jdbcType="INTEGER"/>
+        <result property="lockDay" column="lock_day" jdbcType="INTEGER"/>
     </resultMap>
 
     <!-- 批量插入 -->
     <insert id="insertBatch" keyProperty="userId" useGeneratedKeys="true">
         insert into word.user(account, password, nick_name, tel, email, qq, wechat, head_image, user_status,
-        register_time, lock_time, remark, signature)
+        register_time, lock_time, remark, signature, salt, integration, lock_day)
         values
         <foreach collection="entities" item="entity" separator=",">
             (#{entity.account}, #{entity.password}, #{entity.nickName}, #{entity.tel}, #{entity.email}, #{entity.qq},
             #{entity.wechat}, #{entity.headImage}, #{entity.userStatus}, #{entity.registerTime}, #{entity.lockTime},
-            #{entity.remark}, #{entity.signature})
+            #{entity.remark}, #{entity.signature}, #{entity.salt}, #{entity.integration}, #{entity.lockDay})
         </foreach>
     </insert>
     <!-- 批量插入或按主键更新 -->
     <insert id="insertOrUpdateBatch" keyProperty="userId" useGeneratedKeys="true">
         insert into word.user(account, password, nick_name, tel, email, qq, wechat, head_image, user_status,
-        register_time, lock_time, remark, signature)
+        register_time, lock_time, remark, signature, salt, integration, lock_day)
         values
         <foreach collection="entities" item="entity" separator=",">
             (#{entity.account}, #{entity.password}, #{entity.nickName}, #{entity.tel}, #{entity.email}, #{entity.qq},
             #{entity.wechat}, #{entity.headImage}, #{entity.userStatus}, #{entity.registerTime}, #{entity.lockTime},
-            #{entity.remark}, #{entity.signature})
+            #{entity.remark}, #{entity.signature}, #{entity.salt}, #{entity.integration}, #{entity.lockDay})
         </foreach>
         on duplicate key update
         account = values(account) , password = values(password) , nick_name = values(nick_name) , tel = values(tel) ,
         email = values(email) , qq = values(qq) , wechat = values(wechat) , head_image = values(head_image) ,
         user_status = values(user_status) , register_time = values(register_time) , lock_time = values(lock_time) ,
-        remark = values(remark) , signature = values(signature)
+        remark = values(remark) , signature = values(signature) , salt = values(salt) , integration =
+        values(integration) , lock_day = values(lock_day)
     </insert>
 
 </mapper>

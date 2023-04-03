@@ -52,8 +52,11 @@ public class User extends Model<User> {
     private String userStatus;
     //注册时间
     private LocalDateTime registerTime;
-    //锁定时间
+    //锁定或解锁日期
     private LocalDate lockTime;
+    //    锁定天数
+    private Integer lockDay;
+
     //备注
     private String remark;
     //个性签名
