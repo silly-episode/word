@@ -163,6 +163,7 @@ public class AdminController {
      * @Date: 2023/3/28 9:02
      */
     @PostMapping("userSearch")
+//    @RequiresAuthentication
     public Result<Page<UserMsgDto2>> userSearch(@RequestBody UserSearchDto userSearchDto) {
         Page<User> pageInfo = new Page<>(userSearchDto.getPageNum(), userSearchDto.getPageSize());
         LambdaQueryWrapper<User> wrapper = new LambdaQueryWrapper<>();
@@ -172,8 +173,8 @@ public class AdminController {
         wrapper
                 .ge(null != userSearchDto.getBeginTime(), User::getRegisterTime, userSearchDto.getBeginTime())
                 .le(null != userSearchDto.getEndTime(), User::getRegisterTime, userSearchDto.getEndTime())
-                .eq(null != userSearchDto.getUserStatus(), User::getUserStatus, userSearchDto.getUserStatus())
-                .and(null != oftenParam,
+                .eq(!userSearchDto.getUserStatus().isEmpty(), User::getUserStatus, userSearchDto.getUserStatus())
+                .and(!oftenParam.isEmpty(),
                         e -> e.like(User::getNickName, oftenParam)
                                 .or().eq(User::getAccount, oftenParam)
                                 .or().eq(User::getTel, oftenParam)

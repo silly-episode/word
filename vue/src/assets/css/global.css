@@ -1,0 +1,575 @@
+/* 全局样式表 */
+html,
+body,
+#app {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    /* 设置页面的最小宽度，放置元素被挤压变形 */
+    min-width: 1366px;
+}
+
+.el-breadcrumb {
+    margin-bottom: 15px;
+    /* font-size: 12px; */
+}
+
+.el-card {
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.15) !important;
+}
+
+.el-table {
+    margin-top: 15px;
+}
+
+.el-pagination {
+    margin-top: 15px;
+    margin-left: 50px;
+}
+
+.el-cascader-menu {
+    height: 300px;
+}
+
+.el-steps {
+    margin: 15px 0;
+}
+
+.ql-editor {
+    min-height: 300px;
+}
+
+
+/* 鼠标变小手 */
+.pointer {
+    cursor: pointer;
+}
+
+/* 单行超出省略号 */
+.ellipsis {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* 多行超出省略号 */
+.wrapHide {
+    overflow: hidden;
+    display: -webkit-box;
+    /*将对象作为弹性伸缩盒子模型显示*/
+    -webkit-box-orient: vertical;
+    /*从上到下垂直排列子元素（设置伸缩盒子的子元素排列方式）*/
+    -webkit-line-clamp: 3;
+    /*这个属性不是css的规范属性，需要组合上面两个属性，表示显示的行数。*/
+}
+
+/* 文本居中 */
+.text_center {
+    text-align: center;
+}
+
+/* 固定盒子大小 */
+.box-size {
+    box-sizing: border-box;
+}
+
+.relative {
+    position: relative;
+}
+
+.z-index {
+    z-index: 999;
+}
+
+
+/* 圆角 */
+.radius_per50 {
+    border-radius: 50%;
+}
+
+.radius_10 {
+    border-radius: 10px;
+}
+
+.radius_20 {
+    border-radius: 20px;
+}
+
+.radius_30 {
+    border-radius: 30px;
+}
+
+.radius_40 {
+    border-radius: 40px;
+}
+
+.radius_50 {
+    border-radius: 50px;
+}
+
+.radius_70 {
+    border-radius: 70px;
+}
+
+/* flex布局 */
+.flex {
+    display: flex;
+}
+
+.flex1 {
+    flex: 1;
+}
+
+.flex_end {
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-end;
+}
+
+.flex_center {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.flex_center_center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.flex_between_center {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.flex_around_center {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.flex_between_wrap_center {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.flex_wrap_center {
+    display: flex;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.flex_column_center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.flex_column_center_center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+/* margin-padding */
+.margin_20 {
+    margin: 20px;
+}
+
+.margin_15_0 {
+    margin: 15px 0;
+}
+
+.margin_0_30 {
+    margin: 0 30px;
+}
+
+.margin_12_15 {
+    margin: 12px 15px;
+}
+
+.margin_20_35 {
+    margin: 20px 35px;
+}
+
+.margin_4_10 {
+    margin: 4px 10px;
+}
+
+.margin_t_10 {
+    margin-top: 10px;
+}
+
+.margin_t_20 {
+    margin-top: 20px;
+}
+
+.margin_t_30 {
+    margin-top: 30px;
+}
+
+.margin_t_50 {
+    margin-top: 50px;
+}
+
+.margin_r_10 {
+    margin-right: 10px;
+}
+
+.margin_r_20 {
+    margin-right: 20px;
+}
+
+.margin_l_10 {
+    margin-left: 10px;
+}
+
+.margin_l_30 {
+    margin-left: 30px;
+}
+
+.margin_b_5 {
+    margin-bottom: 5px;
+}
+
+.margin_b_10 {
+    margin-bottom: 10px;
+}
+
+.margin_b_15 {
+    margin-bottom: 15px;
+}
+
+.margin_b_20 {
+    margin-bottom: 20px;
+}
+
+.margin_b_30 {
+    margin-bottom: 30px;
+}
+
+.margin_l_r_10 {
+    margin: 0 10px;
+}
+
+.margin_50_70 {
+    margin: 50px 70px;
+}
+
+.margin_t_b_10 {
+    margin: 10px 0;
+}
+
+.margin_t_b_15 {
+    margin: 15px 0;
+}
+
+.margin_t_b_20 {
+    margin: 20px 0;
+}
+
+.padding_10 {
+    padding: 10px;
+}
+
+.padding_t_20 {
+    padding-top: 20px;
+}
+
+.padding_l_30 {
+    padding-left: 30px;
+}
+
+.padding_0_10 {
+    padding: 0 10px;
+}
+
+.padding_0_50_0_20 {
+    padding: 0 50px 0 20px
+}
+
+.padding_0_30 {
+    padding: 0 30px;
+}
+
+.padding_12_20 {
+    padding: 12px 20px;
+}
+
+.padding_12_40 {
+    padding: 12px 40px;
+}
+
+.padding_12_30 {
+    padding: 12px 30px;
+}
+
+.padding_20_30 {
+    padding: 20px 30px;
+}
+
+.padding_10_50 {
+    padding: 10px 50px;
+}
+
+/* 字体 */
+.font_bold {
+    font-weight: bold;
+}
+
+.font_16 {
+    font-size: 16px;
+}
+
+.font_17 {
+    font-size: 17px;
+}
+
+.font_18 {
+    font-size: 18px;
+}
+
+.font_22 {
+    font-size: 22px;
+}
+
+
+/* 颜色 */
+.blue {
+    color: #1296db;
+}
+
+.green {
+    color: rgb(107, 224, 107);
+}
+
+.red {
+    color: rgb(247, 67, 67);
+}
+
+.orange {
+    color: rgb(255, 179, 37);
+}
+
+.purple {
+    color: purple;
+}
+
+.white {
+    color: #fff;
+}
+
+.black {
+    color: #000;
+}
+
+.grey {
+    color: #aaaaaa;
+}
+
+.grey_888 {
+    color: #888888;
+}
+
+.grey_4e {
+    color: #4e4e4e;
+}
+
+.deep_grey {
+    color: #6f6f6f;
+}
+
+.border_blue {
+    border: 1px solid #1296db;
+}
+
+.border_red {
+    border: 2px solid rgb(214, 0, 0);
+}
+
+.border_2blue {
+    border: 2px solid #1296db;
+}
+
+/* 背景色 */
+.bg_blue {
+    background-color: #1296db;
+}
+
+.bg_baby_blue {
+    background-color: #cde5f1;
+}
+
+.bg_orange {
+    background-color: rgb(255, 179, 37);
+}
+
+.bg_baby_orange {
+    background-color: rgb(253, 234, 198);
+}
+
+.bg_grey {
+    background-color: #eee;
+}
+
+.bg_245grey {
+    background-color: rgb(245, 245, 245);
+}
+
+.bg_c1_grey {
+    background-color: #c1c1c1;
+}
+
+.bg_white {
+    background-color: #fff;
+}
+
+.line_hei_22 {
+    line-height: 22px;
+}
+
+.line_hei_25 {
+    line-height: 25px;
+}
+
+.line_hei_30 {
+    line-height: 30px;
+}
+
+.line_hei_40 {
+    line-height: 40px;
+}
+
+/* 宽高 */
+.wid_hei_30_30 {
+    width: 30px;
+    height: 30px;
+}
+
+.wid_hei_40_40 {
+    width: 40px;
+    height: 40px;
+}
+
+.wid_hei_50_50 {
+    width: 50px;
+    height: 50px;
+}
+
+.wid_hei_55_55 {
+    width: 55px;
+    height: 55px;
+}
+
+.wid_hei_70_70 {
+    width: 70px;
+    height: 70px;
+}
+
+.wid_hei_170_120 {
+    width: 170px;
+    height: 120px;
+}
+
+.wid_hei_95_95 {
+    width: 95px;
+    height: 95px;
+}
+
+.wid_hei_200_200 {
+    width: 200px;
+    height: 200px;
+}
+
+.wid_hei_560_30 {
+    width: 560px;
+    height: 15px;
+}
+
+.wid_hei_560_300 {
+    width: 560px;
+    height: 300px;
+}
+
+.wid_hei_per100 {
+    width: 100%;
+    height: 100%;
+}
+
+.wid_per30 {
+    width: 30%;
+}
+
+.wid_per33 {
+    width: 33%;
+}
+
+.wid_per40 {
+    width: 40%;
+}
+
+.wid_per50 {
+    width: 50%;
+}
+
+.wid_per55 {
+    width: 55%;
+}
+
+.wid_per60 {
+    width: 60%;
+}
+
+.wid_per70 {
+    width: 70%;
+}
+
+.wid_per90 {
+    width: 90%;
+}
+
+.wid_per100 {
+    width: 100%;
+}
+
+.hei_per100 {
+    height: 100%;
+}
+
+.hei_10 {
+    height: 10px;
+}
+
+.hei_20 {
+    height: 20px;
+}
+
+.hei_30 {
+    height: 30px;
+}
+
+.hei_40 {
+    height: 40px;
+}
+
+.hei_50 {
+    height: 50px;
+}
+
+.hei_70 {
+    height: 70px;
+}
+
+.hei_100 {
+    height: 100px;
+}
+
+.hei_150 {
+    height: 150px;
+}

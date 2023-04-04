@@ -6,6 +6,10 @@ import axios from 'axios';
 import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
 import * as echarts from 'echarts';
+// 导入字体图标样式
+import "../src/assets/iconfont/iconfont.css"
+// 导入全局样式表
+import './assets/css/global.css'
 
 //使用echarts
 Vue.prototype.$echarts = echarts

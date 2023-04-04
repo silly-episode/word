@@ -4,7 +4,6 @@ import com.boot.common.result.CodeMsg;
 import com.boot.common.result.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.ShiroException;
-import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authz.UnauthenticatedException;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.springframework.http.HttpStatus;
@@ -45,19 +44,6 @@ public class GlobalExceptionHandler {
 
 
     /**
-     * @param :
-     * @Return: Result
-     * @Author: DengYinzhe
-     * @Description: 捕捉UnauthorizedException
-     * @Date: 2023/2/12 21:10
-     */
-    @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    @ExceptionHandler(AuthenticationException.class)
-    public Result handle(AuthenticationException e) {
-        return Result.error(401, e.getMessage());
-    }
-
-    /**
      * @param e:
      * @Return: Result
      * @Author: DengYinzhe
@@ -75,7 +61,7 @@ public class GlobalExceptionHandler {
      * @param e:
      * @Return: Result
      * @Author: DengYinzhe
-     * @Description: shiro 异常
+     * @Description: token认证 （包含了token错误、过期等情况）
      * @Date: 2023/2/12 21:10
      */
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
@@ -113,6 +99,20 @@ public class GlobalExceptionHandler {
         ObjectError objectError = bindingResult.getAllErrors().stream().findFirst().get();
         return Result.error(4007, objectError.getDefaultMessage());
     }
+
+    /**
+     * @param e:
+     * @Return: Result
+     * @Author: DengYinzhe
+     * @Description: 运行时异常
+     * @Date: 2023/2/12 21:10
+     */
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(value = NullPointerException.class)
+    public Result handler(NullPointerException e) {
+        return Result.error(40008, e.getMessage());
+    }
+
 
     /**
      * @param e:

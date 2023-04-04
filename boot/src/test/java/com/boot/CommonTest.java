@@ -192,9 +192,8 @@ public class CommonTest {
 
     @Test
     public void StringEmpty() {
-        String a = "";
-        System.out.println(a);
-        System.out.println(a.isBlank());
+        String a = null;
+        System.out.println(a.length());
         System.out.println(a.isEmpty());
 
 

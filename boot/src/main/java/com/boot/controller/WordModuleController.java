@@ -1,7 +1,6 @@
 package com.boot.controller;
 
 
-import cn.hutool.core.lang.Snowflake;
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.elasticsearch._types.query_dsl.QueryBuilders;
 import co.elastic.clients.elasticsearch.core.IndexResponse;
@@ -12,6 +11,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.boot.bo.WordPlan;
 import com.boot.common.Exception.CustomException;
+import com.boot.common.Hutool.IdUtils;
 import com.boot.common.result.CodeMsg;
 import com.boot.common.result.Result;
 import com.boot.dto.WordModuleSearchDto;
@@ -75,8 +75,6 @@ public class WordModuleController {
     @Resource
     private PlanService planService;
 
-    @Resource
-    private Snowflake snowflake;
 
     /**
      * @param file:       词源和模块头像文件
@@ -223,7 +221,8 @@ public class WordModuleController {
      */
     @PostMapping("uploadImage")
     public Result uploadImage(MultipartFile file) {
-        String fileName = "module_image_" + snowflake.nextIdStr() + "_"
+
+        String fileName = "module_image_" + IdUtils.getSnowFlakeInstance().nextIdStr() + "_"
                 + String.valueOf(LocalDateTime.now().toEpochSecond(ZoneOffset.of("+8"))
                 + file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf(".")));
         try {
