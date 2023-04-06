@@ -22,23 +22,38 @@ export function userSearch(params) {
 }
 
 /**
- * 导出
+ * 用户信息的导出（excel）
  * @returns {*}
  */
-export function leadingOut() {
+export function userListExcel() {
     return request({
         url: 'admin/userListExcel',
-        method: 'get'
+        method: 'get',
+        'responseType': 'blob'
     })
 }
 
+
 /**
- * 重置密码
+ * 管理员重置密码
  * @returns {*}
  */
 export function resetPwd(data) {
     return request({
         url: 'admin/password',
+        method: 'put',
+        data
+    })
+}
+
+/**
+ * 锁定和解锁用户
+ * @param data
+ * @returns {*}
+ */
+export function lockOrUnLockUser(data) {
+    return request({
+        url: 'admin/lockOrUnLockUser',
         method: 'put',
         data
     })

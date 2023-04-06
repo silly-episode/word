@@ -6,6 +6,7 @@ import com.alibaba.excel.annotation.write.style.*;
 import com.alibaba.excel.converters.longconverter.LongStringConverter;
 import com.alibaba.excel.enums.poi.HorizontalAlignmentEnum;
 import com.alibaba.excel.enums.poi.VerticalAlignmentEnum;
+import com.boot.common.JsonTransformation.LocalDateStringConverter;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -86,9 +87,9 @@ public class UserExcel {
     @ExcelProperty(value = "注册时间", index = 10)
     private LocalDateTime registerTime;
 
-    //    @DateTimeFormat("yyyy年MM月dd日 HH时mm分ss秒")
+    //    //    @DateTimeFormat("yyyy年MM月dd日 HH时mm分ss秒")
     @ColumnWidth(25)
-    @ExcelProperty(value = "锁定时间", index = 11)
+    @ExcelProperty(value = "锁定时间", index = 11, converter = LocalDateStringConverter.class)
     private LocalDate lockTime;
 
     @ContentStyle(horizontalAlignment = HorizontalAlignmentEnum.LEFT, verticalAlignment = VerticalAlignmentEnum.CENTER)

@@ -29,7 +29,6 @@ import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -83,9 +82,9 @@ public class AdminController {
                 .eq("user_id", map.get("userId"))
                 .set("password", userResetPassword);
         if (userService.update(updateWrapper)) {
-            return Result.success("重置密码失败");
+            return Result.success("重置密码成功");
         } else {
-            return Result.error("重置密码成功");
+            return Result.error("重置密码失败");
         }
     }
 
@@ -124,13 +123,9 @@ public class AdminController {
         LocalDate lockTime = null;
         try {
             lockType = map.get("lockType");
-            String lockTimeStr = map.get("lockTime");
+            Integer lockDay = Integer.valueOf(map.get("lockDay"));
             userId = Long.valueOf(map.get("userId"));
-
-            if (lockTimeStr != null) {
-                lockTime = LocalDate.parse(map.get("lockTime"), DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-            }
-            if (lockType == null || userId == null || (userId == null && lockTimeStr == null)) {
+            if (lockType == null || userId == null || lockDay == null) {
                 return Result.error("参数错误");
             }
         } catch (NumberFormatException e) {
@@ -145,13 +140,13 @@ public class AdminController {
                     .set("lock_time", lockTime);
         } else {
             updateWrapper
-                    .set("user_status", "1")
+                    .set("user_status", "0")
                     .set("lock_time", LocalDate.now());
         }
         if (userService.update(updateWrapper)) {
-            return Result.success("修改描述成功");
+            return Result.success("锁定/解锁成功");
         } else {
-            return Result.error("修改描述失败");
+            return Result.error("锁定/解锁失败");
         }
     }
 
