@@ -6,13 +6,11 @@ import com.alibaba.excel.annotation.write.style.*;
 import com.alibaba.excel.converters.longconverter.LongStringConverter;
 import com.alibaba.excel.enums.poi.HorizontalAlignmentEnum;
 import com.alibaba.excel.enums.poi.VerticalAlignmentEnum;
-import com.boot.common.JsonTransformation.LocalDateStringConverter;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 /**
@@ -89,8 +87,8 @@ public class UserExcel {
 
     //    //    @DateTimeFormat("yyyy年MM月dd日 HH时mm分ss秒")
     @ColumnWidth(25)
-    @ExcelProperty(value = "锁定时间", index = 11, converter = LocalDateStringConverter.class)
-    private LocalDate lockTime;
+    @ExcelProperty(value = "锁定时间", index = 11)
+    private LocalDateTime lockTime;
 
     @ContentStyle(horizontalAlignment = HorizontalAlignmentEnum.LEFT, verticalAlignment = VerticalAlignmentEnum.CENTER)
     @ColumnWidth(40)

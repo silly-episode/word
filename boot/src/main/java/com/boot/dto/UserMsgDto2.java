@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 /**
  * @Project: word
@@ -22,5 +22,5 @@ public class UserMsgDto2 extends UserMsgDto {
 
     private String userStatus;
 
-    private LocalDate lockTime;
+    private LocalDateTime lockTime;
 }

@@ -89,6 +89,18 @@ public class AdminController {
     }
 
     /**
+     * @Return:
+     * @Author: DengYinzhe
+     * @Description: TODO 删除用户
+     * @Date: 2023/4/6 20:22
+     */
+    @DeleteMapping("user/{userId}")
+    public Result<String> user(@PathVariable Long userId) {
+
+        return Result.success("删除用户成功");
+    }
+
+    /**
      * @param map:
      * @Return: Result<String>
      * @Author: DengYinzhe
@@ -96,11 +108,12 @@ public class AdminController {
      * @Date: 2023/3/28 9:29
      */
     @PutMapping("remark")
-    public Result<String> remark(@RequestBody Map<String, Long> map) {
+    public Result<String> remark(@RequestBody Map<String, String> map) {
+//        Long userId = Long.valueOf(map.get("userId"));
         UpdateWrapper<User> updateWrapper = new UpdateWrapper<>();
         updateWrapper
                 .eq("user_id", map.get("userId"))
-                .set("password", map.get("remark"));
+                .set("remark", map.get("remark"));
         if (userService.update(updateWrapper)) {
             return Result.success("修改描述成功");
         } else {
@@ -117,31 +130,27 @@ public class AdminController {
      */
     @PutMapping("lockOrUnLockUser")
     public Result<String> lockUser(@RequestBody Map<String, String> map) {
-
+        System.out.println(map.toString());
+        String lockStatus = "lock";
         String lockType = null;
         Long userId = null;
-        LocalDate lockTime = null;
         try {
             lockType = map.get("lockType");
-            Integer lockDay = Integer.valueOf(map.get("lockDay"));
             userId = Long.valueOf(map.get("userId"));
-            if (lockType == null || userId == null || lockDay == null) {
+            if (lockType == null || userId == null) {
                 return Result.error("参数错误");
             }
         } catch (NumberFormatException e) {
-            return Result.error("参数错误");
+            return Result.error("参数转换错误");
         }
         UpdateWrapper<User> updateWrapper = new UpdateWrapper<>();
         updateWrapper
-                .eq("user_id", userId);
-        if ("lock".equals(lockType)) {
-            updateWrapper
-                    .set("user_status", "1")
-                    .set("lock_time", lockTime);
+                .eq("user_id", userId)
+                .set("lock_time", LocalDate.now());
+        if (lockStatus.equals(lockType)) {
+            updateWrapper.set("user_status", "1");
         } else {
-            updateWrapper
-                    .set("user_status", "0")
-                    .set("lock_time", LocalDate.now());
+            updateWrapper.set("user_status", "0");
         }
         if (userService.update(updateWrapper)) {
             return Result.success("锁定/解锁成功");
@@ -160,6 +169,7 @@ public class AdminController {
     @PostMapping("userSearch")
 //    @RequiresAuthentication
     public Result<Page<UserMsgDto2>> userSearch(@RequestBody UserSearchDto userSearchDto) {
+        System.out.println(userSearchDto);
         Page<User> pageInfo = new Page<>(userSearchDto.getPageNum(), userSearchDto.getPageSize());
         LambdaQueryWrapper<User> wrapper = new LambdaQueryWrapper<>();
         String oftenParam = userSearchDto.getAccountOrTelOrNickNameOrUserId();
@@ -175,8 +185,8 @@ public class AdminController {
                                 .or().eq(User::getTel, oftenParam)
                                 .or().eq(User::getUserId, oftenParam)
                 )
-                .orderByDesc(User::getRegisterTime)
-                .orderBy(flag, userSearchDto.getIntegrationOrderByAsc(), User::getIntegration);
+                .orderBy(flag, userSearchDto.getIntegrationOrderByAsc(), User::getIntegration)
+                .orderByDesc(User::getRegisterTime);
         userService.page(pageInfo, wrapper);
         for (User record : pageInfo.getRecords()) {
             userStatus = record.getUserStatus();

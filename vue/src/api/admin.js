@@ -47,6 +47,19 @@ export function resetPwd(data) {
 }
 
 /**
+ * 管理员修改描述
+ * @param data
+ * @returns {*}
+ */
+export function updateRemark(data) {
+    return request({
+        url: 'admin/remark',
+        method: 'put',
+        data
+    })
+}
+
+/**
  * 锁定和解锁用户
  * @param data
  * @returns {*}

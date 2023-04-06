@@ -8,69 +8,130 @@
     </el-breadcrumb>
     <el-card style="min-height: 100%">
       <!-- 搜索与筛选区域 -->
-      <el-row :gutter="30">
-        <el-col :span="8.5">
-          <el-date-picker
-              v-model="timeList"
-              end-placeholder="结束日期"
-              range-separator="至"
-              start-placeholder="开始日期"
-              type="datetimerange"
-              @change="userSearch">
-          </el-date-picker>
-        </el-col>
-        <el-col :span="4">
-          <el-select v-model="queryInfo.userStatus" placeholder="请选择用户状态" @change="userSearch">
-            <el-option
-                v-for="item in userStatusList"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value">
-            </el-option>
-          </el-select>
-        </el-col>
-        <el-col :span="3">
-          <el-select v-model="queryInfo.integrationOrderByAsc" placeholder="请选择积分排序" @change="userSearch">
-            <el-option
-                v-for="status in integrationStatusList"
-                :key="status.value"
-                :label="status.name"
-                :value="status.value"
-            />
-          </el-select>
-        </el-col>
-        <el-col :span="6">
-          <el-input
-              v-model="queryInfo.accountOrTelOrNickNameOrUserId"
-              clearable
-              placeholder="请输入内容"
-              @clear="userSearch"
+      <div>
+        <el-form ref="queryParams" :inline="true" :model="pickDate">
+          <el-form-item label="开始时间">
+            <el-date-picker
+                v-model="pickDate.beginDate"
+                :picker-options="{
+              disabledDate: (time) => {
+                let _this=this
+                if (_this.pickDate.endDate) {
+                   let edtTime = _this.pickDate.endDate.replace(/-/g, '/');
+                   return time.getTime() > new Date(edtTime);
+                  }
+          }, firstDayOfWeek: 1}"
+                placeholder="选择日期"
+                style="width: 200px"
+                type="datetime"
+                value-format="yyyy-MM-dd HH:mm:ss"
+            >
+            </el-date-picker>
+          </el-form-item>
+          <el-form-item label="结束时间">
+            <el-date-picker
+                v-model="pickDate.endDate"
+                :picker-options="{
+              disabledDate: (time) => {
+                let _this=this
+                if (_this.pickDate.beginDate) {
+                let startTime = _this.pickDate.beginDate.replace(/-/g, '/');
+                return time.getTime() < new Date(startTime);
+                }
+          }, firstDayOfWeek: 1}"
+                placeholder="选择日期"
+                style="width: 200px"
+                type="datetime"
+                value-format="yyyy-MM-dd HH:mm:ss"
+            >
+            </el-date-picker>
+          </el-form-item>
+          <el-form-item label="积分排序">
+            <el-select
+                v-model="queryInfo.integrationOrderByAsc"
+                clearable
+                style="width: 120px">
+              <el-option
+                  v-for="status in integrationStatusList"
+                  :key="status.value"
+                  :label="status.name"
+                  :value="status.value">
+              </el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="用户状态">
+            <el-select
+                v-model="queryInfo.userStatus"
+                clearable
+                style="width: 100px">
+              <el-option
+                  v-for="item in userStatusList"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value">
+              </el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="用户搜索">
+            <el-input
+                v-model="queryInfo.accountOrTelOrNickNameOrUserId"
+                autocomplete="off"
+                clearable
+                placeholder="账号、电话、用户名、ID"
+                type="text"
+                @input="() => $forceUpdate()"
+            ></el-input>
+          </el-form-item>
+          <el-button icon="el-icon-search" type="primary" @click="userSearch"
+          >查询
+          </el-button
           >
-            <el-button
-                slot="append"
-                icon="el-icon-search"
-                @click="userSearch"
-            ></el-button>
-          </el-input>
-        </el-col>
-        <el-col :span="2">
-          <el-button type="primary" @click="userListExcel">导出</el-button>
-        </el-col>
-      </el-row>
+          <el-button icon="el-icon-download" type="success" @click="userListExcel"
+          >导出
+          </el-button
+          >
+        </el-form>
+      </div>
+
       <!-- 用户列表区 -->
       <el-table
           :cell-style="{'text-align':'center'}"
           :data="userList"
           :header-cell-style="{'text-align':'center'}"
+          :height="tableHeight === 0 ? 'calc(100vh - 301px)' : tableHeight"
           border
           highlight-current-row stripe>
-        <el-table-column label="序号" type="index" width="50"></el-table-column>
+        <el-table-column label="序号" width="50">
+          <template v-slot="scope">
+          <span>{{
+              scope.$index + (queryInfo.pageNum - 1) * queryInfo.pageSize + 1
+            }}</span>
+          </template>
+        </el-table-column>
         <el-table-column label="账号" prop="account" width="150"></el-table-column>
         <el-table-column label="用户名" prop="nickName" width="150"></el-table-column>
         <el-table-column label="注册时间" prop="registerTime" width="200"></el-table-column>
         <el-table-column label="用户状态" prop="userStatus" width="100"></el-table-column>
         <el-table-column label="用户积分" prop="integration" width="100"></el-table-column>
-        <el-table-column label="描述" prop="remark"></el-table-column>
+        <el-table-column label="描述" prop="remark">
+          <template v-slot="scope">
+            <el-input
+                v-model="scope.row.remark"
+                autocomplete="off"
+                placeholder="请输入用户描述"
+                style="width: 70%"
+                type="text"
+                @input="() => $forceUpdate()"
+            ></el-input>
+            <el-button
+                slot="append"
+                plain
+                type="primary"
+                @click="updateRemark(scope.row.userId,scope.row.remark)"
+            >提交
+            </el-button>
+          </template>
+        </el-table-column>
         <el-table-column label="操作" width="250">
           <template v-slot="scope">
             <!-- 查看按钮 -->
@@ -135,35 +196,33 @@
       </el-table>
       <!-- 分页区 -->
       <div class="flex_center_center">
-        <el-pagination
-            :current-page="queryInfo.pageNum"
-            :page-size="queryInfo.pageSize"
-            :page-sizes="[10, 30, 50]"
-            :total="total"
-            layout="total, sizes, prev, pager, next, jumper"
-            @size-change="handleSizeChange"
-            @current-change="handleCurrentChange"
-        >
-        </el-pagination>
+        <lh-pagination v-show="total > 0" :limit.sync="queryInfo.pageSize" :page.sync="queryInfo.pageNum"
+                       :total="total" @pagination="userSearch"/>
       </div>
 
     </el-card>
     <UserInfo ref="UserInfo"></UserInfo>
+
+
   </div>
 </template>
 
 <script>
 
-import {lockOrUnLockUser, resetPwd, userListExcel, userSearch} from "@/api/admin.js"
+import {lockOrUnLockUser, resetPwd, updateRemark, userListExcel, userSearch} from "@/api/admin.js"
 import UserInfo from "./UserInfo";
 import fileDownload from "js-file-download";
 import dayjs from "dayjs";
+import LhPagination from "@/components/lhPublic/lhPagination";
 
 export default {
   data() {
     return {
+      tableHeight: 0,
+      clientWidth: document.body.clientWidth, // 文档宽度
       //起始时间和截止时间的时间列表
       timeList: ['', ''],
+      pickDate: {beginDate: "", endDate: ""},
       // 获取用户列表的参数对象
       queryInfo: {
         /*开始时间*/
@@ -190,8 +249,8 @@ export default {
       ],
       //积分状态列表
       integrationStatusList: [
-        {value: true, name: "升序"},
-        {value: false, name: "降序"}
+        {value: true, name: "积分升序"},
+        {value: false, name: "积分降序"}
       ],
       // 用于保存获取到的用户列表
       userList: [],
@@ -199,7 +258,7 @@ export default {
       total: 0
     };
   },
-  components: {UserInfo},
+  components: {LhPagination, UserInfo},
   created() {
     // 发送数据请求，获取用户列表数据
     this.userSearch();
@@ -225,9 +284,8 @@ export default {
             this.total = res.data.total
           })
           .catch((err) => {
-            console.log(err.message)
+            console.log(err.msg)
           })
-
     },
 
     //转标准时间
@@ -265,24 +323,53 @@ export default {
 
     },
 
-    //锁定和解锁用户
-    lockOrUnLockUser(userId, userStatus) {
+    //修改描述
+    updateRemark(userId, remark) {
       let params = {
         userId: userId,
-        type: ""
+        remark: remark
       }
-      if ("锁定" === userStatus) {
-        params.type = "unLock"
-      } else {
-        params.type = "lock"
-      }
-      lockOrUnLockUser(params)
+      updateRemark(params)
           .then((res) => {
-            this.$message.success(res.data)
+            this.$message.success(res.msg);
           })
           .catch((err) => {
-            this.$message.success(err.data)
+            this.$message.error(err.msg);
           })
+    },
+
+
+    //锁定和解锁用户
+    lockOrUnLockUser(userId, userStatus) {
+      this.$confirm("请确定是否 锁定/解锁 该用户", {
+        cancelButtonText: "取消",//取消按钮文字更换
+        confirmButtonText: "确认",//确认按钮文字更换
+        showClose: true,//是否显示右上角关闭按钮
+        type: "warning",//提示类型 success/info/warning/error
+      })
+          .then(() => {
+            let params = {
+              userId: userId,
+              lockType: "unLock"
+            }
+            if ("锁定" !== userStatus) {
+              params.lockType = "lock"
+            }
+            lockOrUnLockUser(params)
+                .then((res) => {
+                  this.$message.success(res.msg)
+                })
+                .catch((err) => {
+                  this.$message.success(err.msg)
+                })
+                .finally(() => {
+                      this.userSearch()
+                    }
+                );
+          })
+          .catch((err) => {
+//捕获异常
+          });
     },
 
     // 导出
@@ -302,15 +389,27 @@ export default {
 
     //重置用户密码
     resetPwd(userId) {
-      resetPwd({userId})
-          .then((res) => {
-            console.log('res', res)
-            this.$message.success(res.data);
+      this.$confirm("是否 重置 该用户密码", {
+        cancelButtonText: "取消",//取消按钮文字更换
+        confirmButtonText: "确认",//确认按钮文字更换
+        showClose: true,//是否显示右上角关闭按钮
+        type: "warning",//提示类型 success/info/warning/error
+      })
+          .then(() => {
+            resetPwd({userId})
+                .then((res) => {
+                  console.log('res', res)
+                  this.$message.success(res.msg);
+                })
+                .catch((err) => {
+                  this.$message.error(err.msg);
+                })
           })
           .catch((err) => {
-            this.$message.error(err.data);
-          })
+//捕获异常
+          });
     },
+
 
     // 监听pagesize的改变
     handleSizeChange(newSize) {
@@ -326,10 +425,11 @@ export default {
 
     // 根据id删除对应的用户信息
     removeUserById(id) {
-      this.$confirm("是否确认删除", {
-        confirmButtonText: "确认",//确认按钮文字更换
+      this.$confirm("此操作会立刻 删除 该用户的一切信息，请谨慎操作!", {
         cancelButtonText: "取消",//取消按钮文字更换
+        confirmButtonText: "确认",//确认按钮文字更换
         showClose: true,//是否显示右上角关闭按钮
+        // center: true,
         type: "warning",//提示类型 success/info/warning/error
       })
           .then(() => {
@@ -338,10 +438,12 @@ export default {
           .catch((err) => {
 //捕获异常
           });
-    },
-  },
+    }
+  }
 };
 </script>
 
 <style scoped>
+
+
 </style>
