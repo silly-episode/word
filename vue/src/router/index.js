@@ -1,8 +1,12 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
-import HomeView from "../views/HomeView.vue";
-import TranslateView from "../views/TranslateView.vue";
-import WordView from "../views/WordView.vue";
+
+// 前台
+import HomeView from "@/views/proscenium/HomeView.vue";
+import TranslateView from "@/views/proscenium/TranslateView.vue";
+import WordView from "@/views/proscenium/WordView.vue";
+
+
 // 后台
 import Admin from "@/views/backstage/Admin.vue";
 import Welcome from '@/views/backstage/Welcome.vue'
@@ -25,7 +29,7 @@ const routes = [
   {
     // 重定向到登录页面
     path: '/',
-    redirect: '/admin'
+    redirect: '/home'
   },
   {
     path: "/home",
@@ -33,11 +37,6 @@ const routes = [
     component: HomeView,
     redirect: '/translate',
     children: [{
-      path: "/about",
-      name: "about",
-      component: () =>
-          import(/* webpackChunkName: "about" */ "../components/wordModuleUpload.vue"),
-    }, {
       path: "/translate",
       name: "translate",
       component: TranslateView,
