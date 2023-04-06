@@ -23,9 +23,8 @@
             :default-active="activePath"
             active-text-color="#409EFF"
             background-color="#2e645e"
-            router="true"
             text-color="#fff"
-            unique-opened="true"
+            router
         >
           <el-menu-item
               index="/welcome"

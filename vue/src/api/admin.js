@@ -20,3 +20,35 @@ export function userSearch(params) {
         data: params
     })
 }
+
+/**
+ * 导出
+ * @returns {*}
+ */
+export function leadingOut() {
+    return request({
+        url: 'admin/userListExcel',
+        method: 'get'
+    })
+}
+
+/**
+ * 重置密码
+ * @returns {*}
+ */
+export function resetPwd(data) {
+    return request({
+        url: 'admin/password',
+        method: 'put',
+        data
+    })
+}
+
+//登录日志
+export function Loginlog(data) {
+    return request({
+        url: 'admin/commonUserLog',
+        method: 'post',
+        data
+    })
+}

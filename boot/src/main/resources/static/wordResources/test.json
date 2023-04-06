@@ -1,14 +1,15 @@
-{
-  "wordRank": 1,
-  "headWord": "cancel",
-  "content": {
-    "word": {
-      "wordHead": "cancel",
-      "wordId": "CET4_3_1",
-      "content": {
-        "exam": [
-          {
-            "question": "As we can no longer wait for the delivery of our order, we have to _______ it.",
+[
+  {
+    "wordRank": 1,
+    "headWord": "cancel",
+    "content": {
+      "word": {
+        "wordHead": "cancel",
+        "wordId": "CET4_3_1",
+        "content": {
+          "exam": [
+            {
+              "question": "As we can no longer wait for the delivery of our order, we have to _______ it.",
             "answer": {
               "explain": " cancel order：  取消订单。 句意：  订购的货物尚未送到， 我们不能再等了， 不得不取消订单。 postpone：  推迟， 使延期； refuse：  拒绝， 谢绝； delay：  耽搁， 延迟， 延期。",
               "rightIndex": 4
@@ -136,22 +137,22 @@
             "tranOther": "to decide that something that was officially planned will not happen"
           }
         ]
+        }
       }
-    }
+    },
+    "bookId": "CET4_3"
   },
-  "bookId": "CET4_3"
-}
-{
-  "wordRank": 2,
-  "headWord": "explosive",
-  "content": {
-    "word": {
-      "wordHead": "explosive",
-      "wordId": "CET4_3_2",
-      "content": {
-        "sentence": {
-          "sentences": [
-            {
+  {
+    "wordRank": 2,
+    "headWord": "explosive",
+    "content": {
+      "word": {
+        "wordHead": "explosive",
+        "wordId": "CET4_3_2",
+        "content": {
+          "sentence": {
+            "sentences": [
+              {
               "sContent": "Because the gas is highly explosive, it needs to be kept in high-pressure containers.",
               "sCn": "由于这种气体极易爆炸，因此需要保存在高压容器内。"
             },
@@ -331,22 +332,22 @@
             "tranOther": "a substance that can cause an explosion"
           }
         ]
+        }
       }
-    }
+    },
+    "bookId": "CET4_3"
   },
-  "bookId": "CET4_3"
-}
-{
-  "wordRank": 3,
-  "headWord": "numerous",
-  "content": {
-    "word": {
-      "wordHead": "numerous",
-      "wordId": "CET4_3_3",
-      "content": {
-        "sentence": {
-          "sentences": [
-            {
+  {
+    "wordRank": 3,
+    "headWord": "numerous",
+    "content": {
+      "word": {
+        "wordHead": "numerous",
+        "wordId": "CET4_3_3",
+        "content": {
+          "sentence": {
+            "sentences": [
+              {
               "sContent": "Numerous attempts have been made to hide the truth.",
               "sCn": "为掩盖事实作了很多尝试。"
             },
@@ -446,3 +447,4 @@
   },
   "bookId": "CET4_3"
 }
+]

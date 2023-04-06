@@ -81,7 +81,7 @@ public class AdminController {
         UpdateWrapper<User> updateWrapper = new UpdateWrapper<>();
         updateWrapper
                 .eq("user_id", map.get("userId"))
-                .set("password", map.get("password"));
+                .set("password", userResetPassword);
         if (userService.update(updateWrapper)) {
             return Result.success("重置密码失败");
         } else {
