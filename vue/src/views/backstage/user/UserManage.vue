@@ -8,8 +8,8 @@
     </el-breadcrumb>
     <el-card style="min-height: 100%">
       <!-- 搜索与筛选区域 -->
-      <el-row :gutter="24">
-        <el-col :span="8">
+      <el-row :gutter="30">
+        <el-col :span="8.5">
           <el-date-picker
               v-model="timeList"
               end-placeholder="结束日期"
@@ -18,6 +18,26 @@
               type="datetimerange"
               @change="userSearch">
           </el-date-picker>
+        </el-col>
+        <el-col :span="4">
+          <el-select v-model="queryInfo.userStatus" placeholder="请选择用户状态" @change="userSearch">
+            <el-option
+                v-for="item in userStatusList"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value">
+            </el-option>
+          </el-select>
+        </el-col>
+        <el-col :span="3">
+          <el-select v-model="queryInfo.integrationOrderByAsc" placeholder="请选择积分排序" @change="userSearch">
+            <el-option
+                v-for="status in integrationStatusList"
+                :key="status.value"
+                :label="status.name"
+                :value="status.value"
+            />
+          </el-select>
         </el-col>
         <el-col :span="6">
           <el-input
@@ -33,36 +53,25 @@
             ></el-button>
           </el-input>
         </el-col>
-        <el-col :span="4">
-          <el-select v-model="queryInfo.userStatus" placeholder="请选择用户状态" @change="userSearch">
-            <el-option
-                v-for="item in userStatusList"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value">
-            </el-option>
-          </el-select>
-        </el-col>
-        <el-col :span="4">
-          <el-select v-model="queryInfo.integrationOrderByAsc" placeholder="请选择积分排序" @change="userSearch">
-            <el-option label="升序" value="true"></el-option>
-            <el-option label="降序" value="false"></el-option>
-          </el-select>
-        </el-col>
         <el-col :span="2">
-          <el-button @click="leadingOut">导出</el-button>
+          <el-button type="primary" @click="userListExcel">导出</el-button>
         </el-col>
       </el-row>
       <!-- 用户列表区 -->
-      <el-table :cell-style="{'text-align':'center'}" :data="userlist" :header-cell-style="{'text-align':'center'}"
-                border stripe>
-        <el-table-column label="序号" type="index" width="50px"></el-table-column>
-        <el-table-column label="账号" prop="account"></el-table-column>
-        <el-table-column label="用户名" prop="nickName"></el-table-column>
-        <el-table-column label="注册时间" prop="registerTime"></el-table-column>
-        <el-table-column label="用户状态" prop="userStatus"></el-table-column>
+      <el-table
+          :cell-style="{'text-align':'center'}"
+          :data="userList"
+          :header-cell-style="{'text-align':'center'}"
+          border
+          highlight-current-row stripe>
+        <el-table-column label="序号" type="index" width="50"></el-table-column>
+        <el-table-column label="账号" prop="account" width="150"></el-table-column>
+        <el-table-column label="用户名" prop="nickName" width="150"></el-table-column>
+        <el-table-column label="注册时间" prop="registerTime" width="200"></el-table-column>
+        <el-table-column label="用户状态" prop="userStatus" width="100"></el-table-column>
+        <el-table-column label="用户积分" prop="integration" width="100"></el-table-column>
         <el-table-column label="描述" prop="remark"></el-table-column>
-        <el-table-column label="操作" width="250px">
+        <el-table-column label="操作" width="250">
           <template v-slot="scope">
             <!-- 查看按钮 -->
             <el-tooltip
@@ -93,43 +102,62 @@
               ></el-button>
             </el-tooltip>
             <!-- 锁定 -->
-            <el-button
-                icon="el-icon-key"
-                size="mini"
-                type="primary"
-                @click="show(scope.row)"
-            ></el-button>
+            <el-tooltip
+                :enterable="false"
+                content="锁定/解锁用户"
+                effect="dark"
+                placement="top">
+              <el-button
+                  icon="el-icon-key"
+                  size="mini"
+                  type="primary"
+                  @click="lockOrUnLockUser(scope.row.userId,scope.row.userStatus)"
+              ></el-button>
+            </el-tooltip>
+
             <!-- 删除按钮 -->
-            <el-button
-                icon="el-icon-delete"
-                size="mini"
-                type="danger"
-                @click="removeUserById(scope.row.userId)"
-            ></el-button>
+            <el-tooltip
+                :enterable="false"
+                content="删除用户"
+                effect="dark"
+                placement="top">
+              <el-button
+                  icon="el-icon-delete"
+                  size="mini"
+                  type="danger"
+                  @click="removeUserById(scope.row.userId)"
+              ></el-button>
+            </el-tooltip>
 
 
           </template>
         </el-table-column>
       </el-table>
       <!-- 分页区 -->
-      <el-pagination
-          :current-page="queryInfo.pageNum"
-          :page-size="queryInfo.pageSize"
-          :page-sizes="[10, 30, 50]"
-          :total="total"
-          layout="total, sizes, prev, pager, next, jumper"
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-      >
-      </el-pagination>
+      <div class="flex_center_center">
+        <el-pagination
+            :current-page="queryInfo.pageNum"
+            :page-size="queryInfo.pageSize"
+            :page-sizes="[10, 30, 50]"
+            :total="total"
+            layout="total, sizes, prev, pager, next, jumper"
+            @size-change="handleSizeChange"
+            @current-change="handleCurrentChange"
+        >
+        </el-pagination>
+      </div>
+
     </el-card>
     <UserInfo ref="UserInfo"></UserInfo>
   </div>
 </template>
 
 <script>
-import {leadingOut, resetPwd, userSearch} from "@/api/admin.js"
+
+import {lockOrUnLockUser, resetPwd, userListExcel, userSearch} from "@/api/admin.js"
 import UserInfo from "./UserInfo";
+import fileDownload from "js-file-download";
+import dayjs from "dayjs";
 
 export default {
   data() {
@@ -147,21 +175,26 @@ export default {
         /*用户状态*/
         userStatus: "",
         /*积分升序或降序,*/
-        integrationOrderByAsc: '',
+        integrationOrderByAsc: false,
         // 当前页码
         pageNum: 1,
         // 每页显示条数
-        pageSize: 5,
+        pageSize: 10,
       },
-      //状态列表
+      //用户状态列表
       userStatusList: [
         // 用户状态，0正常，1锁定，2删除
         {label: '正常', value: '0'},
         {label: '锁定', value: '1'},
         {label: '删除', value: '2'}
       ],
+      //积分状态列表
+      integrationStatusList: [
+        {value: true, name: "升序"},
+        {value: false, name: "降序"}
+      ],
       // 用于保存获取到的用户列表
-      userlist: [],
+      userList: [],
       // 总数据条数
       total: 0
     };
@@ -170,19 +203,25 @@ export default {
   created() {
     // 发送数据请求，获取用户列表数据
     this.userSearch();
+    //默认选择条件为降序
+    this.queryInfo.integrationOrderByAsc = this.integrationStatusList[1].value
   },
   methods: {
+    //查询
     userSearch() {
       let params = this.queryInfo;
-      if (this.timeList[0] && this.timeList[1]) {
-        params.beginTime = this.trunDate(this.timeList[0]).hasTime
-        params.endTime = this.trunDate(this.timeList[1]).hasTime
+      if (this.timeList && this.timeList[0] && this.timeList[1]) {
+        params.beginTime = this.turnDateString(this.timeList[0]).hasTime
+        params.endTime = this.turnDateString(this.timeList[1]).hasTime
+      } else {
+        params.beginTime = "";
+        params.endTime = "";
       }
-      if (params.integrationOrderByAsc === '') params.integrationOrderByAsc = false
+      console.log(params)
       userSearch(params)
           .then((res) => {
             console.log(res)
-            this.userlist = res.data.records
+            this.userList = res.data.records
             this.total = res.data.total
           })
           .catch((err) => {
@@ -192,7 +231,7 @@ export default {
     },
 
     //转标准时间
-    trunDate(msec) {
+    turnDateString(msec) {
       let datetime = new Date(msec);
       let year = datetime.getFullYear();
       let month = datetime.getMonth();
@@ -219,23 +258,39 @@ export default {
           '-' +
           ((date + 1) < 10 ? '0' + date : date);
 
-      let result = {
+      return {
         hasTime: result1,
         withoutTime: result2
       };
 
-      return result;
-
     },
 
-    //  导出
-    leadingOut() {
-      leadingOut()
+    //锁定和解锁用户
+    lockOrUnLockUser(userId, userStatus) {
+      let params = {
+        userId: userId,
+        type: ""
+      }
+      if ("锁定" === userStatus) {
+        params.type = "unLock"
+      } else {
+        params.type = "lock"
+      }
+      lockOrUnLockUser(params)
           .then((res) => {
-            console.log('daochu')
+            this.$message.success(res.data)
           })
           .catch((err) => {
-            console.log('err', err)
+            this.$message.success(err.data)
+          })
+    },
+
+    // 导出
+    userListExcel() {
+      let dateTime = dayjs().format('YYYY-MM-DD');
+      userListExcel()
+          .then(response => {
+            fileDownload(response, "Word-用户信息表(" + dateTime + ').xlsx')
           })
     },
 
@@ -245,13 +300,15 @@ export default {
       // console.log((row))
     },
 
+    //重置用户密码
     resetPwd(userId) {
       resetPwd({userId})
           .then((res) => {
             console.log('res', res)
+            this.$message.success(res.data);
           })
           .catch((err) => {
-            console.log('err', err)
+            this.$message.error(err.data);
           })
     },
 
