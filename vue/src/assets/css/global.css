@@ -111,6 +111,11 @@ body,
     border-radius: 70px;
 }
 
+
+.duration-300 {
+    transition-duration: .3s;
+}
+
 /* flex布局 */
 .flex {
     display: flex;
@@ -118,6 +123,10 @@ body,
 
 .flex1 {
     flex: 1;
+}
+
+.flex-1 {
+    flex: 1 1 0%;
 }
 
 .flex_end {
@@ -278,8 +287,16 @@ body,
     padding: 10px;
 }
 
+.padding_t_2 {
+    padding-top: 0.5rem;
+}
+
 .padding_t_20 {
     padding-top: 20px;
+}
+
+.padding_b_8 {
+    padding-bottom: 8px;
 }
 
 .padding_l_30 {
@@ -385,6 +402,12 @@ body,
     color: #6f6f6f;
 }
 
+.bg_f4 {
+    background-color: #f4f4f4;
+}
+
+
+
 .border_blue {
     border: 1px solid #1296db;
 }
@@ -409,6 +432,8 @@ body,
 .bg_orange {
     background-color: rgb(255, 179, 37);
 }
+
+
 
 .bg_baby_orange {
     background-color: rgb(253, 234, 198);
@@ -529,6 +554,11 @@ body,
 .wid_per70 {
     width: 70%;
 }
+
+.wid_per80 {
+    width: 80%;
+}
+
 
 .wid_per90 {
     width: 90%;

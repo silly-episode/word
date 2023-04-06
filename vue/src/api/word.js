@@ -1,16 +1,16 @@
 import request from '../utils/request'
 
-export function importWord() {
+export function getWord(params) {
     return request({
-        url: '/importWord',
+        url: `/word/word/${params.userId}`,
         method: 'get'
     })
 }
 
-export function sayHello(data) {
-    return request({
-        url: '/hello/name',
-        method: 'post',
-        data: data
-    })
-}
+// export function sayHello(data) {
+//     return request({
+//         url: '/hello/name',
+//         method: 'post',
+//         data: data
+//     })
+// }

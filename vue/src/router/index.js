@@ -40,11 +40,7 @@ const routes = [
       path: "/translate",
       name: "translate",
       component: TranslateView,
-    }, {
-      path: "/word",
-      name: "word",
-      component: WordView,
-    },]
+    }]
   },
   {
     path: "/admin",
@@ -86,7 +82,11 @@ const routes = [
       component: DbInformation
     }]
   },
-
+  {
+    path: "/word",
+    name: "word",
+    component: WordView,
+  },
 ];
 
 const router = new VueRouter({
