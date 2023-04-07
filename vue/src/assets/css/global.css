@@ -375,11 +375,11 @@ body,
 }
 
 .green {
-    color: rgb(107, 224, 107);
+    color: #16a34a;
 }
 
 .red {
-    color: rgb(247, 67, 67);
+    color: #dc2626;
 }
 
 .orange {
@@ -432,6 +432,10 @@ body,
 }
 
 /* 背景色 */
+.bg_drak {
+    background-color: #1f2937;
+}
+
 .bg_blue {
     background-color: #1296db;
 }
@@ -445,10 +449,8 @@ body,
 }
 
 .bg_orange {
-    background-color: rgb(255, 179, 37);
+    background-color: #fb9c4e;
 }
-
-
 
 .bg_baby_orange {
     background-color: rgb(253, 234, 198);
@@ -593,6 +595,10 @@ body,
 
 .wid_35 {
     width: 35px;
+}
+
+.wid_36 {
+    width: 36px;
 }
 
 .wid_40 {
