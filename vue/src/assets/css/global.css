@@ -227,6 +227,10 @@ body,
     margin-top: 50px;
 }
 
+.margin_r_5 {
+    margin-right: 5px;
+}
+
 .margin_r_10 {
     margin-right: 10px;
 }
@@ -356,6 +360,14 @@ body,
     font-size: 22px;
 }
 
+.font_26 {
+    font-size: 26px;
+}
+
+.font_30 {
+    font-size: 30px;
+}
+
 
 /* 颜色 */
 .blue {
@@ -375,7 +387,7 @@ body,
 }
 
 .purple {
-    color: purple;
+    color: #818cf8;
 }
 
 .white {
@@ -407,7 +419,6 @@ body,
 }
 
 
-
 .border_blue {
     border: 1px solid #1296db;
 }
@@ -423,6 +434,10 @@ body,
 /* 背景色 */
 .bg_blue {
     background-color: #1296db;
+}
+
+.bg_purple {
+    background-color: #818cf8;
 }
 
 .bg_baby_blue {
@@ -469,6 +484,10 @@ body,
 
 .line_hei_40 {
     line-height: 40px;
+}
+
+.line_hei_50 {
+    line-height: 50px;
 }
 
 /* 宽高 */
@@ -570,6 +589,14 @@ body,
 
 .hei_per100 {
     height: 100%;
+}
+
+.wid_35 {
+    width: 35px;
+}
+
+.wid_40 {
+    width: 40px;
 }
 
 .hei_10 {

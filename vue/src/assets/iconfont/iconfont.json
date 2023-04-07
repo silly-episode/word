@@ -6,6 +6,62 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "8361835",
+      "name": "循环播放",
+      "font_class": "xunhuan",
+      "unicode": "e6cc",
+      "unicode_decimal": 59084
+    },
+    {
+      "icon_id": "1114",
+      "name": "网络",
+      "font_class": "wangluo",
+      "unicode": "e600",
+      "unicode_decimal": 58880
+    },
+    {
+      "icon_id": "936756",
+      "name": "眼睛",
+      "font_class": "yanjing",
+      "unicode": "e629",
+      "unicode_decimal": 58921
+    },
+    {
+      "icon_id": "1235390",
+      "name": "小喇叭",
+      "font_class": "xiaolaba",
+      "unicode": "e64c",
+      "unicode_decimal": 58956
+    },
+    {
+      "icon_id": "4182361",
+      "name": "AK-IN_闭眼",
+      "font_class": "biyan",
+      "unicode": "e601",
+      "unicode_decimal": 58881
+    },
+    {
+      "icon_id": "6468300",
+      "name": "静音",
+      "font_class": "jingyin",
+      "unicode": "e676",
+      "unicode_decimal": 58998
+    },
+    {
+      "icon_id": "30044897",
+      "name": "月亮-fill",
+      "font_class": "moon",
+      "unicode": "e6c0",
+      "unicode_decimal": 59072
+    },
+    {
+      "icon_id": "32336537",
+      "name": "白天模式",
+      "font_class": "sun",
+      "unicode": "e68f",
+      "unicode_decimal": 59023
+    },
+    {
       "icon_id": "629343",
       "name": "首页",
       "font_class": "shouye",
