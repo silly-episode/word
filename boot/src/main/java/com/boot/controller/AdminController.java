@@ -109,7 +109,6 @@ public class AdminController {
      */
     @PutMapping("remark")
     public Result<String> remark(@RequestBody Map<String, String> map) {
-//        Long userId = Long.valueOf(map.get("userId"));
         UpdateWrapper<User> updateWrapper = new UpdateWrapper<>();
         updateWrapper
                 .eq("user_id", map.get("userId"))
@@ -169,36 +168,40 @@ public class AdminController {
     @PostMapping("userSearch")
 //    @RequiresAuthentication
     public Result<Page<UserMsgDto2>> userSearch(@RequestBody UserSearchDto userSearchDto) {
-        System.out.println(userSearchDto);
-        Page<User> pageInfo = new Page<>(userSearchDto.getPageNum(), userSearchDto.getPageSize());
-        LambdaQueryWrapper<User> wrapper = new LambdaQueryWrapper<>();
-        String oftenParam = userSearchDto.getAccountOrTelOrNickNameOrUserId();
-        boolean flag = null != userSearchDto.getIntegrationOrderByAsc();
-        String userStatus;
-        wrapper
-                .ge(null != userSearchDto.getBeginTime(), User::getRegisterTime, userSearchDto.getBeginTime())
-                .le(null != userSearchDto.getEndTime(), User::getRegisterTime, userSearchDto.getEndTime())
-                .eq(!userSearchDto.getUserStatus().isEmpty(), User::getUserStatus, userSearchDto.getUserStatus())
-                .and(!oftenParam.isEmpty(),
-                        e -> e.like(User::getNickName, oftenParam)
-                                .or().eq(User::getAccount, oftenParam)
-                                .or().eq(User::getTel, oftenParam)
-                                .or().eq(User::getUserId, oftenParam)
-                )
-                .orderBy(flag, userSearchDto.getIntegrationOrderByAsc(), User::getIntegration)
-                .orderByDesc(User::getRegisterTime);
-        userService.page(pageInfo, wrapper);
-        for (User record : pageInfo.getRecords()) {
-            userStatus = record.getUserStatus();
-            if ("0".equals(userStatus)) {
-                record.setUserStatus("正常");
-            } else if ("1".equals(userStatus)) {
-                record.setUserStatus("锁定");
-            } else if ("2".equals(userStatus)) {
-                record.setUserStatus("待删除");
+        Page<UserMsgDto2> pageInfoDto = null;
+        try {
+            Page<User> pageInfo = new Page<>(userSearchDto.getPageNum(), userSearchDto.getPageSize());
+            LambdaQueryWrapper<User> wrapper = new LambdaQueryWrapper<>();
+            String oftenParam = userSearchDto.getAccountOrTelOrNickNameOrUserId();
+            boolean flag = (null != userSearchDto.getIntegrationOrderByAsc());
+            String userStatus;
+            wrapper
+                    .ge(null != userSearchDto.getBeginTime(), User::getRegisterTime, userSearchDto.getBeginTime())
+                    .le(null != userSearchDto.getEndTime(), User::getRegisterTime, userSearchDto.getEndTime())
+                    .eq(!userSearchDto.getUserStatus().isEmpty(), User::getUserStatus, userSearchDto.getUserStatus())
+                    .and(!oftenParam.isEmpty(),
+                            e -> e.like(User::getNickName, oftenParam)
+                                    .or().eq(User::getAccount, oftenParam)
+                                    .or().eq(User::getTel, oftenParam)
+                                    .or().eq(User::getUserId, oftenParam)
+                    )
+                    .orderBy(flag, flag && userSearchDto.getIntegrationOrderByAsc(), User::getIntegration)
+                    .orderByDesc(User::getRegisterTime);
+            userService.page(pageInfo, wrapper);
+            for (User record : pageInfo.getRecords()) {
+                userStatus = record.getUserStatus();
+                if ("0".equals(userStatus)) {
+                    record.setUserStatus("正常");
+                } else if ("1".equals(userStatus)) {
+                    record.setUserStatus("锁定");
+                } else if ("2".equals(userStatus)) {
+                    record.setUserStatus("待删除");
+                }
             }
+            pageInfoDto = BeanDtoVoUtils.pageVo(pageInfo, UserMsgDto2.class);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        Page<UserMsgDto2> pageInfoDto = BeanDtoVoUtils.pageVo(pageInfo, UserMsgDto2.class);
         return Result.success(pageInfoDto);
     }
 

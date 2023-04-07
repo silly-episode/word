@@ -104,13 +104,14 @@ public class GlobalExceptionHandler {
      * @param e:
      * @Return: Result
      * @Author: DengYinzhe
-     * @Description: 运行时异常
+     * @Description: 空指针异常
      * @Date: 2023/2/12 21:10
      */
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(value = NullPointerException.class)
     public Result handler(NullPointerException e) {
-        return Result.error(40008, e.getMessage());
+        log.error(e.getMessage());
+        return Result.error(CodeMsg.NULL_POINT);
     }
 
 

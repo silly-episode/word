@@ -72,6 +72,18 @@ export function lockOrUnLockUser(data) {
     })
 }
 
+/**
+ * 管理员删除用户
+ * @param params
+ * @returns {*}
+ */
+export function deleteUser(params) {
+    return request({
+        url: `admin/user/${params}`,
+        method: 'delete',
+    })
+}
+
 //登录日志
 export function Loginlog(data) {
     return request({

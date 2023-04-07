@@ -101,6 +101,9 @@
           :height="tableHeight === 0 ? 'calc(100vh - 301px)' : tableHeight"
           border
           highlight-current-row stripe>
+        <template slot="empty">
+          <el-empty description="暂无数据"></el-empty>
+        </template>
         <el-table-column label="序号" width="50">
           <template v-slot="scope">
           <span>{{
@@ -186,7 +189,7 @@
                   icon="el-icon-delete"
                   size="mini"
                   type="danger"
-                  @click="removeUserById(scope.row.userId)"
+                  @click="deleteUser(scope.row.userId)"
               ></el-button>
             </el-tooltip>
 
@@ -209,7 +212,7 @@
 
 <script>
 
-import {lockOrUnLockUser, resetPwd, updateRemark, userListExcel, userSearch} from "@/api/admin.js"
+import {deleteUser, lockOrUnLockUser, resetPwd, updateRemark, userListExcel, userSearch} from "@/api/admin.js"
 import UserInfo from "./UserInfo";
 import fileDownload from "js-file-download";
 import dayjs from "dayjs";
@@ -285,6 +288,7 @@ export default {
           })
           .catch((err) => {
             console.log(err.msg)
+            this.$message.error(err.msg)
           })
     },
 
@@ -424,16 +428,25 @@ export default {
     },
 
     // 根据id删除对应的用户信息
-    removeUserById(id) {
+    deleteUser(userId) {
       this.$confirm("此操作会立刻 删除 该用户的一切信息，请谨慎操作!", {
         cancelButtonText: "取消",//取消按钮文字更换
         confirmButtonText: "确认",//确认按钮文字更换
         showClose: true,//是否显示右上角关闭按钮
-        // center: true,
         type: "warning",//提示类型 success/info/warning/error
       })
           .then(() => {
             console.log('确认')
+            deleteUser(userId)
+                .then((res) => {
+                  this.$message.success(res.msg)
+                })
+                .catch((err) => {
+                  this.$message.error(err.msg)
+                })
+                .finally(() => {
+                  this.userSearch()
+                })
           })
           .catch((err) => {
 //捕获异常
