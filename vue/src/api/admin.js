@@ -97,11 +97,29 @@ export function deleteUser(params) {
     })
 }
 
-//登录日志
+/**
+ * 登录日志
+ * @param data
+ * @returns {*}
+ */
 export function commonUserLog(data) {
     return request({
         url: 'admin/commonUserLog',
         method: 'post',
         data
+    })
+}
+
+/**
+ * 登录日志导出
+ * @param data
+ * @returns {*}
+ */
+export function logExcelImport(data) {
+    return request({
+        url: 'admin/logExcelImport',
+        method: 'post',
+        data,
+        'responseType': 'blob'
     })
 }

@@ -9,10 +9,8 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.boot.bo.LoginLogExcel;
 import com.boot.bo.UserExcel;
 import com.boot.common.result.Result;
-import com.boot.dto.LoginLogSearchDto;
-import com.boot.dto.LoginMessage;
-import com.boot.dto.UserMsgDto2;
-import com.boot.dto.UserSearchDto;
+import com.boot.dto.*;
+import com.boot.entity.Admin;
 import com.boot.entity.LoginLog;
 import com.boot.entity.User;
 import com.boot.service.AdminService;
@@ -29,6 +27,7 @@ import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -65,6 +64,81 @@ public class AdminController {
 
         return Result.success();
     }
+
+    /**
+     * @Return:
+     * @Author: DengYinzhe
+     * @Description: TODO 添加管理员
+     * @Date: 2023/4/7 19:48
+     */
+    @PostMapping("commonAdmin")
+    public Result commonAdmin(@RequestBody Admin admin) {
+        if ("".equals(admin.getAccount())) {
+            return Result.error("参数缺失,请填写账户号");
+        }
+        LambdaQueryWrapper<Admin> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(Admin::getAccount, admin.getAccount());
+        Admin adminFromDb = adminService.getOne(queryWrapper);
+        if (adminFromDb != null) {
+            return Result.error("该账户已存在");
+        }
+//        todo 默认密码可以配置
+        admin
+                .setPassword("123456")
+                .setAddCreateTime(LocalDateTime.now());
+
+        if (adminService.save(admin)) {
+            return Result.success("添加管理员成功");
+        } else {
+            return Result.error("添加管理员失败");
+        }
+    }
+
+    /**
+     * @Return:
+     * @Author: DengYinzhe
+     * @Description: TODO 管理员搜索
+     * @Date: 2023/4/7 20:06
+     */
+    @PostMapping("adminSearch")
+    public Result adminSearch(@RequestBody AdminSearchDto adminSearchDto) {
+        Page<UserMsgDto2> pageInfoDto = null;
+        try {
+            Page<Admin> pageInfo = new Page<>(adminSearchDto.getPageNum(), adminSearchDto.getPageSize());
+            LambdaQueryWrapper<Admin> wrapper = new LambdaQueryWrapper<>();
+            String oftenParam = adminSearchDto.getAccountOrTelOrNickNameOrUserId();
+            boolean flag = (null != adminSearchDto.getIntegrationOrderByAsc());
+            String userStatus;
+            wrapper
+                    .ge(null != adminSearchDto.getBeginTime(), Admin::getAddCreateTime, adminSearchDto.getBeginTime())
+                    .le(null != adminSearchDto.getEndTime(), Admin::getAddCreateTime, adminSearchDto.getEndTime())
+                    .eq(!adminSearchDto.getUserStatus().isEmpty(), Admin::getUserStatus, adminSearchDto.getUserStatus())
+                    .and(!oftenParam.isEmpty(),
+                            e -> e.like(Admin::getNickName, oftenParam)
+                                    .or().eq(Admin::getAccount, oftenParam)
+                                    .or().eq(Admin::getTel, oftenParam)
+                                    .or().eq(Admin::getUserId, oftenParam)
+                    )
+                    .orderBy(flag, flag && adminSearchDto.getIntegrationOrderByAsc(), User::getIntegration)
+                    .orderByDesc(Admin::getAddCreateTime);
+            userService.page(pageInfo, wrapper);
+            for (User record : pageInfo.getRecords()) {
+                userStatus = record.getUserStatus();
+                if ("0".equals(userStatus)) {
+                    record.setUserStatus("正常");
+                } else if ("1".equals(userStatus)) {
+                    record.setUserStatus("锁定");
+                } else if ("2".equals(userStatus)) {
+                    record.setUserStatus("待删除");
+                }
+            }
+            pageInfoDto = BeanDtoVoUtils.pageVo(pageInfo, UserMsgDto2.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return Result.success(pageInfoDto);
+    }
+
 
     /**
      * @param map:
@@ -288,7 +362,7 @@ public class AdminController {
      * @Date: 2023/3/27 10:03
      */
     @PostMapping("commonUserLog")
-    public Result<Page<LoginLog>> commonUserLog(@RequestBody LoginLogSearchDto logSearch, HttpServletResponse response) throws IOException {
+    public Result<Page<LoginLog>> commonUserLog(@RequestBody LoginLogSearchDto logSearch) {
         /*查询信息*/
         Page<LoginLog> pageInfo = new Page<>(logSearch.getPageNum(), logSearch.getPageSize());
         LambdaQueryWrapper<LoginLog> wrapper = new LambdaQueryWrapper<>();
@@ -297,9 +371,9 @@ public class AdminController {
         wrapper
                 .ge(null != logSearch.getBeginTime(), LoginLog::getLoginTime, logSearch.getBeginTime())
                 .le(null != logSearch.getEndTime(), LoginLog::getLoginTime, logSearch.getEndTime())
-                .eq(null != logSearch.getLoginType(), LoginLog::getLoginType, logSearch.getLoginType())
-                .eq(null != logSearch.getResult(), LoginLog::getResult, logSearch.getResult())
-                .and(null != oftenParam,
+                .eq(!logSearch.getLoginType().isEmpty(), LoginLog::getLoginType, logSearch.getLoginType())
+                .eq(!logSearch.getResult().isEmpty(), LoginLog::getResult, logSearch.getResult())
+                .and(!oftenParam.isEmpty(),
                         e -> e.like(LoginLog::getNickName, oftenParam)
                                 .or().eq(LoginLog::getAccount, oftenParam)
                                 .or().eq(LoginLog::getTel, oftenParam)
@@ -307,7 +381,6 @@ public class AdminController {
                 )
                 .orderByDesc(LoginLog::getLoginTime);
         loginLogService.page(pageInfo, wrapper);
-
         for (LoginLog record : pageInfo.getRecords()) {
             userStatus = record.getUserStatus();
             if ("0".equals(userStatus)) {
@@ -318,33 +391,67 @@ public class AdminController {
                 record.setUserStatus("待删除");
             }
         }
-        /*是否导出的逻辑*/
-        if (logSearch.getExport() != null && logSearch.getExport()) {
-            List<LoginLogExcel> list = BeanDtoVoUtils.convertList(pageInfo.getRecords(), LoginLogExcel.class);
-            try {
-                response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-                response.setCharacterEncoding("utf-8");
-                // 这里URLEncoder.encode可以防止中文乱码 当然和easyexcel没有关系
-                String fileName = URLEncoder.encode("word-用户登录日志表", StandardCharsets.UTF_8).replaceAll("\\+", "%20");
-                response.setHeader("Content-disposition", "attachment;filename*=utf-8''" + fileName + ".xlsx");
-                // 这里需要设置不关闭流
-                EasyExcel.write(response.getOutputStream(), LoginLogExcel.class).autoCloseStream(Boolean.FALSE).sheet()
-                        .doWrite(list);
-            } catch (Exception e) {
-                // 重置response
-                response.reset();
-                response.setContentType("application/json");
-                response.setCharacterEncoding("utf-8");
-                Map<String, String> map = MapUtils.newHashMap();
-                map.put("status", "failure");
-                map.put("message", "下载文件失败" + e.getMessage());
-                response.getWriter().println(JsonUtils.getBeanToJson(map));
-            }
-            return null;
-        } else {
-            return Result.success(pageInfo);
-        }
+        return Result.success(pageInfo);
     }
 
+
+    /**
+     * @param logSearch:
+     * @Return: Result
+     * @Author: DengYinzhe
+     * @Description: 日志导出 20000行
+     * @Date: 2023/3/27 10:03
+     */
+    @PostMapping("logExcelImport")
+    public void logExcelImport(@RequestBody LoginLogSearchDto logSearch, HttpServletResponse response) throws IOException {
+//        todo 导出数量可以定制化
+        Page<LoginLog> pageInfo = new Page<>(1, 20000);
+        LambdaQueryWrapper<LoginLog> wrapper = new LambdaQueryWrapper<>();
+        String oftenParam = logSearch.getAccountOrTelOrNickNameOrUserId();
+        String userStatus;
+        wrapper
+                .ge(null != logSearch.getBeginTime(), LoginLog::getLoginTime, logSearch.getBeginTime())
+                .le(null != logSearch.getEndTime(), LoginLog::getLoginTime, logSearch.getEndTime())
+                .eq(!logSearch.getLoginType().isEmpty(), LoginLog::getLoginType, logSearch.getLoginType())
+                .eq(!logSearch.getResult().isEmpty(), LoginLog::getResult, logSearch.getResult())
+                .and(!oftenParam.isEmpty(),
+                        e -> e.like(LoginLog::getNickName, oftenParam)
+                                .or().eq(LoginLog::getAccount, oftenParam)
+                                .or().eq(LoginLog::getTel, oftenParam)
+                                .or().eq(LoginLog::getUserId, oftenParam)
+                )
+                .orderByDesc(LoginLog::getLoginTime);
+        loginLogService.page(pageInfo, wrapper);
+        for (LoginLog record : pageInfo.getRecords()) {
+            userStatus = record.getUserStatus();
+            if ("0".equals(userStatus)) {
+                record.setUserStatus("正常");
+            } else if ("1".equals(userStatus)) {
+                record.setUserStatus("锁定");
+            } else if ("2".equals(userStatus)) {
+                record.setUserStatus("待删除");
+            }
+        }
+        List<LoginLogExcel> list = BeanDtoVoUtils.convertList(pageInfo.getRecords(), LoginLogExcel.class);
+        try {
+            response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+            response.setCharacterEncoding("utf-8");
+            // 这里URLEncoder.encode可以防止中文乱码 当然和easyexcel没有关系
+            String fileName = URLEncoder.encode("word-用户登录日志表", StandardCharsets.UTF_8).replaceAll("\\+", "%20");
+            response.setHeader("Content-disposition", "attachment;filename*=utf-8''" + fileName + ".xls");
+            // 这里需要设置不关闭流
+            EasyExcel.write(response.getOutputStream(), LoginLogExcel.class).autoCloseStream(Boolean.FALSE).sheet()
+                    .doWrite(list);
+        } catch (Exception e) {
+            // 重置response
+            response.reset();
+            response.setContentType("application/json");
+            response.setCharacterEncoding("utf-8");
+            Map<String, String> map = MapUtils.newHashMap();
+            map.put("status", "failure");
+            map.put("message", "下载文件失败" + e.getMessage());
+            response.getWriter().println(JsonUtils.getBeanToJson(map));
+        }
+    }
 
 }

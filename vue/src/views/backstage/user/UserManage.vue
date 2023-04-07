@@ -101,6 +101,7 @@
             :header-cell-style="{'text-align':'center'}"
             :height="tableHeight === 0 ? 'calc(100vh - 301px)' : tableHeight"
             border
+            style="margin: auto; width: 100%; text-align: center"
             highlight-current-row stripe>
           <template slot="empty">
             <el-empty description="暂无数据"></el-empty>
@@ -123,7 +124,7 @@
                   v-model="scope.row.remark"
                   autocomplete="off"
                   placeholder="请输入用户描述"
-                  style="width: 70%"
+                  style="width: 80%"
                   type="text"
                   @input="() => $forceUpdate()"
               ></el-input>
