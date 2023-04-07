@@ -120,6 +120,37 @@ public class AdminController {
         }
     }
 
+
+    /**
+     * @Return:
+     * @Author: DengYinzhe
+     * @Description: TODO 管理员修改用户信息
+     * @Date: 2023/4/7 11:17
+     */
+    @PutMapping("user")
+    public Result<String> user(@RequestBody User user) {
+        String delete = "待删除";
+        String lock = "锁定";
+        String userStatus = user.getUserStatus();
+        User userFromDb = userService.getById(user.getUserId());
+        user
+                .setHeadImage(userFromDb.getHeadImage())
+                .setPassword(userFromDb.getPassword())
+                .setSalt(userFromDb.getSalt());
+        if (delete.equals(userStatus)) {
+            user.setUserStatus("2");
+        } else if (lock.equals(userStatus)) {
+            user.setUserStatus("1");
+        } else {
+            user.setUserStatus("0");
+        }
+        if (userService.updateById(user)) {
+            return Result.success("修改用户信息成功");
+        } else {
+            return Result.error("修改用户信息失败");
+        }
+    }
+
     /**
      * @param map:
      * @Return: Result<String>

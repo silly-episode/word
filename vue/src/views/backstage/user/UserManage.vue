@@ -77,7 +77,7 @@
                 v-model="queryInfo.accountOrTelOrNickNameOrUserId"
                 autocomplete="off"
                 clearable
-                placeholder="账号、电话、用户名、ID"
+                placeholder="ID、账号、电话、用户名"
                 type="text"
                 @input="() => $forceUpdate()"
             ></el-input>
@@ -94,109 +94,112 @@
       </div>
 
       <!-- 用户列表区 -->
-      <el-table
-          :cell-style="{'text-align':'center'}"
-          :data="userList"
-          :header-cell-style="{'text-align':'center'}"
-          :height="tableHeight === 0 ? 'calc(100vh - 301px)' : tableHeight"
-          border
-          highlight-current-row stripe>
-        <template slot="empty">
-          <el-empty description="暂无数据"></el-empty>
-        </template>
-        <el-table-column label="序号" width="50">
-          <template v-slot="scope">
+      <div class="noTableScrollBar">
+        <el-table
+            :cell-style="{'text-align':'center'}"
+            :data="userList"
+            :header-cell-style="{'text-align':'center'}"
+            :height="tableHeight === 0 ? 'calc(100vh - 301px)' : tableHeight"
+            border
+            highlight-current-row stripe>
+          <template slot="empty">
+            <el-empty description="暂无数据"></el-empty>
+          </template>
+          <el-table-column label="序号" width="50">
+            <template v-slot="scope">
           <span>{{
               scope.$index + (queryInfo.pageNum - 1) * queryInfo.pageSize + 1
             }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="账号" prop="account" width="150"></el-table-column>
-        <el-table-column label="用户名" prop="nickName" width="150"></el-table-column>
-        <el-table-column label="注册时间" prop="registerTime" width="200"></el-table-column>
-        <el-table-column label="用户状态" prop="userStatus" width="100"></el-table-column>
-        <el-table-column label="用户积分" prop="integration" width="100"></el-table-column>
-        <el-table-column label="描述" prop="remark">
-          <template v-slot="scope">
-            <el-input
-                v-model="scope.row.remark"
-                autocomplete="off"
-                placeholder="请输入用户描述"
-                style="width: 70%"
-                type="text"
-                @input="() => $forceUpdate()"
-            ></el-input>
-            <el-button
-                slot="append"
-                plain
-                type="primary"
-                @click="updateRemark(scope.row.userId,scope.row.remark)"
-            >提交
-            </el-button>
-          </template>
-        </el-table-column>
-        <el-table-column label="操作" width="250">
-          <template v-slot="scope">
-            <!-- 查看按钮 -->
-            <el-tooltip
-                :enterable="false"
-                content="查看用户详情"
-                effect="dark"
-                placement="top"
-            >
+            </template>
+          </el-table-column>
+          <el-table-column label="账号" prop="account" width="150"></el-table-column>
+          <el-table-column label="用户名" prop="nickName" width="150"></el-table-column>
+          <el-table-column label="注册时间" prop="registerTime" width="200"></el-table-column>
+          <el-table-column label="用户状态" prop="userStatus" width="100"></el-table-column>
+          <el-table-column label="用户积分" prop="integration" width="100"></el-table-column>
+          <el-table-column label="描述" prop="remark">
+            <template v-slot="scope">
+              <el-input
+                  v-model="scope.row.remark"
+                  autocomplete="off"
+                  placeholder="请输入用户描述"
+                  style="width: 70%"
+                  type="text"
+                  @input="() => $forceUpdate()"
+              ></el-input>
               <el-button
-                  icon="el-icon-postcard"
-                  size="mini"
+                  slot="append"
+                  plain
                   type="primary"
-                  @click="show(scope.row)"
-              ></el-button>
-            </el-tooltip>
-            <!-- 重置密码按钮 -->
-            <el-tooltip
-                :enterable="false"
-                content="重置密码"
-                effect="dark"
-                placement="top"
-            >
-              <el-button
-                  icon="el-icon-setting"
-                  size="mini"
-                  type="warning"
-                  @click="resetPwd(scope.row.userId)"
-              ></el-button>
-            </el-tooltip>
-            <!-- 锁定 -->
-            <el-tooltip
-                :enterable="false"
-                content="锁定/解锁用户"
-                effect="dark"
-                placement="top">
-              <el-button
-                  icon="el-icon-key"
-                  size="mini"
-                  type="primary"
-                  @click="lockOrUnLockUser(scope.row.userId,scope.row.userStatus)"
-              ></el-button>
-            </el-tooltip>
+                  @click="updateRemark(scope.row.userId,scope.row.remark)"
+              >提交
+              </el-button>
+            </template>
+          </el-table-column>
+          <el-table-column label="操作" width="250">
+            <template v-slot="scope">
+              <!-- 查看按钮 -->
+              <el-tooltip
+                  :enterable="false"
+                  content="查看用户详情"
+                  effect="dark"
+                  placement="top"
+              >
+                <el-button
+                    icon="el-icon-postcard"
+                    size="mini"
+                    type="primary"
+                    @click="show(scope.row)"
+                ></el-button>
+              </el-tooltip>
+              <!-- 重置密码按钮 -->
+              <el-tooltip
+                  :enterable="false"
+                  content="重置密码"
+                  effect="dark"
+                  placement="top"
+              >
+                <el-button
+                    icon="el-icon-setting"
+                    size="mini"
+                    type="warning"
+                    @click="resetPwd(scope.row.userId)"
+                ></el-button>
+              </el-tooltip>
+              <!-- 锁定 -->
+              <el-tooltip
+                  :enterable="false"
+                  content="锁定/解锁用户"
+                  effect="dark"
+                  placement="top">
+                <el-button
+                    icon="el-icon-key"
+                    size="mini"
+                    type="primary"
+                    @click="lockOrUnLockUser(scope.row.userId,scope.row.userStatus)"
+                ></el-button>
+              </el-tooltip>
 
-            <!-- 删除按钮 -->
-            <el-tooltip
-                :enterable="false"
-                content="删除用户"
-                effect="dark"
-                placement="top">
-              <el-button
-                  icon="el-icon-delete"
-                  size="mini"
-                  type="danger"
-                  @click="deleteUser(scope.row.userId)"
-              ></el-button>
-            </el-tooltip>
+              <!-- 删除按钮 -->
+              <el-tooltip
+                  :enterable="false"
+                  content="删除用户"
+                  effect="dark"
+                  placement="top">
+                <el-button
+                    icon="el-icon-delete"
+                    size="mini"
+                    type="danger"
+                    @click="deleteUser(scope.row.userId)"
+                ></el-button>
+              </el-tooltip>
 
 
-          </template>
-        </el-table-column>
-      </el-table>
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
+
       <!-- 分页区 -->
       <div class="flex_center_center">
         <lh-pagination v-show="total > 0" :limit.sync="queryInfo.pageSize" :page.sync="queryInfo.pageNum"
@@ -245,10 +248,10 @@ export default {
       },
       //用户状态列表
       userStatusList: [
-        // 用户状态，0正常，1锁定，2删除
+        // 用户状态，0正常，1锁定，2待删除
         {label: '正常', value: '0'},
         {label: '锁定', value: '1'},
-        {label: '删除', value: '2'}
+        {label: '待删除', value: '2'}
       ],
       //积分状态列表
       integrationStatusList: [
@@ -271,15 +274,9 @@ export default {
   methods: {
     //查询
     userSearch() {
+      this.queryInfo.beginTime = this.pickDate.beginDate
+      this.queryInfo.endTime = this.pickDate.endDate
       let params = this.queryInfo;
-      if (this.timeList && this.timeList[0] && this.timeList[1]) {
-        params.beginTime = this.turnDateString(this.timeList[0]).hasTime
-        params.endTime = this.turnDateString(this.timeList[1]).hasTime
-      } else {
-        params.beginTime = "";
-        params.endTime = "";
-      }
-      console.log(params)
       userSearch(params)
           .then((res) => {
             console.log(res)
@@ -291,42 +288,6 @@ export default {
             this.$message.error(err.msg)
           })
     },
-
-    //转标准时间
-    turnDateString(msec) {
-      let datetime = new Date(msec);
-      let year = datetime.getFullYear();
-      let month = datetime.getMonth();
-      let date = datetime.getDate();
-      let hour = datetime.getHours();
-      let minute = datetime.getMinutes();
-      let second = datetime.getSeconds();
-
-      let result1 = year +
-          '-' +
-          ((month + 1) >= 10 ? (month + 1) : '0' + (month + 1)) +
-          '-' +
-          ((date + 1) < 10 ? '0' + date : date) +
-          ' ' +
-          ((hour + 1) < 10 ? '0' + hour : hour) +
-          ':' +
-          ((minute + 1) < 10 ? '0' + minute : minute) +
-          ':' +
-          ((second + 1) < 10 ? '0' + second : second);
-
-      let result2 = year +
-          '-' +
-          ((month + 1) >= 10 ? (month + 1) : '0' + (month + 1)) +
-          '-' +
-          ((date + 1) < 10 ? '0' + date : date);
-
-      return {
-        hasTime: result1,
-        withoutTime: result2
-      };
-
-    },
-
     //修改描述
     updateRemark(userId, remark) {
       let params = {
@@ -388,7 +349,6 @@ export default {
     // 查看用户详情
     show(row) {
       this.$refs.UserInfo.showEditDialog(row)
-      // console.log((row))
     },
 
     //重置用户密码
@@ -457,6 +417,12 @@ export default {
 </script>
 
 <style scoped>
+
+
+.noTableScrollBar /deep/ .el-table__body-wrapper::-webkit-scrollbar {
+  width: 0;
+  /*滚动条宽度*/
+}
 
 
 </style>

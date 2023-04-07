@@ -47,6 +47,19 @@ export function resetPwd(data) {
 }
 
 /**
+ * 修改用户信息
+ * @param data
+ * @returns {*}
+ */
+export function updateUser(data) {
+    return request({
+        url: 'admin/user',
+        method: 'put',
+        data
+    })
+}
+
+/**
  * 管理员修改描述
  * @param data
  * @returns {*}
@@ -85,7 +98,7 @@ export function deleteUser(params) {
 }
 
 //登录日志
-export function Loginlog(data) {
+export function commonUserLog(data) {
     return request({
         url: 'admin/commonUserLog',
         method: 'post',
