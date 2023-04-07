@@ -62,7 +62,7 @@ public class EmotionWordsController {
      * @Date: 2023/3/31 14:07
      */
     @PostMapping("emotionWordsExcel")
-    public Result<Object> emotionWordsExcel(MultipartFile file) throws IOException {
+    public Result emotionWordsExcel(MultipartFile file) throws IOException {
         try {
             EasyExcel.read(
                             file.getInputStream(),

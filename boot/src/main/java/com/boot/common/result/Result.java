@@ -18,6 +18,10 @@ public class Result<T> {
     private T data;
 
 
+    private Result(String msg) {
+        this.msg = msg;
+    }
+
     private Result(Integer code, String msg) {
         this.code = code;
         this.msg = msg;
@@ -53,6 +57,17 @@ public class Result<T> {
      */
     public static <T> Result<T> success(T data) {
         return new Result<>(data, CodeMsg.SUCCESS);
+    }
+
+
+    /**
+     * @Return: String
+     * @Author: DengYinzhe
+     * @Description: 成功时调用，需返回信息
+     * @Date: 2023/2/6 21:09
+     */
+    public static <T> Result<String> success(String msg) {
+        return new Result<String>(msg);
     }
 
     /**
