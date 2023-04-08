@@ -3,9 +3,16 @@ import VueRouter from "vue-router";
 
 // 前台
 import HomeView from "@/views/proscenium/HomeView.vue";
+import WordListView from "@/views/proscenium/WordListView.vue";
+import MyWordView from "@/views/proscenium/MyWordView.vue";
+import ArticleView from "@/views/proscenium/ArticleView.vue";
 import TranslateView from "@/views/proscenium/TranslateView.vue";
-import WordView from "@/views/proscenium/WordView.vue";
+import KeyboardView from "@/views/proscenium/KeyboardView.vue";
 
+import Assist from "@/views/proscenium/Assist.vue";
+import Own from "@/views/proscenium/Own.vue";
+
+import WordView from "@/views/proscenium/WordView.vue";
 
 // 后台
 import Admin from "@/views/backstage/Admin.vue";
@@ -35,11 +42,30 @@ const routes = [
     path: "/home",
     name: "home",
     component: HomeView,
-    redirect: '/translate',
+    redirect: '/wordlist',
     children: [{
+      path: "/wordlist",
+      component: WordListView,
+    }, {
+      path: "/myword",
+      component: MyWordView,
+    }, {
+      path: "/article",
+      component: ArticleView,
+    }, {
       path: "/translate",
-      name: "translate",
       component: TranslateView,
+    }, {
+      path: "/keyboard",
+      component: KeyboardView,
+    }, {
+      path: "/own",
+      name:'own',
+      component: Own,
+    }, {
+      path: "/assist",
+      name:'assist',
+      component: Assist,
     }]
   },
   {
@@ -84,7 +110,6 @@ const routes = [
   },
   {
     path: "/word",
-    name: "word",
     component: WordView,
   },
 ];

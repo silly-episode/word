@@ -138,7 +138,7 @@ export default {
       }
       translate(data) //调用翻译接口
           .then((res) => {
-            if (res.data) this.transWord = res.data
+            if (res.msg) this.transWord = res.msg
             this.translateFlag = !this.translateFlag
           })
           .catch((err) => {
