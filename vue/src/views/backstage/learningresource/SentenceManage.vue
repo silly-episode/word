@@ -144,6 +144,23 @@
                        :total="total" @pagination="emotionWordsSearch"/>
       </div>
     </el-card>
+
+    <!--    上传文件的dialog-->
+    <div>
+      <el-dialog
+          :before-close="handleClose"
+          :visible.sync="dialogVisible"
+          title="提示"
+          width="30%">
+        <span>这是一段信息</span>
+        <span slot="footer" class="dialog-footer">
+    <el-button @click="dialogVisible = false">取 消</el-button>
+    <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+  </span>
+      </el-dialog>
+
+    </div>
+
   </div>
 </template>
 

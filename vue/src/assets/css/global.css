@@ -636,3 +636,8 @@ body,
 .hei_150 {
     height: 150px;
 }
+
+.el-tooltip__popper {
+    max-width: 25%;
+    font-size: 16px;
+}
