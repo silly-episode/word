@@ -23,7 +23,7 @@ public class AdminSearchDto extends PageDto {
     /*结束时间*/
     private LocalDateTime endTime;
     /*账号、电话、持有人、用户id*/
-    private String accountOrTelOrNickNameOrUserId;
+    private String accountOrTelOrKeepNameOrAdminId;
     /*用户状态*/
     private String userStatus;
 }

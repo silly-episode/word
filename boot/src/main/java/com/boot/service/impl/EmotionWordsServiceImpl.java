@@ -22,7 +22,6 @@ public class EmotionWordsServiceImpl extends ServiceImpl<EmotionWordsDao, Emotio
 
     @Override
     public EmotionWords selectOneByRand(String frequency) {
-        System.out.println("123");
         return emotionWordsDao.selectOneByRand(frequency);
     }
 }

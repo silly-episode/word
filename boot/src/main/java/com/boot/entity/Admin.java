@@ -11,7 +11,6 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
 import java.io.Serializable;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 /**
@@ -39,13 +38,13 @@ public class Admin extends Model<Admin> {
     //描述
     private String remark;
     //区分管理员和超级管理员，0是超级管理员，1是普通管理员
-    private Integer role;
+    private String role;
     //添加时间
     private LocalDateTime addCreateTime;
     //持有人
     private String keepName;
 
-    private LocalDate lockTime;
+    private LocalDateTime lockTime;
 
     private String userStatus;
 

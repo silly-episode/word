@@ -37,7 +37,7 @@
     </insert>
 
 
-    <select id="selectAll" resultType="com.boot.vo.PlanVo">
+    <select id="selectAll" resultType="com.boot.dto.PlanVo">
         select p.*, w.module_name
         from word.plan p
                  left join word.word_module w on p.module_id = w.module_id

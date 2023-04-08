@@ -25,5 +25,5 @@ public class EmotionWordsSearchDto extends PageDto {
     /*作者*/
     private String author;
     /*频率升序或降序*/
-    private Boolean frequencyOrderByAsc;
+    private String frequency;
 }

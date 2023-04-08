@@ -1,8 +1,8 @@
 package com.boot.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.boot.dto.PlanVo;
 import com.boot.entity.Plan;
-import com.boot.vo.PlanVo;
 
 import java.util.List;
 

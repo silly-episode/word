@@ -77,6 +77,7 @@ public class CommonController {
     @PostMapping("translate")
     public Result translate(@RequestBody Map<String, String> map) {
         String targetText = null;
+        System.out.println("开始翻译");
         try {
             targetText = translateUtils.translate(map.get("sourceText"), map.get("source"), map.get("target"));
         } catch (TencentCloudSDKException e) {

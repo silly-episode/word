@@ -2,9 +2,9 @@ package com.boot.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.boot.dao.PlanDao;
+import com.boot.dto.PlanVo;
 import com.boot.entity.Plan;
 import com.boot.service.PlanService;
-import com.boot.vo.PlanVo;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;

@@ -130,7 +130,7 @@
 
         <el-form-item class="flex_center_center">
           <el-button type="danger" @click="onSubmit">提交</el-button>
-          <el-button @click="closed">关闭</el-button>
+          <el-button type="info" @click="closed">关闭</el-button>
         </el-form-item>
       </el-form>
     </div>

@@ -87,7 +87,7 @@ public class UserExcel {
 
     //    //    @DateTimeFormat("yyyy年MM月dd日 HH时mm分ss秒")
     @ColumnWidth(25)
-    @ExcelProperty(value = "锁定时间", index = 11)
+    @ExcelProperty(value = "锁定/解锁时间", index = 11)
     private LocalDateTime lockTime;
 
     @ContentStyle(horizontalAlignment = HorizontalAlignmentEnum.LEFT, verticalAlignment = VerticalAlignmentEnum.CENTER)

@@ -67,7 +67,7 @@ public class Result<T> {
      * @Date: 2023/2/6 21:09
      */
     public static <T> Result<String> success(String msg) {
-        return new Result<String>(msg);
+        return new Result<>(200, msg);
     }
 
     /**
@@ -78,6 +78,16 @@ public class Result<T> {
      */
     public static <T> Result<T> success() {
         return new Result<>(CodeMsg.SUCCESS);
+    }
+
+    /**
+     * @Return: String
+     * @Author: DengYinzhe
+     * @Description: 成功时调用，不需返回数据
+     * @Date: 2023/2/6 21:10
+     */
+    public static <T> Result<T> success(String msg, T data) {
+        return new Result<T>(200, msg, data);
     }
 
     /**

@@ -1,8 +1,8 @@
 package com.boot.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.boot.dto.PlanVo;
 import com.boot.entity.Plan;
-import com.boot.vo.PlanVo;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 

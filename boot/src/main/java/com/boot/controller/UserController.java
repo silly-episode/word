@@ -68,8 +68,8 @@ public class UserController {
     private final String smsErrorResult = "3";
     private final String pwdErrorResult = "4";
     private final String lockResult = "5";
+    private LoginLog loginLog;
 
-    private LoginLog loginLog = new LoginLog();
     /**
      * @param phone: 中国手机号码
      * @Return: String 短信验证码
@@ -77,9 +77,8 @@ public class UserController {
      * @Description: 获取短信验证码并存入Redis中 已测试
      * @Date: 2023/2/9 10:43
      */
-    @GetMapping("sms")
-    @RequiresGuest
-    public Result getCode(@RequestParam("phone") String phone) {
+    @GetMapping("sms/{phone}")
+    public Result getCode(@PathVariable("phone") String phone) {
         User userBean = userService.getUserByTel(phone);
         if (userBean == null) {
 //            该手机号的用户不存在，所以不发送短信
@@ -98,17 +97,17 @@ public class UserController {
      * @param loginMessage: 登录信息
      * @Return: String
      * @Author: DengYinzhe
-     * @Description: 登录 todo
+     * @Description: 登录
      * @Date: 2023/2/9 10:44
      */
     @PostMapping("login")
-    @RequiresGuest
     public Result login(@RequestBody LoginMessage loginMessage, HttpServletRequest request) {
         User userBean = null;
         boolean flag = false;
         String smsCode = null;
         //获取用户真实的IP地址并设置登录时间
-        loginLog
+
+        loginLog = new LoginLog()
                 .setIp(HttpUtils.getIpAddress(request))
                 .setLoginTime(LocalDateTime.now());
         //获取用户信息
@@ -158,7 +157,7 @@ public class UserController {
             }
             loginLog.setResult(successResult).setLogRemark("用户登录成功");
             System.out.println(loginLog.toString());
-            return Result.success(jwtUtils.sign(String.valueOf(userBean.getUserId())));
+            return Result.success("登录成功", jwtUtils.sign(String.valueOf(userBean.getUserId())));
         }
         return Result.error("系统异常");
     }

@@ -21,14 +21,121 @@ export function userSearch(params) {
     })
 }
 
+
+/**
+ * 多条件查询管理员列表
+ * @param params
+ * @returns {*}
+ */
+export function adminSearch(params) {
+    return request({
+        url: 'admin/adminSearch',
+        method: 'post',
+        data: params
+    })
+}
+
+
+/**
+ * 修改用户信息
+ * @param data
+ * @returns {*}
+ */
+export function updateAdmin(data) {
+    return request({
+        url: 'admin/admin',
+        method: 'put',
+        data
+    })
+}
+
+/**
+ * 管理员信息的导出（excel）
+ * @returns {*}
+ */
+export function adminListExcel(data) {
+    return request({
+        url: 'admin/adminListExcel',
+        method: 'post',
+        data,
+        'responseType': 'blob'
+    })
+}
+
+/**
+ * 管理员删除用户
+ * @param params
+ * @returns {*}
+ */
+export function deleteAdmin(params) {
+    return request({
+        url: `admin/admin/${params}`,
+        method: 'delete',
+    })
+}
+
+/**
+ * 重置管理员密码
+ * @returns {*}
+ */
+export function resetAdminPwd(data) {
+    return request({
+        url: 'admin/adminPassword',
+        method: 'put',
+        data
+    })
+}
+
+/**
+ * 修改管理员描述
+ * @param data
+ * @returns {*}
+ */
+export function updateAdminRemark(data) {
+    return request({
+        url: 'admin/adminRemark',
+        method: 'put',
+        data
+    })
+}
+
+/**
+ * 锁定和解锁管理员
+ * @param data
+ * @returns {*}
+ */
+export function lockOrUnLockAdmin(data) {
+    return request({
+        url: 'admin/lockOrUnLockAdmin',
+        method: 'put',
+        data
+    })
+}
+
+
+/**
+ * 添加管理员
+ * @param data
+ * @returns {*}
+ */
+export function addAdmin(data) {
+    return request({
+        url: 'admin/commonAdmin',
+        method: 'post',
+        data
+    })
+}
+
+
 /**
  * 用户信息的导出（excel）
  * @returns {*}
  */
-export function userListExcel() {
+export function userListExcel(data) {
     return request({
         url: 'admin/userListExcel',
-        method: 'get',
+        method: 'post',
+        data,
         'responseType': 'blob'
     })
 }
@@ -123,3 +230,59 @@ export function logExcelImport(data) {
         'responseType': 'blob'
     })
 }
+
+
+/**
+ * 励志语的查询
+ * @param data
+ * @returns {*}
+ */
+export function emotionWordsSearch(data) {
+    return request({
+        url: 'emotionWords/emotionWordsSearch',
+        method: 'post',
+        data
+    })
+}
+
+/**
+ * 励志语的一条录入
+ * @param data
+ * @returns {*}
+ */
+export function insertWord(data) {
+    return request({
+        url: 'emotionWords/emotionWords',
+        method: 'post',
+        data
+    })
+}
+
+/**
+ * 批量删除
+ * @param data
+ * @returns {*}
+ */
+export function deleteWords(data) {
+    return request({
+        url: 'emotionWords/emotionWords',
+        method: 'delete',
+        data
+    })
+}
+
+
+/**
+ * 更新一条励志语
+ * @param data
+ * @returns {*}
+ */
+export function updateWord(data) {
+    return request({
+        url: 'emotionWords/emotionWords',
+        method: 'put',
+        data
+    })
+}
+
+

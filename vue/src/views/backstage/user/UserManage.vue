@@ -86,16 +86,19 @@
           >查询
           </el-button
           >
-          <el-button icon="el-icon-download" type="success" @click="userListExcel"
-          >导出
-          </el-button
-          >
+          <el-button
+              :icon="`el-icon-${this.exportLoading?'loading':'download'}`"
+              type="success"
+              @click="userListExcel">
+            导出
+          </el-button>
         </el-form>
       </div>
 
       <!-- 用户列表区 -->
       <div class="noTableScrollBar">
         <el-table
+            v-loading="searchLoading"
             :cell-style="{'text-align':'center'}"
             :data="userList"
             :header-cell-style="{'text-align':'center'}"
@@ -228,7 +231,6 @@ export default {
       tableHeight: 0,
       clientWidth: document.body.clientWidth, // 文档宽度
       //起始时间和截止时间的时间列表
-      timeList: ['', ''],
       pickDate: {beginDate: "", endDate: ""},
       // 获取用户列表的参数对象
       queryInfo: {
@@ -262,7 +264,9 @@ export default {
       // 用于保存获取到的用户列表
       userList: [],
       // 总数据条数
-      total: 0
+      total: 0,
+      exportLoading: false,
+      searchLoading: false,
     };
   },
   components: {LhPagination, UserInfo},
@@ -278,6 +282,7 @@ export default {
       this.queryInfo.beginTime = this.pickDate.beginDate
       this.queryInfo.endTime = this.pickDate.endDate
       let params = this.queryInfo;
+      this.searchLoading = true;
       userSearch(params)
           .then((res) => {
             console.log(res)
@@ -287,6 +292,9 @@ export default {
           .catch((err) => {
             console.log(err.msg)
             this.$message.error(err.msg)
+          })
+          .finally(() => {
+            this.searchLoading = false;
           })
     },
     //修改描述
@@ -341,9 +349,16 @@ export default {
     // 导出
     userListExcel() {
       let dateTime = dayjs().format('YYYY-MM-DD');
-      userListExcel()
+      this.exportLoading = true;
+      userListExcel(this.queryInfo)
           .then(response => {
             fileDownload(response, "Word-用户信息表(" + dateTime + ').xlsx')
+          })
+          .catch((err) => {
+            this.$message.error("导出失败")
+          })
+          .finally(() => {
+            this.exportLoading = false;
           })
     },
 

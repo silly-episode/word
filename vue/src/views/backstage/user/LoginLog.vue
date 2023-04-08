@@ -85,7 +85,8 @@
           <el-button icon="el-icon-search" type="primary" @click="commonUserLog">
             查询
           </el-button>
-          <el-button icon="el-icon-download" type="success" @click="logExcelImport">
+          <el-button :icon="`el-icon-${this.exportLoading?'loading':'download'}`" type="success"
+                     @click="logExcelImport">
             导出
           </el-button>
         </el-form>
@@ -94,6 +95,7 @@
       <!-- 登录日志列表区 -->
       <div class="noTableScrollBar">
         <el-table
+            v-loading="searchLoading"
             :cell-style="{'text-align':'center'}"
             :data="logList"
             :header-cell-style="{'text-align':'center'}"
@@ -149,7 +151,6 @@ export default {
       tableHeight: 0,
       clientWidth: document.body.clientWidth, // 文档宽度
       //起始时间和截止时间的时间列表
-      timeList: ['', ''],
       pickDate: {beginDate: "", endDate: ""},
       // 获取用户列表的参数对象
       queryInfo: {
@@ -163,8 +164,6 @@ export default {
         loginType: "",
         /*登录结果*/
         result: "",
-        /*是否导出*/
-        export: false,
         // 当前页码
         pageNum: 1,
         // 每页显示条数
@@ -188,7 +187,9 @@ export default {
       // 用于保存获取到的用户列表
       logList: [],
       // 总数据条数
-      total: 0
+      total: 0,
+      exportLoading: false,
+      searchLoading: false,
     };
   },
   components: {LhPagination},
@@ -205,16 +206,19 @@ export default {
     logExcelImport() {
       this.queryInfo.beginTime = this.pickDate.beginDate
       this.queryInfo.endTime = this.pickDate.endDate
-      this.queryInfo.export = true
       let params = this.queryInfo;
       console.log(params)
       let dateTime = dayjs().format('YYYY-MM-DD');
+      this.exportLoading = true
       logExcelImport(params)
           .then(response => {
             fileDownload(response, "Word-用户登录日志表(" + dateTime + ').xlsx')
           })
+          .catch((err) => {
+            this.$message.error("导出失败")
+          })
           .finally(() => {
-            this.queryInfo.export = false;
+            this.exportLoading = false
           })
     },
 
@@ -222,8 +226,8 @@ export default {
     commonUserLog() {
       this.queryInfo.beginTime = this.pickDate.beginDate
       this.queryInfo.endTime = this.pickDate.endDate
-      this.queryInfo.export = false
       let params = this.queryInfo;
+      this.searchLoading = true;
       commonUserLog(params)
           .then(response => {
             this.logList = response.data.records;
@@ -234,7 +238,7 @@ export default {
             this.$message.error(err.msg)
           })
           .finally(() => {
-            this.queryInfo.export = false;
+            this.searchLoading = false;
           })
     },
     // 监听pagesize的改变

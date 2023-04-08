@@ -27,6 +27,4 @@ public class LoginLogSearchDto extends PageDto {
     private String loginType;
     /*登录结果*/
     private String result;
-    /*是否要导出*/
-    private Boolean export;
 }

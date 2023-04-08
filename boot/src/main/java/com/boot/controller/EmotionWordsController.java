@@ -123,13 +123,14 @@ public class EmotionWordsController {
      */
     @PostMapping("emotionWordsSearch")
     public Result<Page<EmotionWords>> emotionWordsSearch(@RequestBody EmotionWordsSearchDto emotionWordsSearchDto) {
+        System.out.println(emotionWordsSearchDto);
         Page<EmotionWords> pageInfo = new Page<>(emotionWordsSearchDto.getPageNum(), emotionWordsSearchDto.getPageSize());
         LambdaQueryWrapper<EmotionWords> wrapper = new LambdaQueryWrapper<>();
         wrapper
                 .ge(null != emotionWordsSearchDto.getBeginTime(), EmotionWords::getEmoCreateTime, emotionWordsSearchDto.getBeginTime())
                 .le(null != emotionWordsSearchDto.getEndTime(), EmotionWords::getEmoCreateTime, emotionWordsSearchDto.getEndTime())
-                .like(null != emotionWordsSearchDto.getAuthor(), EmotionWords::getEmoAuthor, emotionWordsSearchDto.getAuthor())
-                .orderBy(null != emotionWordsSearchDto.getFrequencyOrderByAsc(), emotionWordsSearchDto.getFrequencyOrderByAsc(), EmotionWords::getFrequency)
+                .like(!emotionWordsSearchDto.getAuthor().isEmpty(), EmotionWords::getEmoAuthor, emotionWordsSearchDto.getAuthor())
+                .eq(!emotionWordsSearchDto.getFrequency().isEmpty(), EmotionWords::getFrequency, emotionWordsSearchDto.getFrequency())
                 .orderByDesc(EmotionWords::getEmoCreateTime);
         emotionWordsService.page(pageInfo, wrapper);
         return Result.success(pageInfo);

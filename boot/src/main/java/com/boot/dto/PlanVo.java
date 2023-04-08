@@ -1,4 +1,4 @@
-package com.boot.vo;
+package com.boot.dto;
 
 import com.boot.entity.Plan;
 import lombok.AllArgsConstructor;
