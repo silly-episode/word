@@ -3,9 +3,9 @@
     <img class="wordLog" src="@/assets/wordLog.png" alt="" />
     <div :class="`${isDeep ? 'bg_drak grey' : 'bg_white'} card onOffCard`">
       <el-row :gutter="2" type="flex" align="middle">
-        <el-col :span="8"><span>4月6日单词训练</span></el-col>
+        <el-col :span="8"><span>{{title}}</span></el-col>
         <el-col :span="5">
-          <el-select v-model="value" placeholder="请选择" style="width: 90px">
+          <el-select v-model="value" style="width: 90px">
             <el-option label="美音" value="0"></el-option>
             <el-option label="英音" value="1"></el-option>
           </el-select>
@@ -58,7 +58,7 @@
         <el-col :span="2">
           <el-tooltip effect="dark" content="开关深色模式" placement="top">
             <span
-              :class="`font_26 purple iconfont icon-${isDeep ? 'sun' : 'moon'}`"
+              :class="`font_26 purple iconfont icon-${isDeep ? 'moon' : 'sun'}`"
               @click="deep"
             ></span>
           </el-tooltip>
@@ -76,14 +76,23 @@
         <el-col :span="4">
           <div
             @click="skip"
-            class="white radius_10 line_hei_50 text_center pointer bg_orange"
+            :class="`white radius_10 line_hei_50 text_center pointer ${
+              complete ? 'bg_c1_grey' : 'bg_orange'
+            }`"
           >
             Skip
           </div>
         </el-col>
       </el-row>
     </div>
-    <div v-if="complete" class="word">已完成！</div>
+    <div v-if="complete" class="complete">
+      <div class="font_60">已完成！</div>
+      <div class="hei_100"></div>
+      <div class="flex_between_center font_22">
+        <div @click="again" class="btn">Again</div>
+        <div @click="back" class="btn">Back</div>
+      </div>
+    </div>
     <div v-else>
       <div v-if="isStart">
         <div
@@ -149,6 +158,7 @@ export default {
     return {
       complete: false,//二十个单词都完成了
       wordIndex: 0,
+      title:'',
       value: '英音',
       shake: false,//是否显示错误抖动类名
       List: [],//二十个单词对象列表
@@ -192,6 +202,7 @@ export default {
           // console.log('res', res.data.word)
           if (res.code == 200) {
             this.List = res.data.word
+            this.title=res.data.wordPlan.moduleName
             this.getWord(res.data.word[0].content.word)
           }
         })
@@ -201,7 +212,7 @@ export default {
     },
 
     getWord(data) {
-      console.log(data)
+      // console.log(data)
       this.wordArr = data.wordHead.split('')
       this.sentenceEn = data.content.sentence.sentences[0].sContent
       this.sentenceLength = this.sentenceEn.length
@@ -288,12 +299,14 @@ export default {
 
     // 开始
     Start() {
+      if (this.complete) return;
       this.isStart = !this.isStart
       if (this.isStart) this.playWord()
     },
 
     // 跳过
     skip() {
+      if (this.complete) return;
       this.wordArr = []
       this.inputWord = []
       this.sentenceEn = ''
@@ -303,7 +316,22 @@ export default {
       this.wordIndex++
       if (this.wordIndex < this.List.length)
         this.getWord(this.List[this.wordIndex].content.word)
-      else this.complete = true
+      else {
+        this.Start()
+        this.complete = true
+      }
+    },
+
+    // 再练一次
+    again() {
+      this.complete = false
+      this.wordIndex = 0
+      this.getWord(this.List[0].content.word)
+      this.Start()
+    },
+
+    back() {
+      console.log('返回')
     },
 
     // 循环播放
@@ -447,6 +475,25 @@ export default {
   /* left: 30%; */
   top: 49%;
   font-size: 22px;
+  color: #4b5563;
+}
+
+.btn {
+  color: white;
+  background-color: #818cf8;
+  border-radius: 10px;
+  line-height: 50px;
+  text-align: center;
+  cursor: pointer;
+  padding: 1px 30px;
+}
+
+.complete {
+  position: absolute;
+  left: 34%;
+  top: 30%;
+  width: 470px;
+  text-align: center;
   color: #4b5563;
 }
 

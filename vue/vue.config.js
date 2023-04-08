@@ -15,7 +15,7 @@ module.exports = defineConfig({
       // 匹配所有以 '/api'开头的请求路径
       '/api': {
         // 代理目标的基础路径
-        target: 'http://yp3qf8.natappfree.cc',
+        target: 'http://pnypzy.natappfree.cc',
         // 允许跨域
         changeOrigin: true,
         // 重写路径: 去掉路径中开头的'/api'

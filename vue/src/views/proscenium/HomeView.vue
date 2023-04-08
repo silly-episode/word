@@ -1,36 +1,106 @@
 <template>
   <div>
-    <el-header class="bg_f4">
-      <img
-        class="radius_per50 wid_hei_50_50"
-        mode="aspectFill"
-        src="@/assets/logo.png"
-        alt=""
-      />
-      <span class="margin_l_15">Word背单词</span>
-
+    <el-header class="bg_f4 flex_between_center font_30" style="height: 70px">
+      <img src="@/assets/wordLog.png" alt="" class="wid_300 margin_l_10" />
       <el-menu
+        background-color="#f4f4f4"
+        text-color="#000"
+        active-text-color="#818cf8"
+        :router="true"
         :default-active="activeIndex"
         class="el-menu-demo"
         mode="horizontal"
-        @select="handleSelect"
       >
-        <el-menu-item index="1">单词模板</el-menu-item>
-        <el-menu-item index="2">我的单词</el-menu-item>
+        <el-menu-item
+          :index="'/' + item.path"
+          v-for="item in menulist"
+          :key="item.path"
+          @click="saveNavState('/' + item.path)"
+        >
+          <template slot="title">
+            <span>{{ item.authName }}</span>
+          </template>
+        </el-menu-item>
       </el-menu>
+
+      <el-dropdown trigger="click" @command="handleJump">
+        <span class="el-dropdown-link margin_r_20">
+          <el-avatar
+            :size="60"
+            src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"
+          >
+          </el-avatar>
+        </span>
+        <el-dropdown-menu slot="dropdown">
+          <el-dropdown-item command="own"> 个人中心 </el-dropdown-item>
+          <el-dropdown-item command="login">{{
+            isLogin ? "退出登录" : "登录"
+          }}</el-dropdown-item>
+          <el-dropdown-item command="assist"> 用户辅助 </el-dropdown-item>
+        </el-dropdown-menu>
+      </el-dropdown>
     </el-header>
-    <!-- <nav>
-      <router-link to="/word">Word</router-link>
-      |
-      <router-link to="/translate">Translate</router-link>
-    </nav>
-    <router-view/> -->
+    <el-main>
+      <router-view></router-view>
+    </el-main>
+    <Login ref="login"></Login>
   </div>
 </template>
 
 <script>
-
+import Login from './Login.vue'
 export default {
   name: "HomeView",
+  components: { Login },
+  data() {
+    return {
+      isLogin: false,
+      activeIndex: '/wordlist',
+      menulist: [{
+        path: 'wordlist',
+        authName: '单词列表'
+      }, {
+        path: 'myword',
+        authName: '我的单词'
+      }, {
+        path: 'article',
+        authName: '文章练习'
+      }, {
+        path: 'translate',
+        authName: '翻译工具'
+      }, {
+        path: 'keyboard',
+        authName: '键盘练习'
+      }]
+    }
+  },
+  methods: {
+    handleJump(name) {
+      if (name == 'login') this.$refs.login.showLogin()
+      else this.$router.push({ name })
+
+    },
+    saveNavState(activePath) {
+      console.log(activePath)
+      window.sessionStorage.setItem("activePath", activePath);
+      this.activePath = activePath;
+    },
+  }
 };
 </script>
+
+<style>
+.el-menu-item:hover {
+  outline: 0 !important;
+  color: #818cf8 !important;
+  background: transparent !important;
+}
+.el-menu:hover {
+  outline: 0 !important;
+  color: #818cf8 !important;
+  background: transparent !important;
+}
+.el-submenu:hover {
+  background: transparent !important;
+}
+</style>
