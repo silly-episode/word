@@ -46,7 +46,7 @@
             >
             </el-date-picker>
           </el-form-item>
-          <el-form-item label="频率排序">
+          <el-form-item label="出现概率">
             <el-select
                 v-model="queryInfo.frequency"
                 clearable
@@ -66,21 +66,40 @@
                 clearable
                 placeholder="请输入"
                 type="text"
+                style="width: 150px"
                 @input="() => $forceUpdate()"
             ></el-input>
           </el-form-item>
-          <el-button icon="el-icon-search" type="primary" @click="emotionWordsSearch">
-            查询
-          </el-button>
-          <el-button icon="el-icon-search" type="danger" @click="deleteWords">
-            删除
-          </el-button>
-          <el-button icon="el-icon-search" type="warning" @click="emotionWordsSearch">
-            录入
-          </el-button>
-          <el-button :icon="`el-icon-${this.importLoading?'loading':'upload2'}`" type="success" @click="logExcelImport">
-            导入
-          </el-button>
+          <el-form-item>
+            <el-button icon="el-icon-search" type="primary" @click="emotionWordsSearch">
+              查询
+            </el-button>
+          </el-form-item>
+          <el-form-item>
+            <el-button icon="el-icon-delete" type="danger" @click="deleteWords">
+              删除
+            </el-button>
+          </el-form-item>
+          <el-form-item>
+            <el-button icon="el-icon-circle-plus-outline" type="warning" @click="show('emo')">
+              录入
+            </el-button>
+          </el-form-item>
+          <el-form-item>
+            <el-upload
+                :before-upload="iconChange"
+                :on-error="importError"
+                :on-success="importSuccess"
+                :show-file-list="false"
+                accept=".xlsx,.xls"
+                action="api/emotionWords/emotionWordsExcel"
+            >
+              <!--              :headers="{Authorization:}"-->
+              <el-button :icon="`el-icon-${this.importLoading?'loading':'upload2'}`" type="success">
+                导入
+              </el-button>
+            </el-upload>
+          </el-form-item>
         </el-form>
       </div>
 
@@ -112,14 +131,14 @@
           </el-table-column>
           <el-table-column align="center" label="创建时间" min-width="15%" prop="emoCreateTime"></el-table-column>
           <el-table-column align="center" label="作者" min-width="15%" prop="emoAuthor"></el-table-column>
-          <el-table-column align="center" label="频率" min-width="5%" prop="frequency"></el-table-column>
+          <el-table-column align="center" label="概念" min-width="5%" prop="frequency"></el-table-column>
           <el-table-column label="中文" min-width="25%" prop="cnContent" show-overflow-tooltip
                            text-align="left"></el-table-column>
           <el-table-column label="英文" min-width="25%" prop="engContent" show-overflow-tooltip
                            text-align="left"></el-table-column>
           <el-table-column align="center" fixed="right" label="操作" min-width="7%">
             <template v-slot="scope">
-              <!-- 查看按钮 -->
+              <!-- 修改按钮 -->
               <el-tooltip
                   :enterable="false"
                   content="修改"
@@ -144,23 +163,7 @@
                        :total="total" @pagination="emotionWordsSearch"/>
       </div>
     </el-card>
-
-    <!--    上传文件的dialog-->
-    <div>
-      <el-dialog
-          :before-close="handleClose"
-          :visible.sync="dialogVisible"
-          title="提示"
-          width="30%">
-        <span>这是一段信息</span>
-        <span slot="footer" class="dialog-footer">
-    <el-button @click="dialogVisible = false">取 消</el-button>
-    <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
-  </span>
-      </el-dialog>
-
-    </div>
-
+    <SentenceInfo ref="SentenceInfo" @searchAgain="emotionWordsSearch"></SentenceInfo>
   </div>
 </template>
 
@@ -168,10 +171,14 @@
 
 import {deleteWords, emotionWordsSearch} from "@/api/admin.js"
 import LhPagination from "@/components/lhPublic/lhPagination";
+import SentenceInfo from "@/views/backstage/learningresource/SentenceInfo";
 
 export default {
   data() {
     return {
+      headers: {
+        Authorization: "Bearer " + "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2NzU5MTk2MzcsImlhdCI6MTY3NTgzMzIzNywiYWNjb3VudCI6Ijg5NzkxNzcyOCJ9.kjGMhBFkBFxf_D6G-srMkPogilpL91vE_EEE3n71ozA"
+      },
       tableHeight: 0,
       clientWidth: document.body.clientWidth, // 文档宽度
       //起始时间和截止时间的时间列表
@@ -206,15 +213,39 @@ export default {
       multipleSelection: []
     };
   },
-  components: {LhPagination},
+  components: {LhPagination, SentenceInfo},
   created() {
     // 发送数据请求，获取用户列表数据
     this.emotionWordsSearch();
   },
   methods: {
 
+    // 查看管理员详情
+    show(row) {
+      this.$refs.SentenceInfo.showEditDialog(row)
+    },
+
+    iconChange() {
+      this.importLoading = true;
+    },
+
+    importSuccess(response) {
+      console.log(response)
+      this.importLoading = false;
+      this.$message.success(response.msg);
+      this.emotionWordsSearch();
+    },
+    importError(err) {
+      this.importLoading = false;
+      this.$message.error(err.msg);
+    },
+
     /*批量删除励志语言*/
     deleteWords() {
+      if (this.multipleSelection.length === 0) {
+        this.$message.info("请选择待删除的语句");
+        return;
+      }
       this.$confirm('此操作将永久所选中的Sentence', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -230,7 +261,7 @@ export default {
             .finally(() => {
               this.emotionWordsSearch();
             })
-      })
+      });
     },
 
     //查询

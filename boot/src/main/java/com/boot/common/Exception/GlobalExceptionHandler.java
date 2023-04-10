@@ -110,7 +110,7 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(value = NullPointerException.class)
     public Result handler(NullPointerException e) {
-        log.error(e.getMessage());
+        e.printStackTrace();
         return Result.error(CodeMsg.NULL_POINT);
     }
 

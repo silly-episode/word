@@ -77,9 +77,17 @@ public class CommonController {
     @PostMapping("translate")
     public Result translate(@RequestBody Map<String, String> map) {
         String targetText = null;
-        System.out.println("开始翻译");
+        String sourceText = map.get("sourceText");
+        String source = map.get("source");
+        String target = map.get("target");
+        if (source == null || target == null) {
+            return Result.error("请选择翻译语言选项");
+        }
+        if (sourceText.isEmpty()) {
+            return Result.error("请输入源文本");
+        }
         try {
-            targetText = translateUtils.translate(map.get("sourceText"), map.get("source"), map.get("target"));
+            targetText = translateUtils.translate(sourceText, source, target);
         } catch (TencentCloudSDKException e) {
             throw new CustomException("翻译服务异常");
         }

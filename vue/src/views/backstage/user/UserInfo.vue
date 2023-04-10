@@ -163,6 +163,7 @@ export default {
         updateUser(this.userMessage)
             .then((res) => {
               this.$message.success(res.msg)
+              this.closed();
             })
             .catch((err) => {
               this.$message.error(err.msg)
@@ -186,6 +187,7 @@ export default {
 
     // 对话框的关闭
     closed() {
+      this.$emit('searchAgain')
       this.visible = false
     },
   }

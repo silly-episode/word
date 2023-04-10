@@ -286,3 +286,57 @@ export function updateWord(data) {
 }
 
 
+/**
+ * 分页条件搜索单词模块
+ * @param data
+ * @returns {*}
+ */
+export function moduleSearch(data) {
+    return request({
+        url: 'word/wordModuleSearch',
+        method: 'post',
+        data
+    })
+}
+
+
+/**
+ * 更新一个单词模块
+ * @param data
+ * @returns {*}
+ */
+export function updateModule(data) {
+    return request({
+        url: 'word/wordModule',
+        method: 'post',
+        data
+    })
+}
+
+/**
+ * 删除一个单词模块
+ * @param params
+ * @returns {*}
+ */
+export function deleteModule(params) {
+    return request({
+        url: `word/wordModule/${params}`,
+        method: 'delete',
+    })
+}
+
+
+/**
+ * 锁定/解锁一个单词模块
+ * @param data
+ * @returns {*}
+ */
+export function lockOrUnLockModule(data) {
+    return request({
+        url: 'word/lockOrUnLockModule',
+        method: 'put',
+        data
+    })
+}
+
+

@@ -34,8 +34,6 @@ public class EmotionWordsController {
      */
     @Resource
     private EmotionWordsService emotionWordsService;
-    @Resource
-    private EmotionWordsImport emotionWordsImport;
 
     /**
      * @param emotionWords:
@@ -63,11 +61,12 @@ public class EmotionWordsController {
      */
     @PostMapping("emotionWordsExcel")
     public Result emotionWordsExcel(MultipartFile file) throws IOException {
+        System.out.println("开始导入");
         try {
             EasyExcel.read(
                             file.getInputStream(),
                             EmotionWords.class,
-                            emotionWordsImport)
+                            new EmotionWordsImport(emotionWordsService))
                     .sheet().doRead();
             List<String> errorList = (List<String>) ThreadLocalUtils.get("errorMsg");
             if (errorList.size() > 0) {
@@ -91,6 +90,7 @@ public class EmotionWordsController {
      */
     @PutMapping("emotionWords")
     public Result<String> emotionWord(@RequestBody EmotionWords emotionWords) {
+        emotionWords.setEmoCreateTime(LocalDateTime.now());
         if (emotionWordsService.updateById(emotionWords)) {
             return Result.success("更新成功");
         } else {
@@ -123,7 +123,6 @@ public class EmotionWordsController {
      */
     @PostMapping("emotionWordsSearch")
     public Result<Page<EmotionWords>> emotionWordsSearch(@RequestBody EmotionWordsSearchDto emotionWordsSearchDto) {
-        System.out.println(emotionWordsSearchDto);
         Page<EmotionWords> pageInfo = new Page<>(emotionWordsSearchDto.getPageNum(), emotionWordsSearchDto.getPageSize());
         LambdaQueryWrapper<EmotionWords> wrapper = new LambdaQueryWrapper<>();
         wrapper

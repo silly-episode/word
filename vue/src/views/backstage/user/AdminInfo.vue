@@ -26,7 +26,7 @@
       >
         <el-row v-if="flag" :gutter="50">
           <el-col :span="12">
-            <el-form-item aria-rowindex="50px" label="ID" prop="tel">
+            <el-form-item aria-rowindex="50px" label="ID" prop="adminId">
               <el-input v-model.trim="adminMessage.adminId" :disabled="true"></el-input>
             </el-form-item>
           </el-col>
@@ -40,7 +40,7 @@
 
         <el-row v-if="flag" :gutter="50">
           <el-col :span="12">
-            <el-form-item aria-rowindex="50px" label="状态" prop="integration">
+            <el-form-item aria-rowindex="50px" label="状态" prop="userStatus">
               <el-input v-model.number="adminMessage.userStatus" :disabled="true"></el-input>
             </el-form-item>
           </el-col>
@@ -78,7 +78,6 @@
               <el-select
                   v-model="adminMessage.role"
                   :disabled="superFlag"
-                  clearable
                   style="width: 100%">
                 <el-option
                     v-for="item in roleList"

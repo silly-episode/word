@@ -1,8 +1,10 @@
 package com.boot.controller;
 
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.boot.common.Exception.CustomException;
+import com.boot.common.Hutool.IdUtils;
 import com.boot.common.result.CodeMsg;
 import com.boot.common.result.Result;
 import com.boot.dto.LoginMessage;
@@ -307,14 +309,25 @@ public class UserController {
     @PostMapping("user")
     @RequiresGuest
     public Result user(@RequestBody RegisterMessage registerMessage) {
-
+        Long userId = IdUtils.getSnowFlakeInstance().nextId();
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("account", registerMessage.getAccount());
+        User UserFromDb = userService.getOne(queryWrapper);
+        if (UserFromDb != null) {
+            return Result.error("该账号已经存在");
+        }
         User user = BeanDtoVoUtils
                 .convert(registerMessage, User.class)
                 .setHeadImage("user_defalut_image.jpg")
-                .setRegisterTime(LocalDateTime.now());
+                .setRegisterTime(LocalDateTime.now())
+                .setUserId(userId);
+        if (userService.save(user)) {
+            String token = jwtUtils.sign(String.valueOf(userId));
+            return Result.success("注册成功", token);
+        } else {
+            return Result.error("注册失败");
+        }
 
-        userService.save(user);
-        return Result.success("注册成功");
     }
 
     /**

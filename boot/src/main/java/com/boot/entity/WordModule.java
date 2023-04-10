@@ -47,7 +47,10 @@ public class WordModule extends Model<WordModule> {
     private Integer studyNumber;
     //上级模块名称
     private String superiorModule;
-
+    // 单词数量
+    private Integer wordCount;
+    // 锁定/解锁时间
+    private LocalDateTime lockTime;
 
     /**
      * 获取主键值

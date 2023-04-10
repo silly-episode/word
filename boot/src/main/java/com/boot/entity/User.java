@@ -29,7 +29,7 @@ import java.time.LocalDateTime;
 @SuppressWarnings("all")
 public class User extends Model<User> {
     //用户id
-    @TableId(type = IdType.ASSIGN_ID)
+    @TableId(type = IdType.INPUT)
     private Long userId;
     //登录账号
     private String account;

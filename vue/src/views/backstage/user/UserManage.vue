@@ -211,7 +211,7 @@
       </div>
 
     </el-card>
-    <UserInfo ref="UserInfo"></UserInfo>
+    <UserInfo ref="UserInfo" @searchAgain="userSearch"></UserInfo>
 
 
   </div>
@@ -243,7 +243,7 @@ export default {
         /*用户状态*/
         userStatus: "",
         /*积分升序或降序,*/
-        integrationOrderByAsc: false,
+        integrationOrderByAsc: "",
         // 当前页码
         pageNum: 1,
         // 每页显示条数
@@ -274,7 +274,7 @@ export default {
     // 发送数据请求，获取用户列表数据
     this.userSearch();
     //默认选择条件为降序
-    this.queryInfo.integrationOrderByAsc = this.integrationStatusList[1].value
+    // this.queryInfo.integrationOrderByAsc = this.integrationStatusList[1].value
   },
   methods: {
     //查询

@@ -35,7 +35,7 @@ public class Plan extends Model<Plan> {
     private Long userId;
     //创建时间
     private LocalDateTime planCreateTime;
-    //状态，没想好
+    //状态
     private String planStatus;
     //单词总数
     private Integer allWord;

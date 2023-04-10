@@ -132,7 +132,6 @@
       </div>
 
     </el-card>
-    <UserInfo ref="UserInfo"></UserInfo>
 
 
   </div>

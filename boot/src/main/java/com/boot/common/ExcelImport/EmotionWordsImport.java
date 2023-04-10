@@ -4,13 +4,12 @@ import com.alibaba.excel.context.AnalysisContext;
 import com.alibaba.excel.event.AnalysisEventListener;
 import com.alibaba.excel.exception.ExcelDataConvertException;
 import com.alibaba.excel.util.ListUtils;
+import com.boot.common.Hutool.IdUtils;
 import com.boot.entity.EmotionWords;
 import com.boot.service.EmotionWordsService;
 import com.boot.utils.ThreadLocalUtils;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +23,6 @@ import java.util.Map;
  * @Description: 激励语导入
  */
 @Slf4j
-@Component
 public class EmotionWordsImport extends AnalysisEventListener<EmotionWords> {
 
 
@@ -32,7 +30,8 @@ public class EmotionWordsImport extends AnalysisEventListener<EmotionWords> {
      * 每隔100条存储数据库，然后清理list ，方便内存回收
      */
     private static final int BATCH_COUNT = 100;
-    @Resource
+
+    /*操作数据库*/
     private EmotionWordsService emotionWordsService;
     /**
      * 缓存的数据
@@ -48,6 +47,10 @@ public class EmotionWordsImport extends AnalysisEventListener<EmotionWords> {
      * 表头信息
      */
     private Map<Integer, String> headMap;
+
+    public EmotionWordsImport(EmotionWordsService emotionWordsService) {
+        this.emotionWordsService = emotionWordsService;
+    }
 
     /**
      * @param headMap:
@@ -74,6 +77,7 @@ public class EmotionWordsImport extends AnalysisEventListener<EmotionWords> {
     public void invoke(EmotionWords data, AnalysisContext context) {
         LocalDateTime localDateTime = LocalDateTime.now();
         data.setEmoCreateTime(localDateTime);
+        data.setEmoId(IdUtils.getSnowFlakeInstance().nextId());
         cachedDataList.add(data);
         // 达到BATCH_COUNT了，需要去存储一次数据库，防止数据几万条数据在内存，容易OOM
         if (cachedDataList.size() >= BATCH_COUNT) {

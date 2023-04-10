@@ -237,8 +237,6 @@ export default {
         accountOrTelOrKeepNameOrAdminId: "",
         /*用户状态*/
         userStatus: "",
-        /*积分升序或降序,*/
-        integrationOrderByAsc: false,
         // 当前页码
         pageNum: 1,
         // 每页显示条数

@@ -8,6 +8,7 @@ import co.elastic.clients.elasticsearch.core.SearchRequest;
 import co.elastic.clients.elasticsearch.core.search.Hit;
 import co.elastic.clients.elasticsearch.indices.DeleteIndexResponse;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.boot.bo.WordPlan;
 import com.boot.common.Exception.CustomException;
@@ -25,7 +26,6 @@ import com.boot.utils.MinIOUtils;
 import com.boot.utils.SnowFlakeUtil;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -52,7 +52,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Slf4j
 @RequestMapping("word")
 @SuppressWarnings("all")
-@RequiresAuthentication
+//@RequiresAuthentication
 public class WordModuleController {
 
     @Resource
@@ -97,6 +97,7 @@ public class WordModuleController {
         String wordFileType = "application/json";
         String imageFileType = "image/jpeg";
         String word = "";
+        int wordCount = 0;
         AtomicInteger id = new AtomicInteger(1);
 //        判断文件数量
         if (file.length < 2) {
@@ -138,6 +139,7 @@ public class WordModuleController {
                 if (word != null) {
                     StringReader sr = new StringReader(word);
                     IndexResponse response = elasticsearchClient.index(i -> i.index(wordModule.getModuleName()).withJson(sr).id(String.valueOf(id.getAndIncrement())));
+                    wordCount++;
                 }
             }
             log.info("存入Es正常");
@@ -165,7 +167,8 @@ public class WordModuleController {
         wordModule.setModuleId(moduleId)
                 .setModuleImagePath(imageFileName)
                 .setWordPath(wordFileName)
-                .setWordModuleCreateTime(LocalDateTime.now());
+                .setWordModuleCreateTime(LocalDateTime.now())
+                .setWordCount(wordCount);
         wordModuleService.save(wordModule);
         log.info("存入mysql正常");
         return Result.success();
@@ -201,15 +204,90 @@ public class WordModuleController {
     public Result wordModuleSearch(@RequestBody WordModuleSearchDto wordModuleSearchDto) {
         Page<WordModule> pageInfo = new Page<>(wordModuleSearchDto.getPageNum(), wordModuleSearchDto.getPageSize());
         LambdaQueryWrapper<WordModule> wrapper = new LambdaQueryWrapper<>();
+        boolean flag = null != wordModuleSearchDto.getStudyNumberOrderByAsc();
         wrapper
                 .ge(null != wordModuleSearchDto.getBeginTime(), WordModule::getWordModuleCreateTime, wordModuleSearchDto.getBeginTime())
                 .le(null != wordModuleSearchDto.getEndTime(), WordModule::getWordModuleCreateTime, wordModuleSearchDto.getEndTime())
-                .like(null != wordModuleSearchDto.getModuleName(), WordModule::getModuleName, wordModuleSearchDto.getModuleName())
-                .eq(null != wordModuleSearchDto.getSuperiorModule(), WordModule::getSuperiorModule, wordModuleSearchDto.getSuperiorModule())
-                .orderBy(null != wordModuleSearchDto.getStudyNumberOrderByAsc(), wordModuleSearchDto.getStudyNumberOrderByAsc(), WordModule::getStudyNumber)
+                .like(!wordModuleSearchDto.getModuleName().isEmpty(), WordModule::getModuleName, wordModuleSearchDto.getModuleName())
+                .eq(!wordModuleSearchDto.getSuperiorModule().isEmpty(), WordModule::getSuperiorModule, wordModuleSearchDto.getSuperiorModule())
+                .orderBy(flag, flag && wordModuleSearchDto.getStudyNumberOrderByAsc(), WordModule::getStudyNumber)
                 .orderByDesc(WordModule::getWordModuleCreateTime);
         wordModuleService.page(pageInfo, wrapper);
         return Result.success(pageInfo);
+    }
+
+
+    /**
+     * @Return:
+     * @Author: DengYinzhe
+     * @Description: TODO 通过id获取模块详细信息
+     * @Date: 2023/4/10 16:43
+     */
+    @GetMapping("wordModuleById/{moduleId}")
+    public Result wordModuleById(@PathVariable Long moduleId) {
+        WordModule wordModule = wordModuleService.getById(moduleId);
+        Map<String, Object> map = new HashMap<>(1);
+        LambdaQueryWrapper<Plan> queryWrapper = new LambdaQueryWrapper<Plan>();
+        queryWrapper.eq(Plan::getModuleId, moduleId);
+        Boolean planExist = false;
+        long count = planService.count();
+        if (count > 0) {
+            planExist = true;
+        }
+        map.put("wordModule", wordModule);
+        map.put("planExist", planExist);
+        return Result.success(map);
+    }
+
+    /**
+     * @Return:
+     * @Author: DengYinzhe
+     * @Description: TODO 查询词汇模块列表By sueperName
+     * @Date: 2023/4/10 10:44
+     */
+    @GetMapping("wordModuleBySuperior/{superiorModule}")
+    public Result wordModuleBySuperior(@PathVariable String superiorModule) {
+        LambdaQueryWrapper<WordModule> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(WordModule::getSuperiorModule, superiorModule);
+        List<WordModule> list = wordModuleService.list(queryWrapper);
+        return Result.success(list);
+    }
+
+    /**
+     * @Return:
+     * @Author: DengYinzhe
+     * @Description: TODO 轮播图和 最新词汇的list
+     * @Date: 2023/4/10 11:52
+     */
+    @GetMapping("newWordModule")
+    public Result newWordModule() {
+        Page<WordModule> pageInfo = new Page<>(1, 10);
+        LambdaQueryWrapper<WordModule> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper
+                .eq(WordModule::getWordModuleStatus, "0")
+                .orderByDesc(WordModule::getWordModuleCreateTime);
+        wordModuleService.page(pageInfo, queryWrapper);
+        List<WordModule> list = pageInfo.getRecords();
+        return Result.success(list);
+    }
+
+
+    /**
+     * @Return:
+     * @Author: DengYinzhe
+     * @Description: TODO 最热门词汇的list
+     * @Date: 2023/4/10 11:52
+     */
+    @GetMapping("hotWordModule")
+    public Result hotWordModule() {
+        Page<WordModule> pageInfo = new Page<>(1, 10);
+        LambdaQueryWrapper<WordModule> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper
+                .eq(WordModule::getWordModuleStatus, "0")
+                .orderByDesc(WordModule::getStudyNumber);
+        wordModuleService.page(pageInfo, queryWrapper);
+        List<WordModule> list = pageInfo.getRecords();
+        return Result.success(list);
     }
 
     /**
@@ -253,6 +331,45 @@ public class WordModuleController {
         return Result.success();
     }
 
+
+    /**
+     * @param map:
+     * @Return: Result<String>
+     * @Author: DengYinzhe
+     * @Description: TODO 锁定和解锁模块
+     * @Date: 2023/3/28 9:43
+     */
+    @PutMapping("lockOrUnLockModule")
+    public Result<String> lockOrUnLockModule(@RequestBody Map<String, String> map) {
+        System.out.println(map.toString());
+        String lockStatus = "lock";
+        String lockType = null;
+        Long moduleId = null;
+        try {
+            lockType = map.get("lockType");
+            moduleId = Long.valueOf(map.get("moduleId"));
+            if (lockType == null || moduleId == null) {
+                return Result.error("参数错误");
+            }
+        } catch (NumberFormatException e) {
+            return Result.error("参数转换错误");
+        }
+        UpdateWrapper<WordModule> updateWrapper = new UpdateWrapper<>();
+        updateWrapper
+                .eq("module_id", moduleId)
+                .set("lock_time", LocalDateTime.now());
+        if (lockStatus.equals(lockType)) {
+            updateWrapper.set("word_module_status", "1");
+        } else {
+            updateWrapper.set("word_module_status", "0");
+        }
+        if (wordModuleService.update(updateWrapper)) {
+            return Result.success("锁定/解锁成功");
+        } else {
+            return Result.error("锁定/解锁失败");
+        }
+    }
+
     /**
      * @param userId: 用户id
      * @Return: Result
@@ -290,7 +407,7 @@ public class WordModuleController {
      * @Date: 2023/2/9 11:44
      */
     @GetMapping("wordModuleImage/{wordModuleId}")
-    public void wordImage(@PathVariable("wordModuleId") Long wordModuleId, HttpServletResponse response) throws IOException, CustomException {
+    public void wordImage(@PathVariable("wordModuleId") String wordModuleId, HttpServletResponse response) throws IOException, CustomException {
 
         ServletOutputStream outputStream = null;
         InputStream inputStream = null;
