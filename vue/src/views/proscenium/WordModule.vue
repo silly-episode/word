@@ -97,13 +97,20 @@ export default {
     goTo(num) {
       this.$router.push({
         name: 'word',
-        params: { num, moduleId: this.$route.params.moduleId }
+        params: { num, moduleId: this.moduleId }
       })
-      console.log(num)
     }
   },
   created() {
-    if (this.$route.params.moduleId) this.getWordModule(this.$route.params.moduleId)
+    if (this.$route.params.moduleId) {
+      window.sessionStorage.setItem('moduleId', this.$route.params.moduleId)
+      this.moduleId = this.$route.params.moduleId
+      this.getWordModule(this.moduleId)
+    } else {
+      const moduleId = window.sessionStorage.getItem('moduleId')
+      this.moduleId = moduleId
+      this.getWordModule(moduleId)
+    }
   }
 }
 </script>

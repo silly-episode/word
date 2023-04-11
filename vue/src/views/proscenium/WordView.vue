@@ -70,7 +70,7 @@
             @click="Start"
             :class="`white ${
               isStart ? 'bg_c1_grey' : 'bg_purple'
-            }  radius_10 line_hei_50 text_center pointer margin_r_10`"
+            } radius_10 line_hei_50 text_center pointer margin_r_10`"
           >
             {{ isStart ? "Pause" : "Start" }}
           </div>
@@ -152,7 +152,7 @@
 </template>
 <script>
 import Timer from '@/components/Timer.vue'
-import { getWord } from '@/api/word.js'
+import { getWordByUserId, getWordByNum, getWordByBookId } from '@/api/word.js'
 export default {
   name: "WordView",
   components: { Timer },
@@ -198,8 +198,8 @@ export default {
     }
   },
   methods: {
-    getList() {
-      getWord({ userId: 1 })
+    getList(params) {
+      if (params.num && params.moduleId) getWordByNum(params)
         .then((res) => {
           // console.log('res', res.data.word)
           if (res.code == 200) {
@@ -211,6 +211,31 @@ export default {
         .catch((err) => {
           console.log('err', err)
         })
+      else if (params.userId) getWordByUserId({ userId: params.userId })
+        .then((res) => {
+          // console.log('res', res.data.word)
+          if (res.code == 200) {
+            this.List = res.data.word
+            this.title = res.data.wordPlan.moduleName
+            this.getWord(res.data.word[0].content.word)
+          }
+        })
+        .catch((err) => {
+          console.log('err', err)
+        })
+      else if (params.bookId) getWordByBookId({ bookId: params.bookId })
+        .then((res) => {
+          // console.log('res', res.data.word)
+          if (res.code == 200) {
+            this.List = res.data.word
+            this.title = res.data.wordPlan.moduleName
+            this.getWord(res.data.word[0].content.word)
+          }
+        })
+        .catch((err) => {
+          console.log('err', err)
+        })
+
     },
 
     getWord(data) {
@@ -333,7 +358,7 @@ export default {
     },
 
     back() {
-      console.log('返回')
+      this.$router.back() //后退
     },
 
     // 循环播放
@@ -374,11 +399,12 @@ export default {
     }
   },
   created() {
-    const { params } = this.$route
-    if (params) {
-      if (params.num && params.moduleId) this.getList(params)
-      else if (params.userId) this.getList(params.userId)
-      else if (params.bookId) this.getList(params.bookId)
+    if (JSON.stringify(this.$route.params) !== "{}") {
+      window.sessionStorage.setItem('params', JSON.stringify(this.$route.params))
+      this.getList(this.$route.params)
+    } else {
+      const params = JSON.parse(window.sessionStorage.getItem('params'))
+      this.getList(params)
     }
 
     // this.getList()

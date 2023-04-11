@@ -119,7 +119,7 @@ export default {
     getRotationChart() {
       newWordModule()
         .then((res) => {
-          console.log(res.data)
+          // console.log(res.data)
           if (res.code == 200) this.rotationChart = this.trunUrl(res.data)
         })
         .catch((err) => {
@@ -130,7 +130,7 @@ export default {
     gethotList() {
       hotWordModule()
         .then((res) => {
-          console.log(res.data)
+          // console.log(res.data)
           if (res.code == 200) this.hotList = res.data
         })
         .catch((err) => {
@@ -153,7 +153,7 @@ export default {
     getList() {
       wordModuleBySuperior(this.currentIndex)
         .then((res) => {
-          console.log(res)
+          // console.log(res)
           if (res.code == 200) this.bookList = res.data
         })
         .catch((err) => {

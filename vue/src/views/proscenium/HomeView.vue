@@ -63,7 +63,7 @@ export default {
         path: 'myword',
         authName: '我的单词'
       }, {
-        path: 'article',
+        path: 'articlelist',
         authName: '文章练习'
       }, {
         path: 'translate',

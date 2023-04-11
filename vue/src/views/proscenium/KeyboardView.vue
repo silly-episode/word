@@ -1,86 +1,67 @@
 <template>
-  <div class="bgcolor-off">
-    <div class="container">
-      <h1 class="title title-off">Cool keyboard game</h1>
-      <!-- The score will change each time you press the right key -->
-      <h1 class="title title-off" id="score">Score : 0</h1>
-
-      <!-- Almost an AZERTY keyboard -->
-      <div class="keyboard">
+  <div :class="`bgcolor-${isDark ? 'off' : 'on'}`">
+    <div class="flex_column_center hei_per84">
+      <div class="hei_100"></div>
+      <h1 :class="`title title-${isDark ? 'off' : 'on'}`">
+        Cool keyboard game
+      </h1>
+      <h1 :class="`title title-${isDark ? 'off' : 'on'}`" id="score">
+        Score : {{ score }}
+      </h1>
+      <div class="">
         <!-- First row : ESC, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, -, + and BACK -->
         <ul class="row row-0">
-          <li class="color0-off 0" id="esc">ESC</li>
-          <li class="color0-off 0" id="1">1</li>
-          <li class="color1-off 1" id="2">2</li>
-          <li class="color2-off 2" id="3">3</li>
-          <li class="color3-off 3" id="4">4</li>
-          <li class="color4-off 4" id="5">5</li>
-          <li class="color4-off 4" id="6">6</li>
-          <li class="color3-off 3" id="7">7</li>
-          <li class="color2-off 2" id="8">8</li>
-          <li class="color1-off 1" id="9">9</li>
-          <li class="color0-off 0" id="0">0</li>
-          <li class="color0-off 0">-</li>
-          <li class="color0-off 0">+</li>
-          <li class="color0-off 0" id="back">BACK</li>
+          <li
+            :class="`${item.class}-${isDark ? 'off' : 'on'} ${
+              code == item.id ? 'hit' : ''
+            } ${selected == item.id ? 'selected' : ''}`"
+            v-for="item in row0"
+            :key="item.id"
+          >
+            {{ item.id }}
+          </li>
         </ul>
         <!-- Second row : TAB, A, Z, E, R, T, Y, U, I, O, P, "[", "]" and "\" -->
         <ul class="row row-1">
-          <li class="color0-off 0" id="tab">TAB</li>
-          <li class="color0-off 0" id="A">A</li>
-          <li class="color1-off 1" id="Z">Z</li>
-          <li class="color2-off 2" id="E">E</li>
-          <li class="color3-off 3" id="R">R</li>
-          <li class="color4-off 4" id="T">T</li>
-          <li class="color4-off 4" id="Y">Y</li>
-          <li class="color3-off 3" id="U">U</li>
-          <li class="color2-off 2" id="I">I</li>
-          <li class="color1-off 1" id="O">O</li>
-          <li class="color0-off 0" id="P">P</li>
-          <li class="color0-off 0">[</li>
-          <li class="color0-off 0">]</li>
-          <li class="color0-off 0">\</li>
+          <li
+            :class="`${item.class}-${isDark ? 'off' : 'on'} ${
+              code == item.id ? 'hit' : ''
+            } ${selected == item.id ? 'selected' : ''}`"
+            v-for="item in row1"
+            :key="item.id"
+          >
+            {{ item.id }}
+          </li>
         </ul>
         <!-- Third row : CAPS, Q, S, D, F, G, H, J, K, L, M, "%" and ENTER -->
         <ul class="row row-2">
-          <li class="color0-off 0" id="caps">CAPS</li>
-          <li class="color0-off 0" id="Q">Q</li>
-          <li class="color1-off 1" id="S">S</li>
-          <li class="color2-off 2" id="D">D</li>
-          <li class="color3-off 3" id="F">F</li>
-          <li class="color4-off 4" id="G">G</li>
-          <li class="color4-off 4" id="H">H</li>
-          <li class="color3-off 3" id="J">J</li>
-          <li class="color2-off 2" id="K">K</li>
-          <li class="color1-off 1" id="L">L</li>
-          <li class="color0-off 0" id="M">M</li>
-          <li class="color0-off 0">%</li>
-          <li class="color0-off 0" id="enter">ENTER</li>
+          <li
+            :class="`${item.class}-${isDark ? 'off' : 'on'} ${
+              code == item.id ? 'hit' : ''
+            } ${selected == item.id ? 'selected' : ''}`"
+            v-for="item in row2"
+            :key="item.id"
+          >
+            {{ item.id }}
+          </li>
         </ul>
         <!-- Fourth row : LEFT-SHIFT, W, X, C, V, B, N, "?", ".", ";", ":" and RIGHT-SHIFT -->
         <ul class="row row-3">
-          <li class="color0-off 0" id="shift">SHIFT</li>
-          <li class="color0-off 0" id="W">W</li>
-          <li class="color1-off 1" id="X">X</li>
-          <li class="color2-off 2" id="C">C</li>
-          <li class="color3-off 3" id="V">V</li>
-          <li class="color4-off 4" id="B">B</li>
-          <li class="color4-off 4" id="N">N</li>
-          <li class="color3-off 3">?</li>
-          <li class="color2-off 2">.</li>
-          <li class="color1-off 1">;</li>
-          <li class="color0-off 0">:</li>
-          <li class="color0-off 0" id="shift">SHIFT</li>
+          <li
+            :class="`${item.class}-${isDark ? 'off' : 'on'} ${
+              code == item.id ? 'hit' : ''
+            } ${selected == item.id ? 'selected' : ''}`"
+            v-for="item in row3"
+            :key="item.id"
+          >
+            {{ item.id }}
+          </li>
         </ul>
       </div>
-
-      <!-- Combo text that will change when you have 5, 10, 20 and 50 points -->
-      <h1 class="title title-off" id="combo"></h1>
     </div>
 
-    <!-- Funny beer pong button -->
     <div class="toggle beer-pong">
-      <input id="beer-pong" type="checkbox" onclick="toggleClick()" />
+      <input id="beer-pong" type="checkbox" @click="isDark = !isDark" />
       <label class="toggle-item" for="beer-pong"></label>
       <div class="cup">
         <div class="lid"></div>
@@ -91,7 +72,109 @@
 
 <script>
 export default {
+  data() {
+    return {
+      keys: [..."ABCDEFGHIJKLMNOPQRSTUVWXYZ"],
+      score: 0,
+      code: '',//按键的ASCII码
+      selected: '',//随机晃动的键
+      isDark: true,
+      row0: [
+        { class: "color0", id: "Esc" },
+        { class: "color0", id: "1" },
+        { class: "color1", id: "2" },
+        { class: "color2", id: "3" },
+        { class: "color3", id: "4" },
+        { class: "color4", id: "5" },
+        { class: "color4", id: "6" },
+        { class: "color3", id: "7" },
+        { class: "color2", id: "8" },
+        { class: "color1", id: "9" },
+        { class: "color0", id: "0" },
+        { class: "color0", id: "-" },
+        { class: "color0", id: "+" },
+        { class: "width5 color0", id: "Back" }
+      ],
+      row1: [
+        { class: "width5 color0", id: "Tab" },
+        { class: "color0", id: "Q" },
+        { class: "color1", id: "W" },
+        { class: "color2", id: "E" },
+        { class: "color3", id: "R" },
+        { class: "color4", id: "T" },
+        { class: "color4", id: "Y" },
+        { class: "color3", id: "U" },
+        { class: "color2", id: "I" },
+        { class: "color1", id: "O" },
+        { class: "color0", id: "P" },
+        { class: "color0", id: "[" },
+        { class: "color0", id: "]" },
+        { class: "color0", id: "\\" }
+      ],
+      row2: [
+        { class: "width6 color0", id: "Caps" },
+        { class: "color0", id: "A" },
+        { class: "color1", id: "S" },
+        { class: "color2", id: "D" },
+        { class: "color3", id: "F" },
+        { class: "color4", id: "G" },
+        { class: "color4", id: "H" },
+        { class: "color3", id: "J" },
+        { class: "color2", id: "K" },
+        { class: "color1", id: "L" },
+        { class: "color0", id: ";" },
+        { class: "color0", id: "'" },
+        { class: "width6 color0", id: "Enter" }
+      ],
+      row3: [
+        { class: "width8 color0", id: "Ctrl" },
+        { class: "color0", id: "Z" },
+        { class: "color1", id: "X" },
+        { class: "color2", id: "C" },
+        { class: "color3", id: "V" },
+        { class: "color4", id: "B" },
+        { class: "color4", id: "N" },
+        { class: "color3", id: "M" },
+        { class: "color2", id: "," },
+        { class: "color2", id: "." },
+        { class: "color0", id: "?" },
+        { class: "width8 color0", id: "Shift" }
 
+      ]
+    }
+  },
+  methods: {
+    // 获得0到25(密钥)之间的随机数
+    getRandomNumber(min, max) {
+      min = Math.ceil(min);
+      max = Math.floor(max);
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+    },
+
+    // 随机使页面的其中一个字母处于选定状态
+    targetRandomKey() {
+      this.selected = this.keys[this.getRandomNumber(0, this.keys.length - 1)]
+    },
+
+    // 当键盘被按下时
+    keyDown(event) {
+      this.code = String.fromCharCode(event.keyCode)//当前敲的键
+      if (this.code == this.selected) {
+        this.score++
+        this.targetRandomKey();
+      }
+    },
+
+    keyUp() {
+      this.code = ''
+    }
+  },
+  mounted() {
+    // 绑定监听事件
+    window.addEventListener("keydown", this.keyDown);
+    window.addEventListener("keyup", this.keyUp);
+    this.targetRandomKey();
+  },
 }
 </script>
 
@@ -108,12 +191,6 @@ export default {
   position: absolute;
 }
 
-body {
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-weight: 500;
-  transition: background-color 1s;
-}
-
 .bgcolor-off {
   background-color: black;
 }
@@ -122,21 +199,12 @@ body {
   background-color: #c6c5c5;
 }
 
-.container {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  height: 80vh;
-}
-
 .title {
   text-transform: uppercase;
-  margin-top: 3em;
-  margin-bottom: 3em;
+  /* margin: 20px 0; */
+  margin-bottom: 40px;
   font-size: 1em;
   letter-spacing: 0.3em;
-
   transition: color 1s;
 }
 
@@ -146,11 +214,6 @@ body {
 
 .title-on {
   color: rgba(0, 0, 0, 0.7);
-}
-
-.keyboard {
-  display: flex;
-  flex-direction: column;
 }
 
 .row {
@@ -172,17 +235,15 @@ li {
   transition: background-color 1s, border 1s, color 1s;
 }
 
-#back,
-#tab {
+.width5 {
   width: 5em;
 }
 
-#caps,
-#enter {
+.width6 {
   width: 6em;
 }
 
-#shift {
+.width8 {
   width: 8em;
 }
 
@@ -284,16 +345,6 @@ li {
 
 .color4-on.selected {
   color: #59a1f0;
-}
-
-.godlike {
-  color: red;
-  scale: 1.5;
-}
-
-.fill-out-key {
-  background-color: slategrey;
-  border: 2px solid slategrey;
 }
 
 .selected {

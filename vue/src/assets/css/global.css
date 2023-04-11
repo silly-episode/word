@@ -79,6 +79,10 @@ li {
     /*这个属性不是css的规范属性，需要组合上面两个属性，表示显示的行数。*/
 }
 
+.autoCenter {
+    margin: 0 auto;
+}
+
 /* 文本居中 */
 .text_center {
     text-align: center;
@@ -651,13 +655,16 @@ li {
     width: 80%;
 }
 
-
 .wid_per90 {
     width: 90%;
 }
 
 .wid_per100 {
     width: 100%;
+}
+
+.hei_per84 {
+    height: 84vh;
 }
 
 .hei_per100 {
@@ -686,6 +693,14 @@ li {
 
 .wid_300 {
     width: 300px;
+}
+
+.wid_380 {
+    width: 380px;
+}
+
+.wid_1000 {
+    width: 1000px;
 }
 
 .hei_10 {
