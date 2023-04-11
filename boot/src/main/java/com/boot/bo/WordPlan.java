@@ -36,6 +36,7 @@ public class WordPlan extends Plan {
     private Integer studyNumber;
     //上级模块名称
     private String superiorModule;
-
+    // Es Index
+    private String esIndex;
 
 }

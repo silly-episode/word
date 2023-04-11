@@ -90,6 +90,17 @@ public class Result<T> {
         return new Result<T>(200, msg, data);
     }
 
+
+    /**
+     * @Return: String
+     * @Author: DengYinzhe
+     * @Description: 成功时调用，不需返回数据
+     * @Date: 2023/2/6 21:10
+     */
+    public static <T> Result<T> success(int code, String msg) {
+        return new Result<T>(code, msg);
+    }
+
     /**
      * @Return: String
      * @Author: DengYinzhe

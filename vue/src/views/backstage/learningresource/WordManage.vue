@@ -55,7 +55,7 @@
                   v-for="status in superiorModuleList"
                   :key="status.key"
                   :label="status.label"
-                  :value="status.label">
+                  :value="status.key">
               </el-option>
             </el-select>
           </el-form-item>

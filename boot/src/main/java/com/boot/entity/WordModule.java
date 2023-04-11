@@ -51,6 +51,8 @@ public class WordModule extends Model<WordModule> {
     private Integer wordCount;
     // 锁定/解锁时间
     private LocalDateTime lockTime;
+    // ES 索引
+    private String esIndex;
 
     /**
      * 获取主键值

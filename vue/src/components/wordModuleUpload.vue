@@ -41,7 +41,7 @@
 </template>
 
 <script>
-import {importWord} from "@/api/word"
+
 
 export default {
   name: "wordModelUpload",

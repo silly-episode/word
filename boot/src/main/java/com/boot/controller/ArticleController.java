@@ -14,7 +14,6 @@ import com.boot.entity.Article;
 import com.boot.utils.JsonUtils;
 import com.boot.utils.SnowFlakeUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -36,7 +35,7 @@ import java.util.Objects;
 @RestController
 @RequestMapping("article")
 @Slf4j
-@RequiresAuthentication
+//@RequiresAuthentication
 public class ArticleController {
 
     @Resource

@@ -340,3 +340,28 @@ export function lockOrUnLockModule(data) {
 }
 
 
+/**
+ * 上传单模块
+ * @returns {*}
+ * @param data
+ */
+export function uploadModule(data) {
+    return request({
+        url: 'word/wordModule',
+        method: 'post',
+        data,
+    })
+}
+
+
+/**
+ * 上传单模块
+ * @returns {*}
+ * @param data
+ */
+export function getArticle(data) {
+    return request({
+        url: `article/article/${data}`,
+        method: 'get',
+    })
+}

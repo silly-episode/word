@@ -94,7 +94,6 @@
                 accept=".xlsx,.xls"
                 action="api/emotionWords/emotionWordsExcel"
             >
-              <!--              :headers="{Authorization:}"-->
               <el-button :icon="`el-icon-${this.importLoading?'loading':'upload2'}`" type="success">
                 导入
               </el-button>
