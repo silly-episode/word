@@ -3,7 +3,9 @@
     <img class="wordLog" src="@/assets/wordLog.png" alt="" />
     <div :class="`${isDeep ? 'bg_drak grey' : 'bg_white'} card onOffCard`">
       <el-row :gutter="2" type="flex" align="middle">
-        <el-col :span="8"><span>{{title}}</span></el-col>
+        <el-col :span="8"
+          ><span>{{ title }}</span></el-col
+        >
         <el-col :span="5">
           <el-select v-model="value" style="width: 90px">
             <el-option label="美音" value="0"></el-option>
@@ -158,7 +160,7 @@ export default {
     return {
       complete: false,//二十个单词都完成了
       wordIndex: 0,
-      title:'',
+      title: '',
       value: '英音',
       shake: false,//是否显示错误抖动类名
       List: [],//二十个单词对象列表
@@ -202,7 +204,7 @@ export default {
           // console.log('res', res.data.word)
           if (res.code == 200) {
             this.List = res.data.word
-            this.title=res.data.wordPlan.moduleName
+            this.title = res.data.wordPlan.moduleName
             this.getWord(res.data.word[0].content.word)
           }
         })
@@ -372,7 +374,14 @@ export default {
     }
   },
   created() {
-    this.getList()
+    const { params } = this.$route
+    if (params) {
+      if (params.num && params.moduleId) this.getList(params)
+      else if (params.userId) this.getList(params.userId)
+      else if (params.bookId) this.getList(params.bookId)
+    }
+
+    // this.getList()
     // 显示绿色字、  黑色字、   红色字、   底部线黑色、  底部线红色
     //     答对后、  显 未答、  显 答错 、  不显未答、  不显答错
     //        0  、  1      、   2     、    -1   、    -2

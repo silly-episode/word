@@ -8,6 +8,7 @@ import MyWordView from "@/views/proscenium/MyWordView.vue";
 import ArticleView from "@/views/proscenium/ArticleView.vue";
 import TranslateView from "@/views/proscenium/TranslateView.vue";
 import KeyboardView from "@/views/proscenium/KeyboardView.vue";
+import WordModule from "@/views/proscenium/WordModule.vue";
 
 import Assist from "@/views/proscenium/Assist.vue";
 import Own from "@/views/proscenium/Own.vue";
@@ -66,6 +67,10 @@ const routes = [
       path: "/assist",
       name:'assist',
       component: Assist,
+    },{
+      path: "/module",
+      name:'module',
+      component: WordModule,
     }]
   },
   {
@@ -110,6 +115,7 @@ const routes = [
   },
   {
     path: "/word",
+    name:'word',
     component: WordView,
   },
 ];

@@ -9,6 +9,11 @@ body,
     min-width: 1366px;
 }
 
+ul,
+li {
+    list-style: none;
+}
+
 .shade {
     position: fixed;
     top: 0;
@@ -91,7 +96,6 @@ body,
 .z-index {
     z-index: 999;
 }
-
 
 /* 圆角 */
 .radius_per50 {
@@ -210,6 +214,10 @@ body,
     margin: 0 30px;
 }
 
+.margin_0_120 {
+    margin: 0 120px;
+}
+
 .margin_12_15 {
     margin: 12px 15px;
 }
@@ -256,6 +264,10 @@ body,
 
 .margin_r_30 {
     margin-right: 30px;
+}
+
+.margin_r_40 {
+    margin-right: 40px;
 }
 
 .margin_l_10 {
@@ -318,6 +330,10 @@ body,
     padding: 10px;
 }
 
+.padding_30 {
+    padding: 30px;
+}
+
 .padding_t_2 {
     padding-top: 0.5rem;
 }
@@ -373,6 +389,14 @@ body,
 /* 字体 */
 .font_bold {
     font-weight: bold;
+}
+
+.font_12 {
+    font-size: 12px;
+}
+
+.font_14 {
+    font-size: 14px;
 }
 
 .font_16 {
@@ -454,6 +478,9 @@ body,
     background-color: #f4f4f4;
 }
 
+.bg_f9 {
+    background-color: #f9f9f9;
+}
 
 .border_blue {
     border: 1px solid #1296db;
@@ -478,6 +505,10 @@ body,
 
 .bg_purple {
     background-color: #818cf8;
+}
+
+.bg_baby_purple {
+    background-color: #dfe3ff;
 }
 
 .bg_baby_blue {
@@ -506,6 +537,10 @@ body,
 
 .bg_white {
     background-color: #fff;
+}
+
+.line_hei_18 {
+    line-height: 18px;
 }
 
 .line_hei_22 {
@@ -645,6 +680,10 @@ body,
     width: 90px;
 }
 
+.wid_100 {
+    width: 100px;
+}
+
 .wid_300 {
     width: 300px;
 }
@@ -673,12 +712,20 @@ body,
     height: 70px;
 }
 
+.hei_80 {
+    height: 80px;
+}
+
 .hei_100 {
     height: 100px;
 }
 
 .hei_150 {
     height: 150px;
+}
+
+.hei_200 {
+    height: 200px;
 }
 
 .el-tooltip__popper {

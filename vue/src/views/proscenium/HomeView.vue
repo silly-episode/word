@@ -76,15 +76,32 @@ export default {
   },
   methods: {
     handleJump(name) {
-      if (name == 'login') this.$refs.login.showLogin()
+      if (name == 'login') {
+        if (this.isLogin) {
+          this.$confirm('确认退出登录吗?', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(() => {
+            window.sessionStorage.clear();
+          }).catch(() => {
+            console.log('取消操作');
+          });
+          this.isLogin = false
+        } else this.$refs.login.showLogin()
+      }
       else this.$router.push({ name })
 
     },
     saveNavState(activePath) {
-      console.log(activePath)
+      // console.log(activePath)
       window.sessionStorage.setItem("activePath", activePath);
       this.activePath = activePath;
     },
+  },
+  created() {
+    const token = window.sessionStorage.getItem("token");
+    this.isLogin = token ? true : false
   }
 };
 </script>

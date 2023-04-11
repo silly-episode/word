@@ -6,6 +6,41 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "1132",
+      "name": "字体",
+      "font_class": "xiaoxue",
+      "unicode": "e602",
+      "unicode_decimal": 58882
+    },
+    {
+      "icon_id": "2012069",
+      "name": "书",
+      "font_class": "chuzhong",
+      "unicode": "e608",
+      "unicode_decimal": 58888
+    },
+    {
+      "icon_id": "6547428",
+      "name": "出国(境)进修",
+      "font_class": "chuguo",
+      "unicode": "e6cb",
+      "unicode_decimal": 59083
+    },
+    {
+      "icon_id": "18165539",
+      "name": "书籍,知识,书",
+      "font_class": "gaozhong",
+      "unicode": "e895",
+      "unicode_decimal": 59541
+    },
+    {
+      "icon_id": "18170612",
+      "name": "大学,学府,法院",
+      "font_class": "daxue",
+      "unicode": "e9df",
+      "unicode_decimal": 59871
+    },
+    {
       "icon_id": "8361835",
       "name": "循环播放",
       "font_class": "xunhuan",

@@ -1,5 +1,5 @@
 <template>
-  <div v-if="visible" class="flex_center_center">
+  <div v-if="visible" class="z-index po">
     <div class="shade" @click="closed"></div>
     <div :class="`dowebok${signUp ? ' right-panel-active' : ''}`">
       <div class="form-container sign-up-container">
@@ -261,7 +261,10 @@ export default {
           console.log(this.registerForm)
           register(this.registerForm)
             .then((res) => {
-              console.log(res)
+              // console.log(res)
+              window.sessionStorage.setItem("token", res.data);
+              this.$message.success("注册成功！");
+              this.closed()
               // alert('submit!');
             })
 
@@ -279,12 +282,22 @@ export default {
         loginPassword: "",
         type: ''
       }
+      this.registerForm = {
+        nickName: "",
+        account: "",
+        password: ""
+      }
     }
   }
 }
 </script>
 
 <style scoped>
+.po {
+  position: absolute;
+  top: 100px;
+  left: 320px;
+}
 .form-container >>> .el-input__inner {
   background: #eee;
   border: none;
