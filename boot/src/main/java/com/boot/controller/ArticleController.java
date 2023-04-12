@@ -11,7 +11,6 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.boot.common.result.Result;
 import com.boot.dto.ArticleSearchDto;
 import com.boot.entity.Article;
-import com.boot.utils.JsonUtils;
 import com.boot.utils.SnowFlakeUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -52,14 +51,15 @@ public class ArticleController {
     public Result article(@RequestBody Article article) throws IOException {
 
         article.setArticleId(String.valueOf(SnowFlakeUtil.getNextId()))
-                .setArticleCreateTime(LocalDateTime.now().toInstant(ZoneOffset.of("+8")).toEpochMilli());
+                .setArticleCreateTime(LocalDateTime.now().toInstant(ZoneOffset.of("+8")).toEpochMilli())
+                .setWordNumber(article.getContent().length())
+                .setArticleStudyNumber(0);
 
         //这是一个同步请求，请求会卡在这里
         IndexResponse response = elasticsearchClient
                 .index(i -> i.index("article")
                         .document(article)
                         .id(article.getArticleId()));
-        log.info(response.result().jsonValue());
         if ("created".equals(response.result().jsonValue())) {
             return Result.success("插入成功");
         } else {
@@ -98,13 +98,11 @@ public class ArticleController {
      */
     @PutMapping("article")
     public Result articleChange(@RequestBody Map<String, String> article) throws IOException {
-        log.info(JsonUtils.getBeanToJson(article));
         // 构建修改文档的请求
         UpdateResponse<Article> response = elasticsearchClient
                 .update(e -> e.index("article")
                         .id(article.get("articleId"))
                         .doc(article), Article.class);
-
         // 打印请求结果
         System.out.println(response.result());
         if ("updated".equals(response.result().jsonValue())) {
@@ -131,16 +129,34 @@ public class ArticleController {
                 .index("article")
                 .query(
                         QueryBuilders.bool().filter(
-                                        QueryBuilders
-                                                .wildcard()
-                                                .field("articleTitle")
-                                                .value(String.format("*%s*", articleSearchDto.getTitle()))
-                                                .build()._toQuery(),
+                                        QueryBuilders.bool().should(
+                                                QueryBuilders
+                                                        .term()
+                                                        .field("articleTitle")
+                                                        .value(String.format("%s", articleSearchDto.getSearch()))
+                                                        .build()._toQuery(),
+                                                QueryBuilders
+                                                        .wildcard()
+                                                        .field("articleTitle")
+                                                        .value(String.format("*%s*", articleSearchDto.getSearch()))
+                                                        .build()._toQuery(),
+                                                QueryBuilders
+                                                        .wildcard()
+                                                        .field("articleAuthor")
+                                                        .value(String.format("*%s*", articleSearchDto.getSearch()))
+                                                        .build()._toQuery()
+                                        ).build()._toQuery(),
                                         QueryBuilders
                                                 .range()
                                                 .field("wordNumber")
                                                 .gte(JsonData.fromJson(String.valueOf(articleSearchDto.getCountLow())))
                                                 .lte(JsonData.fromJson(String.valueOf(articleSearchDto.getCountUp())))
+                                                .build()._toQuery(),
+                                        QueryBuilders
+                                                .range()
+                                                .field("articleCreateTime")
+                                                .gte(JsonData.fromJson(String.valueOf(articleSearchDto.getBeginTime())))
+                                                .lte(JsonData.fromJson(String.valueOf(articleSearchDto.getEndTime())))
                                                 .build()._toQuery()
                                 )
                                 .build()
@@ -149,13 +165,13 @@ public class ArticleController {
                 .sort(
                         SortOptionsBuilders.field(f -> f.field("articleCreateTime").order(SortOrder.Desc)),
                         SortOptionsBuilders.field(f -> f.field("wordNumber").order(SortOrder.Desc)))
-                .source(sourceConfigBuilders ->
-                        sourceConfigBuilders
-                                .filter(sourceFilterBuilder ->
-                                        sourceFilterBuilder
-                                                .excludes("content")
-                                )
-                )
+//                .source(sourceConfigBuilders ->
+//                        sourceConfigBuilders
+//                                .filter(sourceFilterBuilder ->
+//                                        sourceFilterBuilder
+//                                                .excludes("content")
+//                                )
+//                )
                 .from((pageNum - 1) * pageSize)
                 .size(pageSize)
                 .build();

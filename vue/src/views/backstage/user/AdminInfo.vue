@@ -92,7 +92,7 @@
 
 
         <el-row>
-          <el-form-item label="描述" prop="signature">
+          <el-form-item label="描述" prop="remark">
             <el-input v-model.trim="adminMessage.remark" :disabled="superFlag" :rows="4" maxlength="500" show-word-limit
                       type="textarea"></el-input>
           </el-form-item>
@@ -169,7 +169,7 @@ export default {
     },
 
     showEditDialog(data) {
-      if (data === "添加管理员") {
+      if (data === "admin") {
         this.title = "添加管理员"
         this.buttonContent = "提交"
         this.adminMessage.role = this.roleList[0].value

@@ -33,7 +33,6 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.annotation.Resource;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
 import java.io.*;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -89,7 +88,7 @@ public class WordModuleController {
      */
     @PostMapping("wordModule")
     @Transactional
-    public Result wordModule(@RequestParam MultipartFile file, @Valid WordModule wordModule) throws IOException {
+    public Result wordModule(@RequestParam MultipartFile file, WordModule wordModule) throws IOException {
         String bucketName = "word";
         Long moduleId = SnowFlakeUtil.getNextId();
         String wordFileType = "application/json";
@@ -170,7 +169,10 @@ public class WordModuleController {
      * @Date: 2023/4/11 23:50
      */
     @PostMapping("changeEsWordModule")
-    public Result changeEsWordModule(@RequestParam MultipartFile file, @Valid Long moduleId) throws IOException {
+    public Result changeEsWordModule(@RequestParam MultipartFile file, WordModule module) throws IOException {
+
+        System.out.println(module);
+        Long moduleId = module.getModuleId();
         String esIndex = "word_module_" + IdUtils.getSnowFlakeInstance().nextIdStr();
         WordModule wordModule = wordModuleService.getById(moduleId);
         BufferedReader bufferReader = null;

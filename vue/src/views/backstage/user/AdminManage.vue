@@ -72,7 +72,7 @@
           <el-button icon="el-icon-search" type="primary" @click="adminSearch">
             查询
           </el-button>
-          <el-button icon="el-icon-plus" type="warning" @click="show('添加管理员')">
+          <el-button icon="el-icon-plus" type="warning" @click="show('admin')">
             添加管理员
           </el-button>
           <el-button :icon="`el-icon-${this.exportLoading?'loading':'download'}`" type="success"

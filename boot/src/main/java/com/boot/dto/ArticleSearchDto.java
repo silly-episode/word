@@ -15,11 +15,15 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ArticleSearchDto extends PageDto {
+    /*开始时间*/
+    private String beginTime;
+    /*结束时间*/
+    private String endTime;
     /*字数上限*/
     private Integer countUp;
     /*字数下限*/
     private Integer countLow;
     /*文章标题*/
-    private String title;
+    private String search;
 
 }

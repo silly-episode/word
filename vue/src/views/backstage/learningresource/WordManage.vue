@@ -168,9 +168,9 @@
                         :on-error="importError"
                         :on-success="importSuccess"
                         :show-file-list="false"
-                        accept=".xlsx,.xls"
-                        action="api/emotionWords/emotionWordsExcel"
-                    >
+                        :data="scope.row"
+                        accept=".json"
+                        action="api/word/changeEsWordModule">
                       <el-button
                           icon="el-icon-upload2"
                           size="mini"

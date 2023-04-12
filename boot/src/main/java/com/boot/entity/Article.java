@@ -34,4 +34,8 @@ public class Article {
     private String articleTitle;
     //    文章单词字数
     private Integer wordNumber;
+    //作者
+    private String articleAuthor;
+    //    练习人数
+    private Integer articleStudyNumber;
 }

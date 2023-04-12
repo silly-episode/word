@@ -355,13 +355,79 @@ export function uploadModule(data) {
 
 
 /**
- * 上传单模块
+ * 更换词源
  * @returns {*}
  * @param data
  */
 export function changeEsWordModule(data) {
     return request({
         url: 'word/changeEsWordModule',
+        method: 'post',
+        data,
+    })
+}
+
+
+/**
+ * 文章分页搜索
+ * @returns {*}
+ * @param data
+ */
+export function articleSearch(data) {
+    return request({
+        url: 'article/articleSearch',
+        method: 'post',
+        data,
+    })
+}
+
+
+/**
+ * 修改文章
+ * @returns {*}
+ * @param data
+ */
+export function updateArticle(data) {
+    return request({
+        url: 'article/article',
+        method: 'put',
+        data,
+    })
+}
+
+/**
+ * 删除文章
+ * @returns {*}
+ * @param params
+ */
+export function deleteArticle(params) {
+    return request({
+        url: `article/article/${params}`,
+        method: 'delete',
+    })
+}
+
+
+/**
+ * 获取文章
+ * @returns {*}
+ * @param params
+ */
+export function getArticleById(params) {
+    return request({
+        url: `article/article/${params}`,
+        method: 'get',
+    })
+}
+
+/**
+ * 发布文章
+ * @returns {*}
+ * @param data
+ */
+export function insertArticle(data) {
+    return request({
+        url: 'article/article',
         method: 'post',
         data,
     })
