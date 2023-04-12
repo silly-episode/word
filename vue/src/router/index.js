@@ -24,6 +24,7 @@ import AdminManage from '@/views/backstage/user/AdminManage.vue'
 import LoginLog from '@/views/backstage/user/LoginLog.vue'
 
 import WordManage from '@/views/backstage/learningresource/WordManage.vue'
+import ArticleManage from '@/views/backstage/learningresource/ArticleManage.vue'
 import SentenceManage from '@/views/backstage/learningresource/SentenceManage.vue'
 
 import OperationLog from '@/views/backstage/system/OperationLog.vue'
@@ -94,6 +95,9 @@ const routes = [
     }, {
       path: '/wordmanage',
       component: WordManage
+    }, {
+      path: '/articlemanage',
+      component: ArticleManage
     }, {
       path: '/sentencemanage',
       component: SentenceManage

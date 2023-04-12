@@ -15,7 +15,7 @@
       style="margin: 0 0 0 12%"
       width="70%"
       @close="closed"
-      @open="init "
+      @open="init"
   >
     <div style=" margin:0 auto">
       <el-form

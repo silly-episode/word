@@ -97,11 +97,17 @@ export default {
             id: '31',
             authName: '单词管理',
             path: 'wordmanage'
-          }, {
-            id: '32',
-            authName: '励志语管理',
-            path: 'sentencemanage'
-          }]
+          },
+            {
+              id: '32',
+              authName: '文章管理',
+              path: 'articlemanage'
+            },
+            {
+              id: '33',
+              authName: '励志语管理',
+              path: 'sentencemanage'
+            }]
         }, {
           id: 4,
           authName: '系统监控',

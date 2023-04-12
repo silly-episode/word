@@ -359,9 +359,10 @@ export function uploadModule(data) {
  * @returns {*}
  * @param data
  */
-export function getArticle(data) {
+export function changeEsWordModule(data) {
     return request({
-        url: `article/article/${data}`,
-        method: 'get',
+        url: 'word/changeEsWordModule',
+        method: 'post',
+        data,
     })
 }

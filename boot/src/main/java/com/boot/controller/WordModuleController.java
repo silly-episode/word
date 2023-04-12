@@ -6,7 +6,9 @@ import co.elastic.clients.elasticsearch._types.query_dsl.QueryBuilders;
 import co.elastic.clients.elasticsearch.core.IndexResponse;
 import co.elastic.clients.elasticsearch.core.SearchRequest;
 import co.elastic.clients.elasticsearch.core.search.Hit;
+import co.elastic.clients.elasticsearch.indices.DeleteIndexResponse;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.boot.bo.WordPlan;
@@ -160,6 +162,72 @@ public class WordModuleController {
         return Result.success("图片和Mysql正常");
     }
 
+
+    /**
+     * @Return:
+     * @Author: DengYinzhe
+     * @Description: TODO 更换词源
+     * @Date: 2023/4/11 23:50
+     */
+    @PostMapping("changeEsWordModule")
+    public Result changeEsWordModule(@RequestParam MultipartFile file, @Valid Long moduleId) throws IOException {
+        String esIndex = "word_module_" + IdUtils.getSnowFlakeInstance().nextIdStr();
+        WordModule wordModule = wordModuleService.getById(moduleId);
+        BufferedReader bufferReader = null;
+        AtomicInteger id = new AtomicInteger(1);
+        String word = "";
+        int wordCount = 0;
+        if (wordModule == null) {
+            return Result.error("单词模块不存在");
+        }
+        String oldEsIndex = wordModule.getEsIndex();
+//        上传词源
+        /*存入ES*/
+        try {
+            InputStream inputStream = file.getInputStream();
+            bufferReader = new BufferedReader(new InputStreamReader(inputStream));
+            while (word != null) {
+                word = bufferReader.readLine();
+                if (word != null) {
+                    StringReader sr = new StringReader(word);
+                    IndexResponse response = elasticsearchClient.index(
+                            i -> i
+                                    .index(esIndex)
+                                    .withJson(sr)
+                                    .id(String.valueOf(id.getAndIncrement())));
+                    wordCount++;
+                }
+            }
+            log.info("存入Es正常");
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (bufferReader != null) {
+                bufferReader.close();
+            }
+        }
+//        Mysql处理,更新词块
+        wordModule.setEsIndex(esIndex).setWordCount(wordCount).setWordModuleCreateTime(LocalDateTime.now());
+        wordModuleService.updateById(wordModule);
+//        更新计划
+        LambdaUpdateWrapper<Plan> updateWrapper = new LambdaUpdateWrapper<>();
+        updateWrapper.eq(Plan::getModuleId, moduleId)
+                .set(Plan::getAllWord, wordCount);
+        planService.update(updateWrapper);
+
+//        删除索引
+        try {
+            boolean value = elasticsearchClient.exists(builder -> builder.index(oldEsIndex)).value();
+            if (value) {
+                DeleteIndexResponse delete = elasticsearchClient.indices().delete(f ->
+                        f.index(oldEsIndex));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return Result.success("更换成功");
+    }
 
     /**
      * @param wordModule:

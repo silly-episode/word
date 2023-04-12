@@ -129,56 +129,91 @@
               <span>{{ statusList[scope.row.wordModuleStatus] }}</span>
             </template>
           </el-table-column>
-          <el-table-column align="center" label="词数" min-width="8%" prop="wordCount"
+          <el-table-column align="center" label="词数" min-width="7%" prop="wordCount"
                            show-overflow-tooltip></el-table-column>
-          <el-table-column align="center" label="学习人数" min-width="8%" prop="studyNumber"
+          <el-table-column align="center" label="学习人数" min-width="7%" prop="studyNumber"
                            show-overflow-tooltip></el-table-column>
-          <el-table-column label="单词模块说明" min-width="28%" prop="remark" show-overflow-tooltip
+          <el-table-column label="单词模块说明" min-width="25%" prop="remark" show-overflow-tooltip
                            text-align="left"></el-table-column>
-          <el-table-column align="center" fixed="right" label="操作" min-width="13%">
+          <el-table-column align="center" fixed="right" label="操作" min-width="18%">
             <template v-slot="scope">
-              <!-- 修改按钮 -->
-              <el-tooltip
-                  :enterable="false"
-                  content="修改"
-                  effect="dark"
-                  placement="top"
-              >
-                <el-button
-                    icon="el-icon-edit-outline"
-                    size="small"
-                    type="primary"
-                    @click="show(scope.row)"
-                ></el-button>
-              </el-tooltip>
-              <!-- 锁定/解锁按钮 -->
-              <el-tooltip
-                  :enterable="false"
-                  content="锁定/解锁"
-                  effect="dark"
-                  placement="top"
-              >
-                <el-button
-                    icon="el-icon-key"
-                    size="small"
-                    type="success"
-                    @click="lockOrUnLockModule(scope.row.moduleId,scope.row.wordModuleStatus)"
-                ></el-button>
-              </el-tooltip>
-              <!-- 删除按钮 -->
-              <el-tooltip
-                  :enterable="false"
-                  content="删除"
-                  effect="dark"
-                  placement="top"
-              >
-                <el-button
-                    icon="el-icon-delete"
-                    size="small"
-                    type="danger"
-                    @click="deleteModule(scope.row.moduleId)"
-                ></el-button>
-              </el-tooltip>
+              <el-form :inline="true" style="padding-bottom: 0;padding-top: 0">
+                <el-form-item>
+                  <!-- 修改按钮 -->
+                  <el-tooltip
+                      :enterable="false"
+                      content="修改"
+                      effect="dark"
+                      placement="top"
+                  >
+                    <el-button
+                        icon="el-icon-edit-outline"
+                        size="mini"
+                        type="primary"
+                        @click="show(scope.row)"
+                    ></el-button>
+                  </el-tooltip>
+                </el-form-item>
+
+                <el-form-item>
+                  <!-- 更换词源 -->
+                  <el-tooltip
+                      :enterable="false"
+                      content="更换词源"
+                      effect="dark"
+                      placement="top"
+                  >
+                    <el-upload
+                        :before-upload="iconChange"
+                        :on-error="importError"
+                        :on-success="importSuccess"
+                        :show-file-list="false"
+                        accept=".xlsx,.xls"
+                        action="api/emotionWords/emotionWordsExcel"
+                    >
+                      <el-button
+                          icon="el-icon-upload2"
+                          size="mini"
+                          type="warning">
+                      </el-button>
+                    </el-upload>
+                  </el-tooltip>
+                </el-form-item>
+
+                <el-form-item>
+                  <!-- 锁定/解锁按钮 -->
+                  <el-tooltip
+                      :enterable="false"
+                      content="锁定/解锁"
+                      effect="dark"
+                      placement="top"
+                  >
+                    <el-button
+                        icon="el-icon-key"
+                        size="mini"
+                        type="success"
+                        @click="lockOrUnLockModule(scope.row.moduleId,scope.row.wordModuleStatus)"
+                    ></el-button>
+                  </el-tooltip>
+                </el-form-item>
+
+                <el-form-item>
+                  <!-- 删除按钮 -->
+                  <el-tooltip
+                      :enterable="false"
+                      content="删除"
+                      effect="dark"
+                      placement="top"
+                  >
+                    <el-button
+                        icon="el-icon-delete"
+                        size="mini"
+                        type="danger"
+                        @click="deleteModule(scope.row.moduleId)"
+                    ></el-button>
+                  </el-tooltip>
+                </el-form-item>
+              </el-form>
             </template>
           </el-table-column>
         </el-table>
