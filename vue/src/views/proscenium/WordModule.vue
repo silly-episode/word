@@ -21,7 +21,7 @@
                 >创建时间：{{ moduleInfo.wordModuleCreateTime }}</span
               >
             </div>
-            <el-button type="primary" :disabled="!planExist" @click="joinPlan"
+            <el-button type="primary" :disabled="planExist" @click="joinPlan"
               >加入单词计划</el-button
             >
           </div>
@@ -56,24 +56,27 @@
         </div>
       </div>
     </el-main>
+    <PlanView ref="plan"></PlanView>
   </div>
 </template>
 
 <script>
 import { wordModuleById } from '@/api/wordList'
 import { imageUrl } from '@/utils/img.js'
+import PlanView from './PlanView.vue'
 export default {
   name: 'WordModule',
   data() {
     return {
       path: '',
       planExist: false,
-      moduleInfo: {
-      },
+      moduleId: '',
+      moduleInfo: {},
       sum: 0,
-      remainder: 0,
+      remainder: 0
     }
   },
+  components: { PlanView },
   methods: {
     getWordModule(moduleId) {
       wordModuleById(moduleId)
@@ -91,15 +94,19 @@ export default {
           console.log(err)
         })
     },
-    joinPlan() {
 
+    joinPlan() {
+      this.$refs.plan.show({ wordCount: this.moduleInfo.wordCount, moduleId: this.moduleId })
+      this.planExist = true
     },
+
     goTo(num) {
       this.$router.push({
         name: 'word',
         params: { num, moduleId: this.moduleId }
       })
-    }
+    },
+
   },
   created() {
     if (this.$route.params.moduleId) {

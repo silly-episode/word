@@ -43,7 +43,7 @@
     <el-main>
       <router-view></router-view>
     </el-main>
-    <Login ref="login"></Login>
+    <Login ref="login" @beLogin="beLogin"></Login>
   </div>
 </template>
 
@@ -98,10 +98,15 @@ export default {
       window.sessionStorage.setItem("activePath", activePath);
       this.activePath = activePath;
     },
+    beLogin() {
+      this.isLogin = true
+    }
   },
   created() {
     const token = window.sessionStorage.getItem("token");
+    console.log('token', token)
     this.isLogin = token ? true : false
+    console.log('this.isLogin', this.isLogin)
   }
 };
 </script>

@@ -27,7 +27,7 @@
         </el-carousel-item>
       </el-carousel>
       <div class="margin_15_0 font_20 font_bold">词表</div>
-      <div class="flex_between_wrap_center">
+      <div class="flex_wrap_center">
         <div
           class="box"
           @click="goTo(item.moduleId)"

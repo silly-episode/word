@@ -3,7 +3,7 @@ import request from '../utils/request'
 export function sms(phone) {
     return request({
         url: `/user/sms/${phone}`,
-        method: 'get'       
+        method: 'get'
     })
 }
 
@@ -14,6 +14,15 @@ export function register(data) {
         data
     })
 }
+
+
+export function userInfo() {
+    return request({
+        url: `/user/user`,
+        method: 'get',
+    })
+}
+
 
 
 

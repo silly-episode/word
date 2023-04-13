@@ -1,7 +1,11 @@
-const BaseUrl = 'http://g9fsde.natappfree.cc'
+const BaseUrl = 'http://pad9eh.natappfree.cc'
 
 function imageUrl(fileId) {
   return `${BaseUrl}/word/wordModuleImage/${fileId}`;
+}
+
+function avatarUrl(userId) {
+  return `${BaseUrl}/user/userImage/${userId}`;
 }
 
 function imageId(url) {
@@ -9,4 +13,4 @@ function imageId(url) {
   return arr[1];
 }
 
-module.exports = { imageUrl, imageId };
+module.exports = { imageUrl,avatarUrl, imageId };

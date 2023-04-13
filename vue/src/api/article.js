@@ -6,3 +6,11 @@ export function getArticle(articleId) {
         method: 'get'
     })
 }
+
+export function articleSearch(data) {
+    return request({
+        url: 'article/articleSearch',
+        method: 'post',
+        data,
+    })
+}

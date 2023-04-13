@@ -15,6 +15,7 @@ import Own from "@/views/proscenium/Own.vue";
 
 import WordView from "@/views/proscenium/WordView.vue";
 import ArticleView from "@/views/proscenium/ArticleView.vue";
+import BookInfo from "@/views/proscenium/BookInfo.vue";
 
 // 后台
 import Admin from "@/views/backstage/Admin.vue";
@@ -72,7 +73,11 @@ const routes = [
       path: "/module",
       name: 'module',
       component: WordModule,
-    }]
+    }, {
+      path: "/bookInfo",
+      name: 'bookInfo',
+      component: BookInfo,
+    },]
   },
   {
     path: "/admin",

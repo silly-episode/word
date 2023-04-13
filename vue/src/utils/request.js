@@ -67,9 +67,9 @@ service.interceptors.response.use(res => {
 )
 
 function getJwtAuthorization() {
-    // const token = window.sessionStorage.getItem('token')
-    // return token || "";
-    return 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjI1NDQ3NTkzMzQsInVzZXJJZCI6IjEiLCJpYXQiOjE2ODA3NTkzMzR9.ta5izS2h6QS5pg-fvnDjJ_qXENm6Jw3FVGbfo6PJTHc'
+    const token = window.sessionStorage.getItem('token')
+    return token || "";
+    // return 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjI1NDQ3NTkzMzQsInVzZXJJZCI6IjEiLCJpYXQiOjE2ODA3NTkzMzR9.ta5izS2h6QS5pg-fvnDjJ_qXENm6Jw3FVGbfo6PJTHc'
 }
 
 export default service

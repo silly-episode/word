@@ -241,8 +241,10 @@ export default {
         login(this.loginForm)
           .then((res) => {
             if (res.code == 200) {
-              console.log(res)
+              // console.log(res)
               window.sessionStorage.setItem("token", res.data);
+              this.$emit('beLogin')
+              this.closed()
               this.$message.success("登录成功！");
             }
           })
