@@ -84,10 +84,6 @@ export default {
             id: '22',
             authName: '管理员管理',
             path: 'adminmanage'
-          }, {
-            id: '23',
-            authName: '用户登录日志',
-            path: 'loginlog'
           }]
         }, {
           id: 3,
@@ -114,12 +110,12 @@ export default {
           icon: 'icon-xitong',
           children: [{
             id: '41',
-            authName: '操作日志',
+            authName: '管理员操作日志',
             path: 'operationlog'
           }, {
             id: '42',
-            authName: '错误日志',
-            path: 'errorlog'
+            authName: '用户登录日志',
+            path: 'loginlog'
           }, {
             id: '43',
             authName: '服务信息',

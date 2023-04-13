@@ -21,14 +21,13 @@ import Admin from "@/views/backstage/Admin.vue";
 import Welcome from '@/views/backstage/Welcome.vue'
 import UserManage from '@/views/backstage/user/UserManage.vue'
 import AdminManage from '@/views/backstage/user/AdminManage.vue'
-import LoginLog from '@/views/backstage/user/LoginLog.vue'
+import LoginLog from '@/views/backstage/system/LoginLog.vue'
 
 import WordManage from '@/views/backstage/learningresource/WordManage.vue'
 import ArticleManage from '@/views/backstage/learningresource/ArticleManage.vue'
 import SentenceManage from '@/views/backstage/learningresource/SentenceManage.vue'
 
 import OperationLog from '@/views/backstage/system/OperationLog.vue'
-import ErrorLog from '@/views/backstage/system/ErrorLog.vue'
 import ServiceInformation from '@/views/backstage/system/ServiceInformation.vue'
 import CacheList from '@/views/backstage/system/CacheList.vue'
 import DbInformation from '@/views/backstage/system/DbInformation.vue'
@@ -104,9 +103,6 @@ const routes = [
     }, {
       path: '/operationlog',
       component: OperationLog
-    }, {
-      path: '/errorlog',
-      component: ErrorLog
     }, {
       path: '/serviceinformation',
       component: ServiceInformation

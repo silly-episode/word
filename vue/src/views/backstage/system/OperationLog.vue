@@ -1,206 +1,266 @@
 <template>
-  <div class="box-size">
-    <div class="hei_20"></div>
-    <div class="flex_around_center">
-      <img alt="" class="wid_380" src="@/assets/wordLog.png"/>
-      <div class="card recordCard flex_center">
-        <div class="flex-1 flex_column_center_center">
-          <span class="numCss"
-          ><Timer ref="jishi" :flag="isStart"></Timer
-          ></span>
-          <span class="textCss">时间</span>
-        </div>
-        <div
-            v-for="item in cols"
-            :key="item.lable"
-            class="flex-1 flex_column_center_center"
-        >
-          <div class="numCss">{{ info[item.props] }}</div>
-          <span class="textCss">{{ item.lable }}</span>
-        </div>
+  <div>
+    <!-- 面包屑导航区 -->
+    <el-breadcrumb separator-class="el-icon-arrow-right">
+      <el-breadcrumb-item :to="{ path: '/home' }">首页</el-breadcrumb-item>
+      <el-breadcrumb-item>用户</el-breadcrumb-item>
+      <el-breadcrumb-item>管理员操作日志</el-breadcrumb-item>
+    </el-breadcrumb>
+    <el-card style="min-height: 100%">
+      <!-- 搜索与筛选区域 -->
+      <div>
+        <el-form ref="queryParams" :inline="true" :model="pickDate">
+          <el-form-item label="开始时间">
+            <el-date-picker
+                v-model="pickDate.beginDate"
+                :picker-options="{
+              disabledDate: (time) => {
+                let _this=this
+                if (_this.pickDate.endDate) {
+                   let edtTime = _this.pickDate.endDate.replace(/-/g, '/');
+                   return time.getTime() > new Date(edtTime);
+                  }
+          }, firstDayOfWeek: 1}"
+                placeholder="选择日期"
+                style="width: 200px"
+                type="datetime"
+                value-format="yyyy-MM-dd HH:mm:ss"
+            >
+            </el-date-picker>
+          </el-form-item>
+          <el-form-item label="结束时间">
+            <el-date-picker
+                v-model="pickDate.endDate"
+                :picker-options="{
+              disabledDate: (time) => {
+                let _this=this
+                if (_this.pickDate.beginDate) {
+                let startTime = _this.pickDate.beginDate.replace(/-/g, '/');
+                return time.getTime() < new Date(startTime);
+                }
+          }, firstDayOfWeek: 1}"
+                placeholder="选择日期"
+                style="width: 200px"
+                type="datetime"
+                value-format="yyyy-MM-dd HH:mm:ss"
+            >
+            </el-date-picker>
+          </el-form-item>
+          <el-form-item label="登录方式">
+            <el-select
+                v-model="queryInfo.loginType"
+                clearable
+                style="width: 125px">
+              <el-option
+                  v-for="status in loginTypeList"
+                  :key="status.value"
+                  :label="status.label"
+                  :value="status.value">
+              </el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="登录结果">
+            <el-select
+                v-model="queryInfo.result"
+                clearable
+                style="width: 130px">
+              <el-option
+                  v-for="item in resultList"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value">
+              </el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="搜索">
+            <el-input
+                v-model="queryInfo.accountOrTelOrNickNameOrUserId"
+                autocomplete="off"
+                clearable
+                placeholder="ID、账号、电话、用户名"
+                type="text"
+                @input="() => $forceUpdate()"
+            ></el-input>
+          </el-form-item>
+          <el-button icon="el-icon-search" type="primary" @click="commonUserLog">
+            查询
+          </el-button>
+          <el-button :icon="`el-icon-${this.exportLoading?'loading':'download'}`" type="success"
+                     @click="logExcelImport">
+            导出
+          </el-button>
+        </el-form>
       </div>
-      <div
-          :class="`white ${
-          isStart ? 'bg_c1_grey' : 'bg_purple'
-        }  radius_10 text_center pointer wid_100 hei_50 flex_center_center font_18`"
-          @click="Start"
-      >
-        {{ isStart ? "Pause" : "Start" }}
+
+      <!-- 登录日志列表区 -->
+      <div class="noTableScrollBar">
+        <el-table
+            v-loading="searchLoading"
+            :cell-style="{'text-align':'center'}"
+            :data="logList"
+            :header-cell-style="{'text-align':'center'}"
+            :height="tableHeight === 0 ? 'calc(100vh - 301px)' : tableHeight"
+            border
+            highlight-current-row
+            stripe style="margin: auto; width: 100%; text-align: center">
+          <template slot="empty">
+            <el-empty description="暂无数据"></el-empty>
+          </template>
+          <el-table-column label="序号" min-width="4%">
+            <template v-slot="scope">
+          <span>{{
+              scope.$index + (queryInfo.pageNum - 1) * queryInfo.pageSize + 1
+            }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="登录时间" min-width="10%" prop="loginTime"></el-table-column>
+          <el-table-column label="ID" min-width="12%" prop="userId"></el-table-column>
+          <el-table-column label="账号" min-width="10%" prop="account"></el-table-column>
+          <el-table-column label="昵称" min-width="10%" prop="nickName"></el-table-column>
+          <el-table-column label="电话" min-width="7%" prop="tel"></el-table-column>
+          <el-table-column label="状态" min-width="4%" prop="userStatus"></el-table-column>
+          <el-table-column label="方式" min-width="6%" prop="loginType"></el-table-column>
+          <el-table-column label="IP" min-width="8%" prop="ip"></el-table-column>
+          <el-table-column label="结果" min-width="11%" prop="logRemark"></el-table-column>
+        </el-table>
       </div>
-    </div>
-    <div class="autoCenter wid_1000">
-      <div class="hei_70"></div>
-      <div v-for="(item, index) in articleArr" :key="index" class="margin_t_10">
-        <p class="index_content-row">
-          <span
-              v-for="(i, ind) in item"
-              :key="ind"
-              :class="`${
-              ansArr[index][i] == 1
-                ? 'green'
-                : ansArr[index][i] == 0
-                ? 'red'
-                : 'black'
-            }`"
-          >{{ i }}</span
-          >
-        </p>
-        <input
-            :ref="index"
-            :readonly="!isStart"
-            class="index_content-row"
-            type="text"
-            @keydown="input"
-        />
+
+      <!-- 分页区 -->
+      <div class="flex_center_center">
+        <lh-pagination v-show="total > 0" :limit.sync="queryInfo.pageSize" :page.sync="queryInfo.pageNum"
+                       :total="total" @pagination="commonUserLog"/>
       </div>
-    </div>
+
+    </el-card>
+
+
   </div>
 </template>
 
 <script>
-import Timer from '@/components/Timer.vue'
-import {getArticle} from '@/api/admin.js'
+
+import {commonUserLog, logExcelImport} from "@/api/admin.js"
+import fileDownload from "js-file-download";
+import dayjs from "dayjs";
+import LhPagination from "@/components/lhPublic/lhPagination";
 
 export default {
-  components: {Timer},
   data() {
     return {
-      articleArr: [],
-      inputArr: [],
-      ansArr: [],
-      isStart: false,
-      info: {
-        inputNum: 0,
-        velocity: 0,
-        correctNum: 0,
-        correctRate: 0,
+      tableHeight: 0,
+      clientWidth: document.body.clientWidth, // 文档宽度
+      //起始时间和截止时间的时间列表
+      pickDate: {beginDate: "", endDate: ""},
+      // 获取用户列表的参数对象
+      queryInfo: {
+        /*开始时间*/
+        beginTime: "",
+        /*结束时间*/
+        endTime: "",
+        /*账号、电话、用户名、用户id*/
+        accountOrTelOrNickNameOrUserId: "",
+        /*登录方式*/
+        loginType: "",
+        /*登录结果*/
+        result: "",
+        // 当前页码
+        pageNum: 1,
+        // 每页显示条数
+        pageSize: 10,
       },
-      cols: [{lable: '输入数', props: 'inputNum'},
-        {lable: '速度(字/秒)', props: 'velocity'},
-        {lable: '正确数', props: 'correctNum'},
-        {lable: '正确率', props: 'correctRate'}],
-    }
+      //登录方式列表
+      loginTypeList: [
+        // 用户状态，0正常，1锁定，2待删除
+        {label: '账号登录', value: 'pwd'},
+        {label: '验证码登录', value: 'sms'},
+      ],
+      //登录结果列表
+      resultList: [
+        {label: '登录成功', value: '0'},
+        {label: '账户不存在', value: '1'},
+        {label: '验证码不存在', value: '2'},
+        {label: '验证码错误', value: '3'},
+        {label: '密码错误', value: '4'},
+        {label: '账户锁定', value: '5'},
+      ],
+      // 用于保存获取到的用户列表
+      logList: [],
+      // 总数据条数
+      total: 0,
+      exportLoading: false,
+      searchLoading: false,
+    };
+  },
+  components: {LhPagination},
+  created() {
+    // 发送数据请求，获取用户列表数据
+    this.commonUserLog();
+    // //默认选择条件为降序
+    // this.queryInfo.integrationOrderByAsc = this.resultList[1].value
   },
   methods: {
-    getArticle() {
-      const articleId = '294260072538705920'
-      getArticle(articleId)
-          .then((res) => {
-            // console.log('res', res.data)
-            if (res.code == 200) {
-              const articleArr = this.fnAddBr(res.data.content).split('+')
-              let arr = [], ansArr = []
-              articleArr.forEach((item, index) => {
-                articleArr[index] = item.split('')
-                articleArr[index].forEach(i => {
-                  arr[i] = -1
-                })
-                ansArr.push(arr)
-              });
-              this.articleArr = articleArr
-              this.ansArr = ansArr
-              // console.log(articleArr)
-            }
+
+
+    //导出
+    logExcelImport() {
+      this.queryInfo.beginTime = this.pickDate.beginDate
+      this.queryInfo.endTime = this.pickDate.endDate
+      let params = this.queryInfo;
+      console.log(params)
+      let dateTime = dayjs().format('YYYY-MM-DD');
+      this.exportLoading = true
+      logExcelImport(params)
+          .then(response => {
+            fileDownload(response, "Word-用户登录日志表(" + dateTime + ').xlsx')
           })
           .catch((err) => {
-            console.log('err', err)
+            this.$message.error("导出失败")
+          })
+          .finally(() => {
+            this.exportLoading = false
           })
     },
 
-    Start() {
-      this.isStart = !this.isStart
+    //查询
+    commonUserLog() {
+      this.queryInfo.beginTime = this.pickDate.beginDate
+      this.queryInfo.endTime = this.pickDate.endDate
+      let params = this.queryInfo;
+      this.searchLoading = true;
+      commonUserLog(params)
+          .then(response => {
+            this.logList = response.data.records;
+            this.total = response.data.total
+          })
+          .catch((err) => {
+            console.log(err.msg)
+            this.$message.error(err.msg)
+          })
+          .finally(() => {
+            this.searchLoading = false;
+          })
     },
-
-    input(e) {
-      console.log(e)
-      if (e.tartget)
-        if (e.data) {
-          this.info.inputNum++;
-          let ss = this.trunTime(this.$refs.jishi.content)
-          if (ss > 0) this.info.velocity = (this.info.inputNum / ss).toFixed(2);
-
-
-        }
-
-      // this.inputWord.push(e.key)
-      // const inputLength = this.inputWord.length
-
+    // 监听pagesize的改变
+    handleSizeChange(newSize) {
+      this.queryInfo.pagesize = newSize;
+      this.commonUserLog();
     },
-
-    // 时间转换
-    trunTime(str) {
-      let arr = str.split(':')
-      arr[0] = arr[0] - 0
-      arr[1] = arr[1] - 0
-      return arr[0] * 60 + arr[1]
+    // 监听页码值改变
+    handleCurrentChange(newPage) {
+      this.queryInfo.pagenum = newPage;
+      // 页码值改变则发起新的数据请求
+      this.commonUserLog();
     },
-
-    fnAddBr(sStr) {
-      if (sStr.length <= 80) {
-        return sStr;
-      }
-      let str = "";
-      let l = 0;
-      let schar;
-      for (let i = 0; schar = sStr.charAt(i); i++) {
-        str += schar;
-        l += 1;
-        if (l >= 80) {
-          //判断是不是空格
-          if (schar == " ") {
-            str += "+";
-            l = 0;
-          }
-        }
-      }
-      return str;
-    }
-  },
-  created() {
-    this.getArticle()
-  },
-}
+  }
+};
 </script>
 
+
 <style scoped>
-.index_content-row {
-  font-family: "Lucida Console";
-  display: block;
-  overflow: hidden;
-  width: 100%;
-  border: 0;
-  border-bottom: 1px solid #ddd;
-  outline: none;
-  height: 30px;
-  line-height: 30px;
-  font-size: 21px;
+.noTableScrollBar /deep/ .el-table__body-wrapper::-webkit-scrollbar {
+  width: 0;
+  /*滚动条宽度*/
 }
 
-.card {
-  border-radius: 10px;
-  box-shadow: 0 100px 80px #00000012, 0 41.7776px 33.4221px #0000000d,
-  0 22.3363px 17.869px #0000000b, 0 12.5216px 10.0172px #00000009,
-  0 6.6501px 5.32008px #00000007, 0 2.76726px 2.21381px #00000005;
-}
 
-.numCss {
-  transition-duration: 0.3s;
-  text-align: center;
-  width: 70%;
-  font-weight: 700;
-  font-size: 24px;
-  padding-bottom: 16px;
-  border-bottom: 1px solid #e5e7eb;
-}
-
-.textCss {
-  padding-top: 8px;
-  font-size: 16px;
-  transition-duration: 0.3s;
-}
-
-.recordCard {
-  width: 48%;
-  padding: 30px 16px;
-}
 </style>
