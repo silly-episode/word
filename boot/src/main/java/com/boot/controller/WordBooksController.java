@@ -1,17 +1,19 @@
 package com.boot.controller;
 
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.boot.common.result.Result;
 import com.boot.entity.WordBooks;
 import com.boot.service.BookOfWordsService;
 import com.boot.service.WordBooksService;
+import com.boot.utils.JwtUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
@@ -35,17 +37,20 @@ public class WordBooksController {
 
     @Resource
     private BookOfWordsService bookOfWordsService;
+    @Resource
+    private JwtUtils jwtUtils;
 
     /**
      * @param bookName:
-     * @param userId:
      * @Return: Result
      * @Author: DengYinzhe
      * @Description: TODO 新建单词本
      * @Date: 2023/2/25 10:56
      */
     @PostMapping("book")
-    public Result wordBooks(@RequestParam String bookName, @RequestParam Long userId) {
+    public Result wordBooks(@RequestParam String bookName, HttpServletRequest request) {
+        Long userId = jwtUtils.getUserIdFromRequest(request);
+        assert userId != null;
         WordBooks wordBooks = new WordBooks()
                 .setBookName(bookName)
                 .setBookCreateTime(LocalDateTime.now())
@@ -56,6 +61,22 @@ public class WordBooksController {
         } else {
             return Result.error("创建单词本失败");
         }
+    }
+
+    /**
+     * @Return:
+     * @Author: DengYinzhe
+     * @Description: TODO 根据Id获取所有的单词本
+     * @Date: 2023/4/13 11:36
+     */
+    @GetMapping("allBook")
+    public Result allBook(HttpServletRequest request) {
+        Long userId = jwtUtils.getUserIdFromRequest(request);
+        assert userId != null;
+        LambdaQueryWrapper<WordBooks> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(WordBooks::getUserId, userId);
+        List<WordBooks> wordBooks = wordBooksService.list(queryWrapper);
+        return Result.success(wordBooks);
     }
 
     /**
@@ -97,21 +118,6 @@ public class WordBooksController {
             return Result.success("删除成功");
         }
         return Result.error("删除失败");
-    }
-
-    /**
-     * @param userId:
-     * @Return: Result
-     * @Author: DengYinzhe
-     * @Description: TODO 获取单词本信息
-     * @Date: 2023/2/25 11:15
-     */
-    @GetMapping("book/{userId}")
-    public Result wordBookss(@PathVariable Long userId) {
-        QueryWrapper<WordBooks> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("user_id", userId);
-        List<WordBooks> wordBooks = wordBooksService.list(queryWrapper);
-        return Result.success(wordBooks);
     }
 
 

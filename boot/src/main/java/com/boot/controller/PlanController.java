@@ -9,11 +9,13 @@ import com.boot.entity.Plan;
 import com.boot.entity.WordModule;
 import com.boot.service.PlanService;
 import com.boot.service.WordModuleService;
+import com.boot.utils.JwtUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -41,6 +43,9 @@ public class PlanController {
     @Resource
     private WordModuleService wordModuleService;
 
+    @Resource
+    private JwtUtils jwtUtils;
+
     /**
      * @param userId:
      * @Return: Result
@@ -48,9 +53,10 @@ public class PlanController {
      * @Description: 查询所有的计划 已测试
      * @Date: 2023/2/14 14:49
      */
-    @GetMapping("plan/{userId}")
-
-    public Result plan(@PathVariable Long userId) {
+    @GetMapping("plan")
+    public Result plan(HttpServletRequest request) {
+        Long userId = jwtUtils.getUserIdFromRequest(request);
+        assert userId != null;
         Map map = new HashMap<>();
         List<PlanVo> list = planService.selectAll(userId);
         WordPlan wordPlan = wordModuleService.selectWordPlan(userId);
@@ -68,8 +74,12 @@ public class PlanController {
      * @Date: 2023/2/14 13:31
      */
     @PostMapping("plan")
-    public Result plan(@RequestBody Plan plan) {
-        plan.setPlanCreateTime(LocalDateTime.now());
+    public Result plan(@RequestBody Plan plan, HttpServletRequest request) {
+        Long userId = jwtUtils.getUserIdFromRequest(request);
+        assert userId != null;
+        plan
+                .setPlanCreateTime(LocalDateTime.now())
+                .setUserId(userId);
         if (planService.save(plan)) {
             return Result.success("创建计划成功");
         } else {

@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class adminMsgDto {
+public class AdminMsgDto {
     private Long adminId;
     //登录账户
     private String account;

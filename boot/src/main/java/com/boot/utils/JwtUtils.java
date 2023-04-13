@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 
 /**
@@ -70,6 +71,25 @@ public class JwtUtils {
             return null;
         }
     }
+
+
+    /**
+     * @Return:
+     * @Author: DengYinzhe
+     * @Description: TODO 获取userId
+     * @Date: 2023/4/13 11:15
+     */
+    public Long getUserIdFromRequest(HttpServletRequest request) {
+        try {
+            //获取请求头token
+            String token = request.getHeader("Authorization");
+            //从token中获取openid
+            return Long.valueOf(getUserId(token));
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
 
     /**
      * @param userId:用户id

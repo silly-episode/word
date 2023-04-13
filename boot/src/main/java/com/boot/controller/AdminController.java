@@ -105,7 +105,7 @@ public class AdminController {
         /*admin状态转换*/
         pageInfo.setRecords(adminService.translateAdminStatus(pageInfo.getRecords()));
         /*转换*/
-        Page<adminMsgDto> pageInfoDto = BeanDtoVoUtils.pageVo(pageInfo, adminMsgDto.class);
+        Page<AdminMsgDto> pageInfoDto = BeanDtoVoUtils.pageVo(pageInfo, AdminMsgDto.class);
 
         return Result.success(pageInfoDto);
     }
