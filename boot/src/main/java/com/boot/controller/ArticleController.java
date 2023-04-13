@@ -4,24 +4,28 @@ import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.elasticsearch._types.SortOptionsBuilders;
 import co.elastic.clients.elasticsearch._types.SortOrder;
 import co.elastic.clients.elasticsearch._types.query_dsl.QueryBuilders;
-import co.elastic.clients.elasticsearch.core.*;
+import co.elastic.clients.elasticsearch.core.DeleteRequest;
+import co.elastic.clients.elasticsearch.core.DeleteResponse;
+import co.elastic.clients.elasticsearch.core.IndexResponse;
+import co.elastic.clients.elasticsearch.core.SearchRequest;
 import co.elastic.clients.elasticsearch.core.search.Hit;
 import co.elastic.clients.json.JsonData;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.boot.common.result.Result;
 import com.boot.dto.ArticleSearchDto;
 import com.boot.entity.Article;
+import com.boot.utils.ActionLogUtils;
 import com.boot.utils.SnowFlakeUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -39,6 +43,8 @@ public class ArticleController {
 
     @Resource
     private ElasticsearchClient elasticsearchClient;
+    @Resource
+    private ActionLogUtils actionLogUtils;
 
     /**
      * @param article:
@@ -48,7 +54,7 @@ public class ArticleController {
      * @Date: 2023/3/17 16:27
      */
     @PostMapping("article")
-    public Result article(@RequestBody Article article) throws IOException {
+    public Result article(@RequestBody Article article, HttpServletRequest request) throws IOException {
 
         article.setArticleId(String.valueOf(SnowFlakeUtil.getNextId()))
                 .setArticleCreateTime(LocalDateTime.now().toInstant(ZoneOffset.of("+8")).toEpochMilli())
@@ -61,6 +67,7 @@ public class ArticleController {
                         .document(article)
                         .id(article.getArticleId()));
         if ("created".equals(response.result().jsonValue())) {
+            actionLogUtils.saveActionLog(request, actionLogUtils.INSERT, "发布了 《" + article.getArticleTitle() + "》 的文章");
             return Result.success("插入成功");
         } else {
             return Result.error("插入失败");
@@ -77,16 +84,39 @@ public class ArticleController {
      * @Date: 2023/3/17 17:09
      */
     @DeleteMapping("article/{articleId}")
-    public Result article(@PathVariable String articleId) throws IOException {
-        DeleteRequest deleteRequest = DeleteRequest.of(s -> s
+    public Result article(@PathVariable String articleId, HttpServletRequest request) throws IOException {
+        /*判断是否存在*/
+        SearchRequest searchRequest = new SearchRequest.Builder()
+                //去哪个索引里搜索
                 .index("article")
-                .id(articleId));
-        DeleteResponse response = elasticsearchClient.delete(deleteRequest);
-        if ("deleted".equals(response.result().jsonValue())) {
-            return Result.success("删除成功");
+                .query(
+                        QueryBuilders
+                                .term()
+                                .field("articleId")
+                                .value(articleId)
+                                .build()._toQuery()
+                )
+                .size(1)
+                .build();
+        List<Hit<Article>> hits = elasticsearchClient.search(searchRequest, Article.class).hits().hits();
+        Article article = 1 == hits.size() ? hits.get(0).source() : null;
+        if (article != null) {
+            /*开始删除*/
+            DeleteRequest deleteRequest = DeleteRequest.of(s -> s
+                    .index("article")
+                    .id(articleId));
+            DeleteResponse response = elasticsearchClient.delete(deleteRequest);
+            if ("deleted".equals(response.result().jsonValue())) {
+                /*记录操作日志*/
+                actionLogUtils.saveActionLog(request, actionLogUtils.DELETE, "删除了 《" + article.getArticleTitle() + "》 的文章");
+                return Result.success("删除成功");
+            } else {
+                return Result.error("删除失败");
+            }
         } else {
-            return Result.error("删除失败");
+            return Result.error("该文章不存在");
         }
+
     }
 
     /**
@@ -96,21 +126,41 @@ public class ArticleController {
      * @Description: 修改文章
      * @Date: 2023/3/20 11:44
      */
-    @PutMapping("article")
-    public Result articleChange(@RequestBody Map<String, String> article) throws IOException {
-        // 构建修改文档的请求
-        UpdateResponse<Article> response = elasticsearchClient
-                .update(e -> e.index("article")
-                        .id(article.get("articleId"))
-                        .doc(article), Article.class);
-        // 打印请求结果
-        System.out.println(response.result());
-        if ("updated".equals(response.result().jsonValue())) {
-            return Result.success("修改成功");
-        } else {
-            return Result.error("修改失败");
-        }
-    }
+//    @PutMapping("article")
+//    public Result articleChange(@RequestBody Map<String, String> map,HttpServletRequest request) throws IOException {
+//        long articleId = Long.parseLong(map.get("articleId"));
+//
+//        /*判断是否存在*/
+//        SearchRequest searchRequest = new SearchRequest.Builder()
+//                //去哪个索引里搜索
+//                .index("article")
+//                .query(
+//                        QueryBuilders
+//                                .term()
+//                                .field("articleId")
+//                                .value(articleId)
+//                                .build()._toQuery()
+//                )
+//                .size(1)
+//                .build();
+//        List<Hit<Article>> hits = elasticsearchClient.search(searchRequest, Article.class).hits().hits();
+//        Article article = 1 == hits.size() ? hits.get(0).source() : null;
+//
+//        // 构建修改文档的请求
+//        UpdateResponse<Article> response = elasticsearchClient
+//                .update(e -> e.index("article")
+//                        .id(article.get("articleId"))
+//                        .doc(article), Article.class);
+//        // 打印请求结果
+//        System.out.println(response.result());
+//        if ("updated".equals(response.result().jsonValue())) {
+//            actionLogUtils.saveActionLog(request,actionLogUtils.UPDATE,"修改了 《"+article.getArticleTitle()+"》 的文章");
+//
+//            return Result.success("修改成功");
+//        } else {
+//            return Result.error("修改失败");
+//        }
+//    }
 
     /**
      * @param articleSearchDto:

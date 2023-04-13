@@ -1,17 +1,19 @@
 package com.boot.controller;
 
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.boot.common.Exception.CustomException;
 import com.boot.common.Hutool.IdUtils;
 import com.boot.common.result.CodeMsg;
 import com.boot.common.result.Result;
-import com.boot.dto.LoginMessage;
-import com.boot.dto.RegisterMessage;
-import com.boot.dto.UserMsgDto;
+import com.boot.dto.*;
 import com.boot.entity.LoginLog;
+import com.boot.entity.Swear;
 import com.boot.entity.User;
+import com.boot.service.SwearService;
 import com.boot.service.UserService;
 import com.boot.utils.*;
 import lombok.extern.slf4j.Slf4j;
@@ -26,8 +28,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.concurrent.TimeUnit;
 
 
@@ -56,6 +62,8 @@ public class UserController {
     private RedisUtils redisUtils;
     @Resource
     private MinIOUtils minIOUtils;
+    @Resource
+    private SwearService swearService;
     /*登录方式*/
     private final String loginBySm = "sms";
     private final String loginByPwd = "pwd";
@@ -208,7 +216,7 @@ public class UserController {
      * @Date: 2023/2/9 11:44
      */
     @GetMapping("userImage/{userId}")
-    @RequiresAuthentication
+//    @RequiresAuthentication
     public void userImage(@PathVariable("userId") Long userId, HttpServletResponse response) throws IOException {
         ServletOutputStream outputStream = null;
         InputStream inputStream = null;
@@ -271,11 +279,29 @@ public class UserController {
      * @Description: 获取用户信息 已测试
      * @Date: 2023/2/9 11:44
      */
-    @GetMapping("user/{userId}")
-    @RequiresAuthentication
-    public Result<UserMsgDto> user(@PathVariable("userId") Long userId) {
+    @GetMapping("user")
+//    @RequiresAuthentication
+    public Result<UserMsgDto> user(HttpServletRequest request) {
+//        时间处理
+        LocalDateTime today_start = LocalDateTime.of(LocalDate.now(), LocalTime.MIN);
+        LocalDateTime today_end = LocalDateTime.of(LocalDate.now(), LocalTime.MAX);
+        DateTimeFormatter time = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+//        获取信息
+        Long userId = jwtUtils.getUserIdFromRequest(request);
         User user = userService.getById(userId);
         UserMsgDto userMsgDto = BeanDtoVoUtils.convert(user, UserMsgDto.class);
+//        发誓情况
+        LambdaQueryWrapper<Swear> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(Swear::getUserId, userId)
+                .ge(Swear::getSwearTime, today_start)
+                .le(Swear::getSwearTime, today_end);
+        long count = swearService.count(queryWrapper);
+        if (count > 0) {
+            userMsgDto.setSwear(true);
+        } else {
+            userMsgDto.setSwear(false);
+        }
+
         return Result.success(userMsgDto);
     }
 
@@ -417,8 +443,91 @@ public class UserController {
         } else {
             return Result.error("更换密码失败");
         }
-
     }
+
+    /**
+     * @Return:
+     * @Author: DengYinzhe
+     * @Description: TODO 积分排名
+     * @Date: 2023/4/13 15:33
+     */
+    @PostMapping("hotIntegration")
+    public Result hotIntegration(@RequestBody PageDto pageDto) {
+        Page<User> pageInfo = new Page<>(1, 100);
+        LambdaQueryWrapper<User> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(User::getUserStatus, "0").orderByDesc(User::getIntegration);
+        userService.page(pageInfo, wrapper);
+        return Result.success(pageInfo);
+    }
+
+    /**
+     * @Return:
+     * @Author: DengYinzhe
+     * @Description: TODO 发誓
+     * @Date: 2023/4/13 16:13
+     */
+    @PostMapping("swear")
+    public Result swear(HttpServletRequest request) {
+
+        LocalDateTime today_start = LocalDateTime.of(LocalDate.now(), LocalTime.MIN);
+        LocalDateTime today_end = LocalDateTime.of(LocalDate.now(), LocalTime.MAX);
+        DateTimeFormatter time = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+        Long userId = jwtUtils.getUserIdFromRequest(request);
+        LambdaQueryWrapper<Swear> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(Swear::getUserId, userId)
+                .ge(Swear::getSwearTime, today_start)
+                .le(Swear::getSwearTime, today_end);
+        long count = swearService.count(queryWrapper);
+        if (count == 0) {
+            Swear swear = new Swear()
+                    .setSwearTime(LocalDateTime.now())
+                    .setUserId(userId);
+            if (swearService.save(swear)) {
+                return Result.success("发誓成功");
+            } else {
+                return Result.error("系统错误");
+            }
+        } else {
+            return Result.success("已经发过誓啦");
+        }
+    }
+
+
+    /**
+     * @Return:
+     * @Author: DengYinzhe
+     * @Description: TODO 发誓动态
+     * @Date: 2023/4/13 16:59
+     */
+    @PostMapping("swearSearch")
+    public Result swearSearch(@RequestBody PageDto pageDto) {
+//      时间处理
+        LocalDate yesterday = LocalDate.now().minus(1, ChronoUnit.DAYS);
+        LocalDateTime yesterday_start = LocalDateTime.of(yesterday, LocalTime.MIN);
+        LocalDateTime yesterday_end = LocalDateTime.of(yesterday, LocalTime.MAX);
+        DateTimeFormatter time = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+//      昨日动态
+        Page<Swear> swearPage = new Page<>(pageDto.getPageNum(), pageDto.getPageSize());
+        LambdaQueryWrapper<Swear> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper
+                .ge(Swear::getSwearTime, yesterday_start)
+                .le(Swear::getSwearTime, yesterday_end);
+        swearService.page(swearPage, queryWrapper);
+//        转换
+        Page<SwearUserDto> pageInfo = BeanDtoVoUtils.pageVo(swearPage, SwearUserDto.class);
+        LambdaQueryWrapper<User> wrapper = new LambdaQueryWrapper<>();
+        for (SwearUserDto record : pageInfo.getRecords()) {
+            wrapper.clear();
+            wrapper.eq(User::getUserId, record.getUserId());
+            User user = userService.getOne(wrapper);
+            record.setNickName(user.getNickName());
+        }
+
+        return Result.success(pageInfo);
+    }
+
 
 }
 

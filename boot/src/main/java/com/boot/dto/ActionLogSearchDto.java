@@ -22,10 +22,8 @@ public class ActionLogSearchDto extends PageDto {
     /*结束时间*/
     private LocalDateTime endTime;
     /*账号、电话、用户名、用户id*/
-    private String accountOrTelOrNickNameOrUserId;
-    /*登录类型，验证码登录还是密码登录*/
+    private String search;
+    /*操作类型*/
     private String actionType;
-    /*登录结果*/
-    private String result;
 
 }

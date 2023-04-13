@@ -284,7 +284,7 @@ public class WordModuleController {
         LambdaQueryWrapper<Plan> queryWrapper = new LambdaQueryWrapper<Plan>();
         queryWrapper.eq(Plan::getModuleId, moduleId);
         Boolean planExist = false;
-        long count = planService.count();
+        long count = planService.count(queryWrapper);
         if (count > 0) {
             planExist = true;
         }

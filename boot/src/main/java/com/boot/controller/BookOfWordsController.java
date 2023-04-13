@@ -1,8 +1,11 @@
 package com.boot.controller;
 
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.boot.common.result.Result;
+import com.boot.dto.BookOfWordSearchDto;
 import com.boot.entity.BookOfWords;
 import com.boot.entity.WordBooks;
 import com.boot.service.BookOfWordsService;
@@ -54,18 +57,24 @@ public class BookOfWordsController {
     }
 
     /**
-     * @param bookId:
      * @Return: Result
      * @Author: DengYinzhe
      * @Description: TODO 获取练习的单词
      * @Date: 2023/2/25 15:20
      */
-    @GetMapping("word/{bookId}")
-    public Result wordss(@PathVariable Long bookId) {
-        Map<String, Object> map = new HashMap<>();
-        map.put("book_id", bookId);
-        List<BookOfWords> list = bookOfWordsService.listByMap(map);
-        return Result.success(list);
+    @PostMapping("wordSearch")
+    public Result wordss(@RequestBody BookOfWordSearchDto dto) {
+        Page<BookOfWords> pageInfo = new Page<>(dto.getPageNum(), dto.getPageSize());
+        LambdaQueryWrapper<BookOfWords> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(BookOfWords::getBookId, dto.getBookId());
+        bookOfWordsService.page(pageInfo, queryWrapper);
+
+        WordBooks wordBooks = wordBooksService.getById(dto.getBookId());
+
+        Map<String, Object> map = new HashMap<>(2);
+        map.put("word", pageInfo);
+        map.put("book", wordBooks);
+        return Result.success(map);
     }
 
     /**

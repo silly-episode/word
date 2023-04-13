@@ -3,22 +3,28 @@ package com.boot.controller;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.boot.bo.ActionLogExcel;
 import com.boot.bo.AdminExcel;
 import com.boot.bo.LoginLogExcel;
 import com.boot.bo.UserExcel;
 import com.boot.common.result.Result;
 import com.boot.dto.*;
+import com.boot.entity.ActionLog;
 import com.boot.entity.Admin;
 import com.boot.entity.LoginLog;
 import com.boot.entity.User;
+import com.boot.service.ActionLogService;
 import com.boot.service.AdminService;
 import com.boot.service.LoginLogService;
 import com.boot.service.UserService;
+import com.boot.utils.ActionLogUtils;
 import com.boot.utils.BeanDtoVoUtils;
+import com.boot.utils.JwtUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.LocalDate;
@@ -44,6 +50,12 @@ public class AdminController {
     private LoginLogService loginLogService;
     @Resource
     private AdminService adminService;
+    @Resource
+    private ActionLogService actionLogService;
+    @Resource
+    private JwtUtils jwtUtils;
+    @Resource
+    private ActionLogUtils actionLogUtils;
     /*重置的密码*/
 
     /**
@@ -55,8 +67,18 @@ public class AdminController {
      */
     @PostMapping("login")
     public Result adminLogin(@RequestBody LoginMessage loginMessage) {
-
-        return Result.success();
+        LambdaQueryWrapper<Admin> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(Admin::getAccount, loginMessage.getLoginAccount());
+        Admin admin = adminService.getOne(queryWrapper);
+        if (admin == null) {
+            return Result.error("用户不存在");
+        }
+        if (admin.getPassword().equals(loginMessage.getLoginPassword())) {
+            String token = jwtUtils.sign(String.valueOf(admin.getAdminId()));
+            return Result.success("登录成功", token);
+        } else {
+            return Result.error("密码不正确");
+        }
     }
 
     /**
@@ -446,7 +468,7 @@ public class AdminController {
      * @param logSearch:
      * @Return: Result
      * @Author: DengYinzhe
-     * @Description: 日志导出
+     * @Description: 登录日志导出
      * @Date: 2023/3/27 10:03
      */
     @PostMapping("logExcelImport")
@@ -461,4 +483,47 @@ public class AdminController {
         adminService.importExcel(response, "Word-日志", LoginLogExcel.class, list);
     }
 
+
+    /**
+     * @Return:
+     * @Author: DengYinzhe
+     * @Description: TODO 分页获取操作日志
+     * @Date: 2023/4/13 11:54
+     */
+    @PostMapping("actionLogSearch")
+    public Result selectAll(@RequestBody ActionLogSearchDto searchDto) {
+//        分页
+        Page<ActionLog> pageInfo = new Page<>(searchDto.getPageNum(), searchDto.getPageSize());
+//        构造条件
+        LambdaQueryWrapper<ActionLog> wrapper = adminService.getActionLogQueryWrapper(searchDto);
+//        查询数据
+        actionLogService.page(pageInfo, wrapper);
+        return Result.success(pageInfo);
+    }
+
+    /**
+     * @Return: Result
+     * @Author: DengYinzhe
+     * @Description: 操作日志导出
+     * @Date: 2023/3/27 10:03
+     */
+    @PostMapping("actionLogExcelImport")
+    public void actionLogExcelImport(@RequestBody ActionLogSearchDto searchDto, HttpServletRequest request, HttpServletResponse response) throws IOException {
+        /*记录操作日志*/
+        actionLogUtils.saveActionLog(request, actionLogUtils.EXPORT, "导出管理员操作日志");
+        /*获取查询条件*/
+        LambdaQueryWrapper<ActionLog> queryWrapper = adminService.getActionLogQueryWrapper(searchDto);
+        /*查询数据*/
+        List<ActionLog> logList = actionLogService.list(queryWrapper);
+        /*转换*/
+        logList = adminService.translateActionLogStatus(logList);
+        /*类型转换，方便Excel导出*/
+        List<ActionLogExcel> list = BeanDtoVoUtils.convertList(logList, ActionLogExcel.class);
+        /*开始导出，并放入response*/
+        adminService.importExcel(response, "Word-操作日志", ActionLogExcel.class, list);
+
+
+    }
 }
+
+

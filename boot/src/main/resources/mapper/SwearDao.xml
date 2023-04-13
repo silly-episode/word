@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.boot.dao.SwearDao">
+
+    <resultMap type="com.boot.entity.Swear" id="SwearMap">
+        <result property="swearId" column="swear_id" jdbcType="INTEGER"/>
+        <result property="userId" column="user_id" jdbcType="INTEGER"/>
+        <result property="swearTime" column="swear_time" jdbcType="TIMESTAMP"/>
+        <result property="swearStatus" column="swear_status" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!-- 批量插入 -->
+    <insert id="insertBatch" keyProperty="swearId" useGeneratedKeys="true">
+        insert into word.swear(user_id, swear_time, swear_status)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.userId}, #{entity.swearTime}, #{entity.swearStatus})
+        </foreach>
+    </insert>
+    <!-- 批量插入或按主键更新 -->
+    <insert id="insertOrUpdateBatch" keyProperty="swearId" useGeneratedKeys="true">
+        insert into word.swear(user_id, swear_time, swear_status)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.userId}, #{entity.swearTime}, #{entity.swearStatus})
+        </foreach>
+        on duplicate key update
+        user_id = values(user_id) , swear_time = values(swear_time) , swear_status = values(swear_status)
+    </insert>
+
+</mapper>
+

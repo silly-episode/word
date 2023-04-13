@@ -397,7 +397,7 @@ export function updateArticle(data) {
 
 /**
  * 删除文章
- * @returns {*}
+ * @returns {*} log ok
  * @param params
  */
 export function deleteArticle(params) {
@@ -422,7 +422,7 @@ export function getArticleById(params) {
 
 /**
  * 发布文章
- * @returns {*}
+ * @returns {*} log ok
  * @param data
  */
 export function insertArticle(data) {
@@ -430,5 +430,33 @@ export function insertArticle(data) {
         url: 'article/article',
         method: 'post',
         data,
+    })
+}
+
+
+/**
+ * 分页条件查询操作日志
+ * @returns {*}
+ * @param data
+ */
+export function actionLogSearch(data) {
+    return request({
+        url: 'admin/actionLogSearch',
+        method: 'post',
+        data,
+    })
+}
+
+/**
+ * 操作日志导出 log ok
+ * @param data
+ * @returns {*}
+ */
+export function actionLogExcelImport(data) {
+    return request({
+        url: 'admin/actionLogExcelImport',
+        method: 'post',
+        data,
+        'responseType': 'blob'
     })
 }

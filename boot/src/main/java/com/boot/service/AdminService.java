@@ -2,9 +2,11 @@ package com.boot.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.boot.dto.ActionLogSearchDto;
 import com.boot.dto.AdminSearchDto;
 import com.boot.dto.LoginLogSearchDto;
 import com.boot.dto.UserSearchDto;
+import com.boot.entity.ActionLog;
 import com.boot.entity.Admin;
 import com.boot.entity.LoginLog;
 import com.boot.entity.User;
@@ -27,11 +29,15 @@ public interface AdminService extends IService<Admin> {
 
     LambdaQueryWrapper<LoginLog> getLoginLogQueryWrapper(LoginLogSearchDto logSearch);
 
+    LambdaQueryWrapper<ActionLog> getActionLogQueryWrapper(ActionLogSearchDto logSearch);
+
     LambdaQueryWrapper<Admin> getAdminQueryWrapper(AdminSearchDto adminSearchDto);
 
     List<User> translateUserStatus(List<User> userList);
 
     List<LoginLog> translateLogUserStatus(List<LoginLog> logList);
+
+    List<ActionLog> translateActionLogStatus(List<ActionLog> logList);
 
     List<Admin> translateAdminStatus(List<Admin> adminList);
 }

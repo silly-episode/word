@@ -5,9 +5,11 @@ import com.alibaba.excel.util.MapUtils;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.boot.dao.AdminDao;
+import com.boot.dto.ActionLogSearchDto;
 import com.boot.dto.AdminSearchDto;
 import com.boot.dto.LoginLogSearchDto;
 import com.boot.dto.UserSearchDto;
+import com.boot.entity.ActionLog;
 import com.boot.entity.Admin;
 import com.boot.entity.LoginLog;
 import com.boot.entity.User;
@@ -96,6 +98,23 @@ public class AdminServiceImpl extends ServiceImpl<AdminDao, Admin> implements Ad
 
 
     @Override
+    public LambdaQueryWrapper<ActionLog> getActionLogQueryWrapper(ActionLogSearchDto searchDto) {
+        LambdaQueryWrapper<ActionLog> wrapper = new LambdaQueryWrapper<>();
+        String oftenParam = searchDto.getSearch();
+        wrapper
+                .ge(null != searchDto.getBeginTime(), ActionLog::getActionTime, searchDto.getBeginTime())
+                .le(null != searchDto.getEndTime(), ActionLog::getActionTime, searchDto.getEndTime())
+                .eq(!searchDto.getActionType().isEmpty(), ActionLog::getActionKind, searchDto.getActionType())
+                .and(!oftenParam.isEmpty(),
+                        e -> e.like(ActionLog::getKeepName, oftenParam)
+                                .or().like(ActionLog::getRemark, oftenParam)
+                                .or().eq(ActionLog::getAdminId, oftenParam)
+                )
+                .orderByDesc(ActionLog::getActionTime);
+        return wrapper;
+    }
+
+    @Override
     public LambdaQueryWrapper<Admin> getAdminQueryWrapper(AdminSearchDto adminSearchDto) {
         LambdaQueryWrapper<Admin> wrapper = new LambdaQueryWrapper<>();
         String oftenParam = adminSearchDto.getAccountOrTelOrKeepNameOrAdminId();
@@ -140,6 +159,46 @@ public class AdminServiceImpl extends ServiceImpl<AdminDao, Admin> implements Ad
             } else if ("2".equals(status)) {
                 log.setUserStatus("待删除");
             }
+        }
+        return logList;
+    }
+
+
+    @Override
+    public List<ActionLog> translateActionLogStatus(List<ActionLog> logList) {
+
+        /*
+        INSERT: '插入',
+        INSERT_BATCH: '批量插入',
+        DELETE: '删除',
+        DELETE_BATCH: '批量删除',
+        UPDATE: '修改',
+        EXPORT:'导出'
+        */
+
+        for (ActionLog log : logList) {
+            String role = log.getRole();
+            String actionKind = log.getActionKind();
+            if ("0".equals(role)) {
+                log.setRole("超级管理员");
+            } else if ("1".equals(role)) {
+                log.setRole("普通管理员");
+            }
+
+            if ("INSERT".equals(actionKind)) {
+                log.setActionKind("插入");
+            } else if ("INSERT_BATCH".equals(actionKind)) {
+                log.setActionKind("批量插入");
+            } else if ("DELETE".equals(actionKind)) {
+                log.setActionKind("删除");
+            } else if ("DELETE_BATCH".equals(actionKind)) {
+                log.setActionKind("批量删除");
+            } else if ("UPDATE".equals(actionKind)) {
+                log.setActionKind("修改");
+            } else if ("EXPORT".equals(actionKind)) {
+                log.setActionKind("导出");
+            }
+
         }
         return logList;
     }

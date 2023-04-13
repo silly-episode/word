@@ -15,38 +15,28 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
- * 学习计划(Plan)表实体类
+ * 发誓表(Swear)表实体类
  *
  * @author makejava
- * @since 2023-02-12 12:03:03
+ * @since 2023-04-13 15:50:03
  */
 @Accessors(chain = true)
 @EqualsAndHashCode(callSuper = true)
-@TableName("plan")
+@TableName("swear")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @SuppressWarnings("all")
-public class Plan extends Model<Plan> {
-    //计划id
+public class Swear extends Model<Swear> {
     @TableId(type = IdType.ASSIGN_ID)
-    private Long planId;
-    //用户id
+    private Long swearId;
+    //用户ID
     private Long userId;
-    //创建时间
-    private LocalDateTime planCreateTime;
-    //状态
-    private String planStatus;
-    //单词总数
-    private Integer allWord;
-    //模块id
-    private Long moduleId;
-    //已完成单词数量
-    private Integer finishedWord;
-    //计划每天完成单词数量
-    private Integer dayWord;
-    //计划名称
-    private String planName;
+    //发誓时间
+    private LocalDateTime swearTime;
+    //完成状况，0未完成，1已经完成
+    private String swearStatus;
+
 
     /**
      * 获取主键值
@@ -55,7 +45,7 @@ public class Plan extends Model<Plan> {
      */
     @Override
     public Serializable pkVal() {
-        return this.planId;
+        return this.swearId;
     }
 }
 

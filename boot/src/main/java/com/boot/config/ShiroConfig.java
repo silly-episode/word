@@ -2,7 +2,13 @@ package com.boot.config;
 
 
 import com.boot.common.Jwt.JwtFilter;
+import com.boot.common.Realm.AdminRealm;
 import com.boot.common.Realm.CommonUserRealm;
+import org.apache.shiro.authc.Authenticator;
+import org.apache.shiro.authc.pam.FirstSuccessfulStrategy;
+import org.apache.shiro.authc.pam.ModularRealmAuthenticator;
+import org.apache.shiro.authz.Authorizer;
+import org.apache.shiro.authz.ModularRealmAuthorizer;
 import org.apache.shiro.mgt.DefaultSessionStorageEvaluator;
 import org.apache.shiro.mgt.DefaultSubjectDAO;
 import org.apache.shiro.spring.LifecycleBeanPostProcessor;
@@ -15,6 +21,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 
 import javax.servlet.Filter;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -28,11 +35,62 @@ import java.util.Map;
 @Configuration
 public class ShiroConfig {
 
+    @Bean
+    public CommonUserRealm commonUserRealm() {
+        CommonUserRealm commonUserRealm = new CommonUserRealm();
+        //设置 凭证匹配器
+//        commonUserRealm.setCredentialsMatcher();
+        return commonUserRealm;
+    }
+
+
+    @Bean
+    public AdminRealm adminRealm() {
+        AdminRealm adminRealm = new AdminRealm();
+        //设置 凭证匹配器
+//        commonUserRealm.setCredentialsMatcher();
+        return adminRealm;
+    }
+
+    @Bean
+    public Authenticator authenticator() {
+        ModularRealmAuthenticator authenticator = new ModularRealmAuthenticator();//留意这一行哟
+        // 设置两个Realm，一个用于用户登录验证；一个用于jwt token的认证和访问权限获取
+        authenticator.setRealms(Arrays.asList(adminRealm(), commonUserRealm()));
+        // 设置多个realm认证策略，一个成功即跳过其它的
+        authenticator.setAuthenticationStrategy(new FirstSuccessfulStrategy());
+        return authenticator;
+    }
+
+    /**
+     * 初始化authorizer 认证器 权限认证
+     *
+     * @return
+     */
+    @Bean
+    public Authorizer authorizer() {
+        ModularRealmAuthorizer authorizer = new ModularRealmAuthorizer();//这里的
+        authorizer.setRealms(Arrays.asList(adminRealm(), commonUserRealm()));
+        return authorizer;
+    }
+
+
+    /**
+     * 2.创建 DefaultWebSecurityManager
+     */
     @Bean("securityManager")
-    public DefaultWebSecurityManager getManager(CommonUserRealm realm) {
+    public DefaultWebSecurityManager getManager() {
         DefaultWebSecurityManager manager = new DefaultWebSecurityManager();
         // 使用自己的realm
-        manager.setRealm(realm);
+//        List<Realm> realms =new ArrayList<Realm>();
+//        realms.add(commonUserRealm);
+//        realms.add(new AdminRealm());
+//        manager.setRealms(realms);
+
+
+        manager.setAuthenticator(authenticator());
+        manager.setAuthorizer(authorizer());
+
 
         /*
          * 关闭shiro自带的session，详情见文档
@@ -47,6 +105,9 @@ public class ShiroConfig {
         return manager;
     }
 
+    /**
+     * 3.创建ShiroFilterFactoryBean
+     */
     @Bean(name = "shiroFilterFactoryBean")
     public ShiroFilterFactoryBean factory(DefaultWebSecurityManager securityManager) {
         ShiroFilterFactoryBean factoryBean = new ShiroFilterFactoryBean();
@@ -77,8 +138,10 @@ public class ShiroConfig {
         filterRuleMap.put("/**", "jwt");
 
 //        测试拦截
-        filterRuleMap.put("/test/test", "jwt");
+        filterRuleMap.put("/test/**", "jwt");
 
+
+//        添入拦截器
         factoryBean.setFilterChainDefinitionMap(filterRuleMap);
         return factoryBean;
     }
@@ -101,6 +164,9 @@ public class ShiroConfig {
         return new LifecycleBeanPostProcessor();
     }
 
+    /**
+     * 开启Shiro注解通知器
+     */
     @Bean
     public AuthorizationAttributeSourceAdvisor authorizationAttributeSourceAdvisor(DefaultWebSecurityManager securityManager) {
         AuthorizationAttributeSourceAdvisor advisor = new AuthorizationAttributeSourceAdvisor();

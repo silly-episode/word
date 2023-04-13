@@ -1,6 +1,7 @@
 package com.boot.controller;
 
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.boot.bo.WordPlan;
 import com.boot.common.result.Result;
@@ -11,7 +12,6 @@ import com.boot.service.PlanService;
 import com.boot.service.WordModuleService;
 import com.boot.utils.JwtUtils;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -32,7 +32,7 @@ import java.util.Map;
 @Slf4j
 @RequestMapping("plan")
 @SuppressWarnings("all")
-@RequiresAuthentication
+//@RequiresAuthentication
 public class PlanController {
 
 
@@ -56,7 +56,6 @@ public class PlanController {
     @GetMapping("plan")
     public Result plan(HttpServletRequest request) {
         Long userId = jwtUtils.getUserIdFromRequest(request);
-        assert userId != null;
         Map map = new HashMap<>();
         List<PlanVo> list = planService.selectAll(userId);
         WordPlan wordPlan = wordModuleService.selectWordPlan(userId);
@@ -76,14 +75,23 @@ public class PlanController {
     @PostMapping("plan")
     public Result plan(@RequestBody Plan plan, HttpServletRequest request) {
         Long userId = jwtUtils.getUserIdFromRequest(request);
-        assert userId != null;
-        plan
-                .setPlanCreateTime(LocalDateTime.now())
-                .setUserId(userId);
-        if (planService.save(plan)) {
-            return Result.success("创建计划成功");
+
+//        新增
+        if (plan.getPlanId() == null) {
+            plan
+                    .setPlanCreateTime(LocalDateTime.now())
+                    .setUserId(userId);
+            LambdaQueryWrapper<Plan> queryWrapper = new LambdaQueryWrapper<>();
+            queryWrapper.eq(Plan::getUserId, userId);
+            long count = planService.count(queryWrapper);
+            if (count == 0) {
+                plan.setPlanStatus("1");
+            }
+        }
+        if (planService.saveOrUpdate(plan)) {
+            return Result.success("成功");
         } else {
-            return Result.error("创建计划失败");
+            return Result.error("失败");
         }
     }
 
@@ -114,29 +122,9 @@ public class PlanController {
      */
     @GetMapping("wordModule")
     public Result wordModule() {
-
         List<WordModule> list = new WordModule().selectAll();
 
         return Result.success(list);
-    }
-
-    /**
-     * @param planId:
-     * @param dayWord:
-     * @Return: Result
-     * @Author: DengYinzhe
-     * @Description: 更改某个计划天数 已测试
-     * @Date: 2023/2/14 15:57
-     */
-    @PutMapping("plan/{planId}/{dayWord}")
-    public Result plan(@PathVariable Long planId, @PathVariable Integer dayWord) {
-        UpdateWrapper<Plan> updateWrapper = new UpdateWrapper<>();
-        updateWrapper.set("day_word", dayWord).eq("plan_id", planId);
-        if (planService.update(updateWrapper)) {
-            return Result.success("更改成功");
-        } else {
-            return Result.error("更改失败");
-        }
     }
 
     /**

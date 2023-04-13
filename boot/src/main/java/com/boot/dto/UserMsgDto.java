@@ -38,4 +38,6 @@ public class UserMsgDto {
     private String account;
 
     private LocalDateTime registerTime;
+    //    今天是否发誓
+    private boolean swear;
 }
