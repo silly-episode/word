@@ -168,9 +168,27 @@ public class UserController {
                 userService.updateById(userBean);
             }
             loginLog.setResult(successResult).setLogRemark("用户登录成功");
+            /*返回信息*/
             Map<String, Object> map = new HashMap<>(2);
             String token = jwtUtils.sign(String.valueOf(userBean.getUserId()));
             UserMsgDto userInfo = BeanDtoVoUtils.convert(userBean, UserMsgDto.class);
+
+
+            LocalDateTime today_start = LocalDateTime.of(LocalDate.now(), LocalTime.MIN);
+            LocalDateTime today_end = LocalDateTime.of(LocalDate.now(), LocalTime.MAX);
+
+            //        发誓情况
+            LambdaQueryWrapper<Swear> queryWrapper = new LambdaQueryWrapper<>();
+            queryWrapper.eq(Swear::getUserId, userBean.getUserId())
+                    .ge(Swear::getSwearTime, today_start)
+                    .le(Swear::getSwearTime, today_end);
+            long count = swearService.count(queryWrapper);
+            if (count > 0) {
+                userInfo.setSwear(true);
+            } else {
+                userInfo.setSwear(false);
+            }
+
             map.put("token", token);
             map.put("userInfo", userInfo);
             return Result.success("登录成功", map);
@@ -285,31 +303,31 @@ public class UserController {
      * @Description: 获取用户信息 已测试
      * @Date: 2023/2/9 11:44
      */
-    @GetMapping("user")
-//    @RequiresAuthentication
-    public Result<UserMsgDto> user(HttpServletRequest request) {
-//        时间处理
-        LocalDateTime today_start = LocalDateTime.of(LocalDate.now(), LocalTime.MIN);
-        LocalDateTime today_end = LocalDateTime.of(LocalDate.now(), LocalTime.MAX);
-        DateTimeFormatter time = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-//        获取信息
-        Long userId = jwtUtils.getUserIdFromRequest(request);
-        User user = userService.getById(userId);
-        UserMsgDto userMsgDto = BeanDtoVoUtils.convert(user, UserMsgDto.class);
-//        发誓情况
-        LambdaQueryWrapper<Swear> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(Swear::getUserId, userId)
-                .ge(Swear::getSwearTime, today_start)
-                .le(Swear::getSwearTime, today_end);
-        long count = swearService.count(queryWrapper);
-        if (count > 0) {
-            userMsgDto.setSwear(true);
-        } else {
-            userMsgDto.setSwear(false);
-        }
-
-        return Result.success(userMsgDto);
-    }
+//    @GetMapping("user")
+////    @RequiresAuthentication
+//    public Result<UserMsgDto> user(HttpServletRequest request) {
+////        时间处理
+//        LocalDateTime today_start = LocalDateTime.of(LocalDate.now(), LocalTime.MIN);
+//        LocalDateTime today_end = LocalDateTime.of(LocalDate.now(), LocalTime.MAX);
+//        DateTimeFormatter time = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+////        获取信息
+//        Long userId = jwtUtils.getUserIdFromRequest(request);
+//        User user = userService.getById(userId);
+//        UserMsgDto userMsgDto = BeanDtoVoUtils.convert(user, UserMsgDto.class);
+////        发誓情况
+//        LambdaQueryWrapper<Swear> queryWrapper = new LambdaQueryWrapper<>();
+//        queryWrapper.eq(Swear::getUserId, userId)
+//                .ge(Swear::getSwearTime, today_start)
+//                .le(Swear::getSwearTime, today_end);
+//        long count = swearService.count(queryWrapper);
+//        if (count > 0) {
+//            userMsgDto.setSwear(true);
+//        } else {
+//            userMsgDto.setSwear(false);
+//        }
+//
+//        return Result.success(userMsgDto);
+//    }
 
     /**
      * @param userId:

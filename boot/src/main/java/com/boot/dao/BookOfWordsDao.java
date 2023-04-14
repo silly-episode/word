@@ -3,7 +3,6 @@ package com.boot.dao;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.boot.entity.BookOfWords;
 import org.apache.ibatis.annotations.Param;
-import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
@@ -11,9 +10,8 @@ import java.util.List;
  * (BookOfWords)表数据库访问层
  *
  * @author makejava
- * @since 2023-02-25 10:40:36
+ * @since 2023-04-14 13:35:25
  */
-@Repository
 public interface BookOfWordsDao extends BaseMapper<BookOfWords> {
 
     /**

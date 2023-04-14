@@ -262,6 +262,10 @@ public class PdfUtils {
         PdfPTable table = createHead();
         int i = 0;
         for (int j = 0; j <= totalWord; j += 2) {
+//            拼接词性和词义
+            String trans = bookOfWordsList.get(j).getTrans();
+            String pos = bookOfWordsList.get(j).getPos();
+            bookOfWordsList.get(j).setTrans(pos + "   " + trans);
             i += 2;
 //            当页结束时，设置最下方的单元格的底部为实线
             if ((i) % 50 == 0 || (j == totalWord - 2) || (totalWord % 2 != 0 && j == totalWord - 1)) {
@@ -273,13 +277,13 @@ public class PdfUtils {
             if (j != totalWord) {
                 table.addCell(createCell(String.valueOf(j + 1), keyfont, CellType.NoCell, Finalytype));
                 table.addCell(createCell(bookOfWordsList.get(j).getWord(), keyfont, CellType.WordOrMeaningCell, Finalytype));
-                table.addCell(createCell(bookOfWordsList.get(j).getMeaning(), textfont, CellType.WordOrMeaningCell, Finalytype));
+                table.addCell(createCell(bookOfWordsList.get(j).getTrans(), textfont, CellType.WordOrMeaningCell, Finalytype));
                 table.addCell(createCell("", keyfont, CellType.BlankCell, Finalytype, img));
 //              如果是奇数单词数，则最好一行只显示左侧单词
                 if (totalWord - j != 1) {
                     table.addCell(createCell(String.valueOf(j + 2), keyfont, CellType.NoCell, Finalytype));
                     table.addCell(createCell(bookOfWordsList.get(j + 1).getWord(), keyfont, CellType.WordOrMeaningCell, Finalytype));
-                    table.addCell(createCell(bookOfWordsList.get(j + 1).getMeaning(), textfont, CellType.WordOrMeaningCell, Finalytype));
+                    table.addCell(createCell(bookOfWordsList.get(j + 1).getTrans(), textfont, CellType.WordOrMeaningCell, Finalytype));
                     table.addCell(createCell("", keyfont, CellType.BlankCell, Finalytype, img));
                 } else {
                     table.addCell(createCell("", keyfont, CellType.NoCell, Finalytype));

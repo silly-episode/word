@@ -11,13 +11,14 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
  * (BookOfWords)表实体类
  *
  * @author makejava
- * @since 2023-02-25 10:40:36
+ * @since 2023-04-14 13:35:32
  */
 @Accessors(chain = true)
 @TableName("book_of_words")
@@ -27,18 +28,32 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @SuppressWarnings("all")
 public class BookOfWords extends Model<BookOfWords> {
-
     @TableId(type = IdType.ASSIGN_ID)
     private Long wordId;
 
     private Long bookId;
-
+    //单词
     private String word;
-    //词性：词意；词性：词意
-    private String meaning;
-    //音标
-    private String ukphone;
-
+    //解释
+    private String trans;
+    //词性
+    private String pos;
+    //单词插入时间
     private LocalDateTime wordInsertTime;
+    //例句
+    private String sentenceEn;
+    //例句翻译
+    private String sentenceZh;
+
+
+    /**
+     * 获取主键值
+     *
+     * @return 主键值
+     */
+    @Override
+    public Serializable pkVal() {
+        return this.wordId;
+    }
 }
 

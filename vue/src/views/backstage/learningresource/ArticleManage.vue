@@ -204,12 +204,6 @@ export default {
         // 每页显示条数
         pageSize: 10,
       },
-      //用户状态列表
-      userStatusList: [
-        // 用户状态，0正常，1锁定，2待删除
-        {label: '正常', value: '0'},
-        {label: '锁定', value: '1'}
-      ],
       // 用于保存获取到的用户列表
       articleList: [],
       // 总数据条数

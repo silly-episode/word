@@ -100,7 +100,7 @@ public class BookOfWordsController {
             return Result.error("未选择单词本");
         }
         /*去重和计数初始化*/
-        List<Long> bookIdList = new ArrayList<Long>(new LinkedHashSet<Long>(collectWordsDto.getBookId()));
+        List<Long> bookIdList = new ArrayList<>(new LinkedHashSet<>(collectWordsDto.getBookId()));
         Map<Long, Integer> map = new HashMap<>(bookIdList.size());
         for (Long aLong : bookIdList) {
             map.put(aLong, 0);
@@ -112,8 +112,10 @@ public class BookOfWordsController {
                     .setWord(collectWordsDto.getWord())
                     .setWordInsertTime(LocalDateTime.now())
                     .setBookId(aLong)
-                    .setMeaning(collectWordsDto.getMeaning())
-                    .setUkphone(collectWordsDto.getUkphone());
+                    .setPos(collectWordsDto.getPos())
+                    .setSentenceEn(collectWordsDto.getSentenceEn())
+                    .setSentenceZh(collectWordsDto.getSentenceZh())
+                    .setTrans(collectWordsDto.getTrans());
             wordList.add(word);
             map.put(aLong, map.get(aLong) + 1);
         }

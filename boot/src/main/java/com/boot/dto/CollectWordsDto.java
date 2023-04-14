@@ -16,13 +16,18 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@SuppressWarnings("all")
 public class CollectWordsDto {
 
     private List<Long> bookId;
 
     private String word;
     //词性：词意；词性：词意
-    private String meaning;
-    //音标
-    private String ukphone;
+    private String trans;
+    //例句
+    private String sentenceEn;
+    //例句翻译
+    private String sentenceZh;
+    //词性
+    private String pos;
 }

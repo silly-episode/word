@@ -1,184 +1,247 @@
 <template>
-  <el-card>
-    <el-form ref="queryParams" :inline="true" :model="pickDate">
-      <el-form-item label="开始时间">
-        <el-date-picker
-          v-model="pickDate.beginDate"
-          :picker-options="{
-            disabledDate: (time) => {
-              let _this = this;
-              if (_this.pickDate.endDate) {
-                let edtTime = _this.pickDate.endDate.replace(/-/g, '/');
-                return time.getTime() > new Date(edtTime);
-              }
-            },
-            firstDayOfWeek: 1,
-          }"
-          placeholder="选择日期"
-          style="width: 200px"
-          type="datetime"
-          value-format="yyyy-MM-dd HH:mm:ss"
-        >
-        </el-date-picker>
-      </el-form-item>
-      <el-form-item label="结束时间">
-        <el-date-picker
-          v-model="pickDate.endDate"
-          :picker-options="{
-            disabledDate: (time) => {
-              let _this = this;
-              if (_this.pickDate.beginDate) {
+  <div>
+    <!--<div>-->
+    <!--  <span>励志语</span>-->
+    <!--</div>-->
+    <el-card style="min-height: 100%">
+      <!-- 搜索与筛选区域 -->
+      <div>
+        <el-form ref="queryParams" :inline="true" :model="pickDate">
+          <el-form-item label="开始时间">
+            <el-date-picker
+                v-model="pickDate.beginDate"
+                :picker-options="{
+              disabledDate: (time) => {
+                let _this=this
+                if (_this.pickDate.endDate) {
+                   let edtTime = _this.pickDate.endDate.replace(/-/g, '/');
+                   return time.getTime() > new Date(edtTime);
+                  }
+          }, firstDayOfWeek: 1}"
+                placeholder="选择日期时间"
+                style="width: 200px"
+                type="datetime"
+                value-format="yyyy-MM-dd HH:mm:ss"
+            >
+            </el-date-picker>
+          </el-form-item>
+          <el-form-item label="结束时间">
+            <el-date-picker
+                v-model="pickDate.endDate"
+                :picker-options="{
+              disabledDate: (time) => {
+                let _this=this
+                if (_this.pickDate.beginDate) {
                 let startTime = _this.pickDate.beginDate.replace(/-/g, '/');
                 return time.getTime() < new Date(startTime);
-              }
-            },
-            firstDayOfWeek: 1,
-          }"
-          placeholder="选择日期"
-          style="width: 200px"
-          type="datetime"
-          value-format="yyyy-MM-dd HH:mm:ss"
-        >
-        </el-date-picker>
-      </el-form-item>
-      <el-form-item label="搜索关键字">
-        <el-input style="width: 150px" v-model="queryInfo.search"></el-input>
-      </el-form-item>
-      <el-form-item label="字数下限">
-        <el-input
-          style="width: 90px"
-          v-model="queryInfo.countLow"
-          type="number"
-        ></el-input>
-      </el-form-item>
-      <el-form-item label="字数上限">
-        <el-input
-          style="width: 100px"
-          v-model="queryInfo.countUp"
-          type="number"
-        ></el-input>
-      </el-form-item>
-      <el-form-item>
-        <el-button icon="el-icon-search" type="primary" @click="getArticleList">
-          查询
-        </el-button>
-      </el-form-item>
-    </el-form>
-    <!-- 用户列表区 -->
-    <el-table
-      :data="articleList"
-      border
-      stripe
-      :header-cell-style="{ 'text-align': 'center' }"
-      :cell-style="{ 'text-align': 'center' }"
-    >
-      <el-table-column type="index" min-width="10%"></el-table-column>
-      <el-table-column
-        v-for="item in column"
-        :key="item.label"
-        :label="item.label"
-        :prop="item.prop"
-      ></el-table-column>
-      <el-table-column label="操作" min-width="12%">
-        <template slot-scope="scope">
-          <el-button
-            type="primary"
-            icon="el-icon-key"
-            @click="removeUserById('unLock', scope.row.openId)"
-            size="mini"
-          ></el-button>
-        </template>
-      </el-table-column>
-    </el-table>
-    <!-- 分页区 -->
-    <el-pagination
-      @size-change="handleSizeChange"
-      @current-change="handleCurrentChange"
-      :current-page="queryInfo.pageNum"
-      :page-sizes="[1, 2, 5, 10]"
-      :page-size="queryInfo.pageSize"
-      layout="total, sizes, prev, pager, next, jumper"
-      :total="total"
-    >
-    </el-pagination>
-  </el-card>
+                }
+          }, firstDayOfWeek: 1}"
+                placeholder="选择日期时间"
+                style="width: 200px"
+                type="datetime"
+                value-format="yyyy-MM-dd HH:mm:ss"
+            >
+            </el-date-picker>
+          </el-form-item>
+          <el-form-item label="字数上限">
+            <el-input
+                v-model.number="queryInfo.countUp"
+                autocomplete="off"
+                clearable
+                placeholder="请输入"
+                style="width: 160px"
+                type="number"
+                @input="() => $forceUpdate()"
+            ></el-input>
+          </el-form-item>
+          <el-form-item label="字数下限">
+            <el-input
+                v-model.number="queryInfo.countLow"
+                autocomplete="off"
+                clearable
+                placeholder="请输入"
+                style="width: 160px"
+                type="number"
+                @input="() => $forceUpdate()"
+            ></el-input>
+          </el-form-item>
+          <el-form-item label="搜索">
+            <el-input
+                v-model.trim="queryInfo.search"
+                autocomplete="off"
+                clearable
+                placeholder="标题、作者"
+                style="width: 255px"
+                type="text"
+                @input="() => $forceUpdate()"
+            ></el-input>
+          </el-form-item>
+          <el-button icon="el-icon-search" type="primary" @click="articleSearch">
+            查询
+          </el-button>
+        </el-form>
+      </div>
+
+      <!-- 文章列表区 -->
+      <div class="noTableScrollBar">
+        <el-table
+            v-loading="searchLoading"
+            :data="articleList"
+            :header-cell-style="{'text-align':'center'}"
+            :height="tableHeight === 0 ? 'calc(100vh - 301px)' : tableHeight"
+            border
+            highlight-current-row
+            stripe style="margin: auto; width: 100%; text-align: center">
+          <template slot="empty">
+            <el-empty description="暂无数据"></el-empty>
+          </template>
+          <el-table-column align="center" label="序号" min-width="5%">
+            <template v-slot="scope">
+          <span>{{
+              scope.$index + (queryInfo.pageNum - 1) * queryInfo.pageSize + 1
+            }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column align="center" label="标题" min-width="12%" prop="articleTitle"></el-table-column>
+          <el-table-column align="center" label="作者" min-width="11%" prop="articleAuthor"></el-table-column>
+          <el-table-column align="center" label="字数" min-width="8%" prop="wordNumber"></el-table-column>
+          <el-table-column align="center" label="练习人数" min-width="8%" prop="articleStudyNumber"></el-table-column>
+          <el-table-column align="center" label="添加时间" min-width="15%" prop="articleCreateTime">
+            <template v-slot="scope">
+              <span>{{
+                  dayjs(parseInt(scope.row.articleCreateTime)).format('YYYY-MM-DD HH:mm:ss')
+                }}</span>
+            </template>
+          </el-table-column>
+
+          <el-table-column label="内容概览" min-width="31%" prop="content" show-overflow-tooltip
+                           text-align="left"></el-table-column>
+          <el-table-column align="center" label="Action" min-width="10%">
+            <template v-slot="scope">
+              <!-- 保存按钮 -->
+              <el-tooltip
+                  :enterable="false"
+                  content="练习吧"
+                  effect="dark"
+                  placement="top"
+              >
+                <el-button
+                    icon="el-icon-postcard"
+                    size="medium"
+                    type="danger"
+                    @click="show(scope.row)"
+                >练习吧
+                </el-button>
+              </el-tooltip>
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
+
+      <!-- 分页区 -->
+      <div class="flex_center_center">
+        <lh-pagination v-show="total > 0" :limit.sync="queryInfo.pageSize" :page.sync="queryInfo.pageNum"
+                       :total="total" @pagination="articleSearch"/>
+      </div>
+
+    </el-card>
+
+
+  </div>
 </template>
 
 <script>
 
-import { articleSearch } from '@/api/article.js'
+import {articleSearch} from "@/api/admin.js"
 import dayjs from "dayjs";
+import LhPagination from "@/components/lhPublic/lhPagination";
+
 export default {
   data() {
     return {
       dayjs: dayjs,
-      articleList: [],
+      tableHeight: 0,
+      clientWidth: document.body.clientWidth, // 文档宽度
+      //起始时间和截止时间的时间列表
+      pickDate: {beginDate: "", endDate: ""},
+      // 获取用户列表的参数对象
       queryInfo: {
-        beginTime: '',
-        endTime: '',
-        countUp: 100000,
-        countLow: 0,
+        /*开始时间*/
+        beginTime: "",
+        /*结束时间*/
+        endTime: "",
+        /*账号、电话、用户名、用户id*/
+        countUp: "",
+        /*用户状态*/
+        countLow: "",
+        /*搜索*/
         search: "",
+        // 当前页码
         pageNum: 1,
-        pageSize: 5,
+        // 每页显示条数
+        pageSize: 10,
       },
-      pickDate: { beginDate: "", endDate: "" },
-      column: [
-        {
-          label: '标题',
-          prop: 'articleTitle'
-        }, {
-          label: '作者',
-          prop: 'articleAuthor'
-        }, {
-          label: '文章字数',
-          prop: 'wordNumber'
-        }, {
-          label: '练习人数',
-          prop: 'articleStudyNumber'
-        }, {
-          label: '内容',
-          prop: 'content'
-        }
-      ]
-    }
-
+      // 用于保存获取到的用户列表
+      articleList: [],
+      // 总数据条数
+      total: 0,
+      exportLoading: false,
+      searchLoading: false,
+    };
+  },
+  components: {LhPagination},
+  created() {
+    // 发送数据请求，获取用户列表数据
+    this.articleSearch();
   },
   methods: {
-    getArticleList() {
+
+    //查询
+    articleSearch() {
       this.queryInfo.beginTime = dayjs(this.pickDate.beginDate).valueOf()
       this.queryInfo.endTime = dayjs(this.pickDate.endDate).valueOf()
-      console.log(this.queryInfo)
-      articleSearch(this.queryInfo)
-        .then((res) => {
-          console.log('res', res)
-          if (res.code == 200) {
+      let params = this.queryInfo;
+      this.searchLoading = true;
+      console.log(params)
+      articleSearch(params)
+          .then((res) => {
+            console.log(res)
             this.articleList = res.data.records
             this.total = res.data.total
-          }
-        })
-        .catch((err) => {
-          console.log('err', err)
-        })
+          })
+          .catch((err) => {
+            console.log(err.msg)
+            this.$message.error(err.msg)
+          })
+          .finally(() => {
+            this.searchLoading = false;
+          })
     },
 
 
-
-    handleSizeChange(newSize) {// 监听pagesize的改变
-      this.queryInfo.pageSize = newSize;
-      this.getArticleList();
+    // 监听pagesize的改变
+    handleSizeChange(newSize) {
+      this.queryInfo.pagesize = newSize;
+      this.articleSearch();
+    },
+    // 监听页码值改变
+    handleCurrentChange(newPage) {
+      this.queryInfo.pagenum = newPage;
+      // 页码值改变则发起新的数据请求
+      this.articleSearch();
     },
 
-    handleCurrentChange(newPage) {// 监听页码值改变
-      this.queryInfo.pageNum = newPage;
-      this.getArticleList();
-    },
-  },
-  created() {
-    this.getArticleList()
   }
-}
+};
 </script>
 
-<style>
+<style scoped>
+
+
+.noTableScrollBar /deep/ .el-table__body-wrapper::-webkit-scrollbar {
+  width: 0;
+  /*滚动条宽度*/
+}
+
+
 </style>

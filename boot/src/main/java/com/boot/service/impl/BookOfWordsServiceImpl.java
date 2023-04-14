@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
  * (BookOfWords)表服务实现类
  *
  * @author makejava
- * @since 2023-02-25 10:40:36
+ * @since 2023-04-14 13:35:35
  */
 @Service("bookOfWordsService")
 public class BookOfWordsServiceImpl extends ServiceImpl<BookOfWordsDao, BookOfWords> implements BookOfWordsService {

@@ -7,7 +7,7 @@ import com.boot.entity.BookOfWords;
  * (BookOfWords)表服务接口
  *
  * @author makejava
- * @since 2023-02-25 10:40:36
+ * @since 2023-04-14 13:35:34
  */
 public interface BookOfWordsService extends IService<BookOfWords> {
 

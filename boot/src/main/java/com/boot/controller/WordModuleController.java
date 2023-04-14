@@ -23,6 +23,7 @@ import com.boot.service.PlanService;
 import com.boot.service.UserService;
 import com.boot.service.WordModuleService;
 import com.boot.utils.ActionLogUtils;
+import com.boot.utils.JwtUtils;
 import com.boot.utils.MinIOUtils;
 import com.boot.utils.SnowFlakeUtil;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -82,6 +83,9 @@ public class WordModuleController {
 
     @Resource
     private ActionLogUtils actionLogUtils;
+
+    @Resource
+    private JwtUtils jwtUtils;
 
     /**
      * @param file:       词源和模块头像文件
@@ -287,15 +291,19 @@ public class WordModuleController {
      * @Date: 2023/4/10 16:43
      */
     @GetMapping("wordModuleById/{moduleId}")
-    public Result wordModuleById(@PathVariable Long moduleId) {
+    public Result wordModuleById(@PathVariable Long moduleId, HttpServletRequest request) {
         WordModule wordModule = wordModuleService.getById(moduleId);
         Map<String, Object> map = new HashMap<>(1);
-        LambdaQueryWrapper<Plan> queryWrapper = new LambdaQueryWrapper<Plan>();
-        queryWrapper.eq(Plan::getModuleId, moduleId);
         Boolean planExist = false;
-        long count = planService.count(queryWrapper);
-        if (count > 0) {
-            planExist = true;
+        Long userId = jwtUtils.getUserIdFromRequest(request);
+
+        if (userId != null) {
+            LambdaQueryWrapper<Plan> queryWrapper = new LambdaQueryWrapper<Plan>();
+            queryWrapper.eq(Plan::getModuleId, moduleId).eq(Plan::getUserId, userId);
+            long count = planService.count(queryWrapper);
+            if (count > 0) {
+                planExist = true;
+            }
         }
         map.put("wordModule", wordModule);
         map.put("planExist", planExist);

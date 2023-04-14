@@ -6,28 +6,33 @@
         <result property="wordId" column="word_id" jdbcType="INTEGER"/>
         <result property="bookId" column="book_id" jdbcType="INTEGER"/>
         <result property="word" column="word" jdbcType="VARCHAR"/>
-        <result property="meaning" column="trans" jdbcType="VARCHAR"/>
-        <result property="ukphone" column="pos" jdbcType="VARCHAR"/>
+        <result property="trans" column="trans" jdbcType="VARCHAR"/>
+        <result property="pos" column="pos" jdbcType="VARCHAR"/>
+        <result property="wordInsertTime" column="word_insert_time" jdbcType="TIMESTAMP"/>
+        <result property="sentenceEn" column="sentence_en" jdbcType="VARCHAR"/>
+        <result property="sentenceZh" column="sentence_zh" jdbcType="VARCHAR"/>
     </resultMap>
 
     <!-- 批量插入 -->
-    <insert id="insertBatch" keyProperty="" useGeneratedKeys="true">
-        insert into word.book_of_words(word_id, book_id, word, trans, pos)
+    <insert id="insertBatch" keyProperty="wordId" useGeneratedKeys="true">
+        insert into word.book_of_words(book_id, word, trans, pos, word_insert_time, sentence_en, sentence_zh)
         values
         <foreach collection="entities" item="entity" separator=",">
-            (#{entity.wordId}, #{entity.bookId}, #{entity.word}, #{entity.meaning}, #{entity.ukphone})
+            (#{entity.bookId}, #{entity.word}, #{entity.trans}, #{entity.pos}, #{entity.wordInsertTime},
+            #{entity.sentenceEn}, #{entity.sentenceZh})
         </foreach>
     </insert>
     <!-- 批量插入或按主键更新 -->
-    <insert id="insertOrUpdateBatch" keyProperty="" useGeneratedKeys="true">
-        insert into word.book_of_words(word_id, book_id, word, trans, pos)
+    <insert id="insertOrUpdateBatch" keyProperty="wordId" useGeneratedKeys="true">
+        insert into word.book_of_words(book_id, word, trans, pos, word_insert_time, sentence_en, sentence_zh)
         values
         <foreach collection="entities" item="entity" separator=",">
-            (#{entity.wordId}, #{entity.bookId}, #{entity.word}, #{entity.meaning}, #{entity.ukphone})
+            (#{entity.bookId}, #{entity.word}, #{entity.trans}, #{entity.pos}, #{entity.wordInsertTime},
+            #{entity.sentenceEn}, #{entity.sentenceZh})
         </foreach>
         on duplicate key update
-        word_id = values(word_id) , book_id = values(book_id) , word = values(word) , trans = values(trans) ,
-        pos = values(pos)
+        book_id = values(book_id) , word = values(word) , trans = values(trans) , pos = values(pos) , word_insert_time =
+        values(word_insert_time) , sentence_en = values(sentence_en) , sentence_zh = values(sentence_zh)
     </insert>
 
 </mapper>
