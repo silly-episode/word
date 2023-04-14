@@ -198,7 +198,7 @@ export default {
       pageNum: 1,
       pageSize: 10,
       stage: true,//ture第一阶段，false第二阶段
-      enterFlag: false,//计划进的练习页面1,模块进的0,单词本进的-1，
+      enterFlag: 0,//计划进的练习页面1,模块进的0,单词本进的-1，
       skipSum: 0,
       visible: false,//展示选择收藏单词本的弹窗
       checkList: [],
@@ -457,7 +457,8 @@ export default {
       this.trans = ''
       this.wordIndex++
       if (this.wordIndex < this.List.length)
-        this.getWord(this.List[this.wordIndex].content.word)
+        if (this.enterFlag == -1) this.getWord(this.List[this.wordIndex])
+        else this.getWord(this.List[this.wordIndex].content.word)
       else {
         this.Start()
         this.complete = true

@@ -9,6 +9,40 @@ body,
     min-width: 1366px;
 }
 
+* {
+    margin: 0;
+    padding: 0;
+}
+
+body,
+input,
+select,
+textarea {
+    font: 14px/1 Microsoft Yahei, Helvetica, PingFang SC, Helvetica Neue,
+        sans-serif, Arial, Verdana;
+    color: #333;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+input,
+select,
+textarea {
+    outline: none;
+    border: none;
+    border-radius: 0;
+    -moz-appearance: none;
+    appearance: none;
+    -webkit-appearance: none;
+    background-color: transparent;
+    box-sizing: content-box;
+}
+
+img {
+    vertical-align: middle;
+    border-style: none;
+}
+
 a {
     color: white;
     text-decoration: none;

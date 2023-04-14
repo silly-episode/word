@@ -27,14 +27,18 @@
       <div class="margin_t_30">
         <h2>
           <i></i>正在背诵的词表:
-          <span v-if="mainPlan">{{ mainPlan.moduleName }}</span>
-          <span v-else>暂未选择词表</span>
+
+          <span v-if="JSON.stringify(mainPlan) == '{}'">暂未选择词表</span>
+          <span v-else>{{ mainPlan.moduleName }}</span>
         </h2>
         <p class="font_16 font_bold margin_l_20 margin_t_20">主计划</p>
         <div
           class="font_16 border_ccc flex_between_center padding_20 margin_t_20"
         >
-          <template v-if="mainPlan">
+          <template v-if="JSON.stringify(mainPlan) == '{}'">
+            暂无主计划</template
+          >
+          <template v-else>
             <div class="wid_per70">
               <p>计划名：{{ mainPlan.planName }}</p>
               <p class="margin_t_20">
@@ -64,7 +68,6 @@
               </el-button>
             </div></template
           >
-          <template v-else> 暂无主计划</template>
         </div>
         <div>
           <p class="font_16 font_bold margin_l_20 margin_t_20">次计划</p>
@@ -420,8 +423,8 @@ export default {
     init() {
       this.getBookList()
       this.getPlanList()
-      this.getIntegralList()
-      this.getSwearList()
+      // this.getIntegralList()
+      // this.getSwearList()
       const userInfo = JSON.parse(window.sessionStorage.getItem('userInfo'))
       console.log('userInfo', userInfo)
       if (userInfo) {
@@ -433,6 +436,8 @@ export default {
   created() {
     const token = window.sessionStorage.getItem('token')
     this.token = token
+    this.getIntegralList()
+    this.getSwearList()
     if (token) this.init()
   },
   mounted() {
