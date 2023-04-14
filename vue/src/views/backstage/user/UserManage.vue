@@ -87,7 +87,7 @@
           </el-button
           >
           <el-button
-              :icon="`el-icon-${this.exportLoading?'loading':'download'}`"
+              :icon="`el-icon-${exportLoading?'loading':'download'}`"
               type="success"
               @click="userListExcel">
             导出

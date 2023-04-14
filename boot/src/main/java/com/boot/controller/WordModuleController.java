@@ -14,6 +14,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.boot.bo.WordPlan;
 import com.boot.common.Exception.CustomException;
 import com.boot.common.Hutool.IdUtils;
+import com.boot.common.result.CodeMsg;
 import com.boot.common.result.Result;
 import com.boot.dto.WordModuleSearchDto;
 import com.boot.entity.Plan;
@@ -230,7 +231,8 @@ public class WordModuleController {
 
 //        删除索引
         try {
-            boolean value = elasticsearchClient.exists(builder -> builder.index(oldEsIndex)).value();
+            /*判断Es索引是否存在*/
+            boolean value = elasticsearchClient.indices().exists(builder -> builder.index(oldEsIndex)).value();
             if (value) {
                 DeleteIndexResponse delete = elasticsearchClient.indices().delete(f ->
                         f.index(oldEsIndex));
@@ -240,6 +242,7 @@ public class WordModuleController {
         }
         /*记录日志*/
         actionLogUtils.saveActionLog(request, actionLogUtils.UPDATE, "更新了 《" + wordModule.getModuleName() + "》 的词源，并删除了旧词源。");
+        log.info("更换词源成功");
         return Result.success("更换成功");
     }
 
@@ -500,6 +503,19 @@ public class WordModuleController {
         int from = (num - 1) * 20;
 //        单词计划和单词模块信息
         WordModule wordModule = wordModuleService.getById(moduleId);
+
+        if (wordModule == null) {
+            return Result.error("该单词模块不存在");
+        }
+
+//        计算最大页数
+        int total = wordModule.getWordCount();
+        int maxNum = (int) Math.ceil(total * 1.0 / size);
+        /*超出返回错误信息*/
+        if (num > maxNum) {
+            return Result.error(CodeMsg.BEYOND_NUM);
+        }
+
 //        词源
         SearchRequest request = new SearchRequest.Builder()
                 .index(wordModule.getEsIndex())

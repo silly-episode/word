@@ -164,17 +164,18 @@
                       placement="top"
                   >
                     <el-upload
-                        :before-upload="iconChange"
+                        :before-upload="beforeUpload"
                         :on-error="importError"
                         :on-success="importSuccess"
                         :show-file-list="false"
-                        :data="scope.row"
+                        :data="wordModule"
                         accept=".json"
                         action="api/word/changeEsWordModule">
                       <el-button
-                          icon="el-icon-upload2"
+                          :icon="`el-icon-${importLoading?'loading':'upload2'}`"
                           size="mini"
-                          type="warning">
+                          type="warning"
+                          @click="getWordModuleInfo(scope.row)">
                       </el-button>
                     </el-upload>
                   </el-tooltip>
@@ -279,6 +280,8 @@ export default {
       total: 0,
       importLoading: false,
       searchLoading: false,
+      wordModule: {},
+
     };
   },
   components: {LhPagination, WordInfo},
@@ -288,6 +291,15 @@ export default {
   },
   methods: {
 
+    beforeUpload() {
+      this.importLoading = true;
+    },
+
+    getWordModuleInfo(row) {
+      this.wordModule = JSON.parse(JSON.stringify(row));
+      delete this.wordModule.lockTime;
+      delete this.wordModule.wordModuleCreateTime;
+    },
     deleteModule(moduleId) {
       this.$prompt('防止误操作,请输入:“谨慎操作,建议用锁定代替删除。”', '确认框', {
         confirmButtonText: '确认',
@@ -347,9 +359,6 @@ export default {
       this.$refs.WordInfo.showEditDialog(row)
     },
 
-    iconChange() {
-      this.importLoading = true;
-    },
 
     importSuccess(response) {
       console.log(response)
