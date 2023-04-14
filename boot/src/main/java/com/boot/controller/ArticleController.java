@@ -236,7 +236,20 @@ public class ArticleController {
                 .build();
         List<Hit<Article>> hits = elasticsearchClient.search(request, Article.class).hits().hits();
         Article article = 1 == hits.size() ? hits.get(0).source() : null;
-        return Result.success(article);
+
+        if (article == null) {
+            return Result.error("该文章不存在");
+        } else {
+            /*修改文章练习人数*/
+            article.setArticleStudyNumber(article.getArticleStudyNumber() + 1);
+            elasticsearchClient
+                    .update(e -> e.index("article")
+                            .id(article.getArticleId())
+                            .doc(article), Article.class);
+            return Result.success(article);
+        }
+
+
     }
 
 }

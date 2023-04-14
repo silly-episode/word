@@ -83,12 +83,17 @@ public class PlanController {
                     .setUserId(userId);
             LambdaQueryWrapper<Plan> queryWrapper = new LambdaQueryWrapper<>();
             queryWrapper.eq(Plan::getUserId, userId);
+            /*没用主计划则设置其为主计划*/
             long count = planService.count(queryWrapper);
             if (count == 0) {
                 plan.setPlanStatus("1");
             }
         }
         if (planService.saveOrUpdate(plan)) {
+            /*学习模块的学习人数加1*/
+            WordModule wordModule = wordModuleService.getById(plan.getModuleId());
+            wordModule.setStudyNumber(wordModule.getStudyNumber() + 1);
+            wordModuleService.updateById(wordModule);
             return Result.success("成功");
         } else {
             return Result.error("失败");
@@ -104,9 +109,17 @@ public class PlanController {
      */
     @DeleteMapping("plan/{planId}")
     public Result planDelete(@PathVariable Long planId) {
+        Plan plan = planService.getById(planId);
+        if (plan == null) {
+            return Result.error("该计划不存在");
+        }
         if ("1".equals(planService.getById(planId).getPlanStatus())) {
             return Result.error("无法删除主计划");
         } else if (planService.removeById(planId)) {
+            /*学习模块的学习人数加1*/
+            WordModule wordModule = wordModuleService.getById(plan.getModuleId());
+            wordModule.setStudyNumber(wordModule.getStudyNumber() - 1);
+            wordModuleService.updateById(wordModule);
             return Result.success("删除计划成功");
         } else {
             return Result.error("删除计划失败");

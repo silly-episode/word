@@ -519,34 +519,34 @@ public class WordModuleController {
     }
 
 
-    /**
-     * @param userId: 用户id
-     * @Return: Result
-     * @Author: DengYinzhe
-     * @Description: 查询完成一个模块所需要的单词信息 已测试
-     * @Date: 2023/2/12 12:37
-     */
-    @GetMapping("word/bookId{bookId}")
-    public Result<List> wordFromBook(@PathVariable Long bookId) throws IOException {
-//        List word = new ArrayList<ObjectNode>();
-//        /*todo size要可配置*/
-//        int size = 20;
-//        int from = (num-1) * 20;
-////        单词计划和单词模块信息
-//        WordModule wordModule = wordModuleService.getById(moduleId);
-////        词源
-//        SearchRequest request = new SearchRequest.Builder()
-//                .index(wordModule.get())
-//                .query(QueryBuilders.matchAll().build()._toQuery())
-//                .from(from)
-//                .size(size)
-//                .build();
-//        List<Hit<ObjectNode>> hits = elasticsearchClient.search(request, ObjectNode.class).hits().hits();
-//        for (Hit<ObjectNode> Hit : hits) {
-//            word.add(Hit.source());
-//        }
-        return Result.success();
-    }
+//    /**
+//     * @param userId: 用户id
+//     * @Return: Result
+//     * @Author: DengYinzhe
+//     * @Description: 查询完成一个模块所需要的单词信息 已测试
+//     * @Date: 2023/2/12 12:37
+//     */
+//    @GetMapping("word/bookId{bookId}")
+//    public Result<List> wordFromBook(@PathVariable Long bookId) throws IOException {
+////        List word = new ArrayList<ObjectNode>();
+////        /*todo size要可配置*/
+////        int size = 20;
+////        int from = (num-1) * 20;
+//////        单词计划和单词模块信息
+////        WordModule wordModule = wordModuleService.getById(moduleId);
+//////        词源
+////        SearchRequest request = new SearchRequest.Builder()
+////                .index(wordModule.get())
+////                .query(QueryBuilders.matchAll().build()._toQuery())
+////                .from(from)
+////                .size(size)
+////                .build();
+////        List<Hit<ObjectNode>> hits = elasticsearchClient.search(request, ObjectNode.class).hits().hits();
+////        for (Hit<ObjectNode> Hit : hits) {
+////            word.add(Hit.source());
+////        }
+//        return Result.success();
+//    }
 
 
     /**
