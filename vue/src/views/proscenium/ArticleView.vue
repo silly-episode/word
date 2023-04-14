@@ -115,8 +115,8 @@ export default {
 
     input(e) {
       const { value, name } = e.target
-      console.log('value.length', value.length)
-      console.log('this.articleArr[name].length', this.articleArr[name].length)
+      // console.log('value.length', value.length)
+      // console.log('this.articleArr[name].length', this.articleArr[name].length)
       if (value.length >= this.articleArr[name].length - 1) {
         this.inputIndex++
         this.$refs[`input${this.inputIndex}`][0].focus()

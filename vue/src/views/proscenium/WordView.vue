@@ -47,7 +47,7 @@
         </el-col>
         <!-- 开关中文 -->
         <el-col :span="2">
-          <el-tooltip effect="dark" content="开关中文" placement="top">
+          <el-tooltip effect="dark" content="开关例句" placement="top">
             <span
               :class="`${
                 showZh ? 'purple' : 'deep_grey'
@@ -89,14 +89,12 @@
     </div>
     <div v-if="complete" class="complete">
       <div class="font_40">
-        {{ planView ? (stage ? "第一阶段" : "第二阶段") : "" }}已完成！
+        {{ enterFlag == 1 ? (stage ? "第一阶段" : "第二阶段") : "" }}已完成！
       </div>
       <div class="hei_100"></div>
       <div class="flex_between_center font_22">
         <div @click="again" class="btn">Again</div>
-        <div @click="back" class="btn">
-          {{ planView ? "Next" : "Back" }}
-        </div>
+        <div @click="next" class="btn">Next</div>
       </div>
     </div>
     <div v-else>
@@ -123,15 +121,18 @@
             <p class="font_bold font_16 margin_b_10 text_center">
               请选择单词本
             </p>
-            <el-checkbox-group v-model="checkList" class="padding_10">
-              <el-checkbox
-                v-for="item in bookList"
-                :key="item.bookId"
-                :label="item.bookId"
-                class="margin_b_10 block"
-                >{{ item.bookName }}</el-checkbox
-              >
-            </el-checkbox-group>
+            <template v-if="bookList.length > 0">
+              <el-checkbox-group v-model="checkList" class="padding_10">
+                <el-checkbox
+                  v-for="item in bookList"
+                  :key="item.bookId"
+                  :label="item.bookId"
+                  class="margin_b_10 block"
+                  >{{ item.bookName }}</el-checkbox
+                >
+              </el-checkbox-group>
+            </template>
+            <div class="text_center margin_t_b_10" v-else>暂无单词本</div>
 
             <div style="text-align: right; margin: 0">
               <el-button size="mini" type="text" @click="visible = false"
@@ -186,15 +187,18 @@
 </template>
 <script>
 import Timer from '@/components/Timer.vue'
-import { getWordByUserId, getWordByNum, getWordByBookId, collectWord } from '@/api/word.js'
+import { getWordByUserId, getWordByNum, collectWord } from '@/api/word.js'
 import { allBook } from '@/api/wordList'
+import { bookInfo } from '@/api/wordList'
 export default {
   name: "WordView",
   components: { Timer },
   data() {
     return {
+      pageNum: 1,
+      pageSize: 10,
       stage: true,//ture第一阶段，false第二阶段
-      planView: false,//是否是计划进的练习页面
+      enterFlag: false,//计划进的练习页面1,模块进的0,单词本进的-1，
       skipSum: 0,
       visible: false,//展示选择收藏单词本的弹窗
       checkList: [],
@@ -243,24 +247,27 @@ export default {
   methods: {
     getList(params) {
       // 模块进
-      if (params.num && params.moduleId) getWordByNum(params)
-        .then((res) => {
-          // console.log('res', res.data.word)
-          if (res.code == 200) {
-            this.List = res.data.word
-            this.title = res.data.wordPlan.moduleName
-            for (let i = 0; i < this.List.length; i++) {
-              this.collectList[i] = false
+      if (params.num && params.moduleId) {
+        this.enterFlag = 0
+        getWordByNum(params)
+          .then((res) => {
+            // console.log('res', res.data.word)
+            if (res.code == 200) {
+              this.List = res.data.word
+              this.title = res.data.wordPlan.moduleName
+              for (let i = 0; i < this.List.length; i++) {
+                this.collectList[i] = false
+              }
+              this.getWord(res.data.word[0].content.word)
             }
-            this.getWord(res.data.word[0].content.word)
-          }
-        })
-        .catch((err) => {
-          console.log('err', err)
-        })
-      // 计划进（token
+          })
+          .catch((err) => {
+            console.log('err', err)
+          })
+      }
+      // 计划进
       else if (params.userId) {
-        this.planView = true
+        this.enterFlag = 1
         getWordByUserId({ userId: params.userId })
           .then((res) => {
             // console.log('res', res.data.word)
@@ -278,32 +285,38 @@ export default {
           })
       }
       // 单词本进
-      else if (params.bookId) getWordByBookId({ bookId: params.bookId })
-        .then((res) => {
-          // console.log('res', res.data.word)
-          if (res.code == 200) {
-            this.List = res.data.word
-            this.title = res.data.wordPlan.moduleName
-            for (let i = 0; i < this.List.length; i++) {
-              this.collectList[i] = false
+      else if (params.bookId) {
+        this.enterFlag = -1
+        bookInfo({
+          bookId: params.bookId, pageNum: this.pageNum,
+          pageSize: this.pageSize
+        })
+          .then((res) => {
+            // console.log('res', res.data.word)
+            if (res.code == 200) {
+              this.List = res.data.word.records
+              this.title = res.data.book.bookName
+              for (let i = 0; i < this.List.length; i++) {
+                this.collectList[i] = false
+              }
+              this.getWord(res.data.word.records[0])
             }
-            this.getWord(res.data.word[0].content.word)
-          }
-        })
-        .catch((err) => {
-          console.log('err', err)
-        })
+          })
+          .catch((err) => {
+            console.log('err', err)
+          })
+      }
     },
 
     getWord(data) {
       // console.log(data)
-      this.word = data.wordHead
-      this.wordArr = data.wordHead.split('')
-      this.sentenceEn = data.content.sentence.sentences[0].sContent
+      this.word = data.wordHead || data.word
+      this.wordArr = this.word.split('')
+      this.sentenceEn = this.enterFlag == -1 ? data.sentenceEn : data.content.sentence.sentences[0].sContent
       this.sentenceLength = this.sentenceEn.length
-      this.sentenceZh = data.content.sentence.sentences[0].sCn
-      this.trans = data.content.trans[0].tranCn
-      this.pos = data.content.trans[0].pos
+      this.sentenceZh = this.enterFlag == -1 ? data.sentenceZh : data.content.sentence.sentences[0].sCn
+      this.trans = this.enterFlag == -1 ? data.trans : data.content.trans[0].tranCn
+      this.pos = this.enterFlag == -1 ? data.pos : data.content.trans[0].pos
 
       this.wordlength = this.wordArr.length
       for (let i = 0; i < this.wordlength; i++) {
@@ -327,6 +340,7 @@ export default {
     // 收藏单词
     collectWord() {
       this.visible = false
+      if (this.checkList.length < 1 || !this.checkList) return
       const data = {
         bookId: this.checkList,
         word: this.word,
@@ -360,7 +374,7 @@ export default {
 
         this.inputWord.push(e.key)
         const inputLength = this.inputWord.length
-        if (this.wordArr[inputLength - 1] === e.key) {
+        if (this.wordArr[inputLength - 1].toLowerCase() === e.key) {
           this.$set(this.rwList, inputLength - 1, 0)
           // this.rwList[inputLength - 1] = 0
           this.info.correctNum++;
@@ -416,7 +430,7 @@ export default {
     // 本页单词完成后
     finish() {
       this.audio.src = this.hintUrl;
-      this.skip()
+      this.skip(false)
       // console.log('完成了', this.inputWord)
     },
 
@@ -428,7 +442,11 @@ export default {
     },
 
     // 跳过
-    skip() {
+    skip(flag) {
+      if (!this.stage && !flag) {
+        this.skipSum++
+        console.log('自打次数', this.skipSum)
+      }
       if (this.complete) return;
       this.word = ''
       this.wordArr = []
@@ -455,8 +473,8 @@ export default {
     },
 
     // 下一阶段/返回
-    back() {
-      if (this.planView) {
+    next() {
+      if (this.enterFlag == 1) {//是计划
         if (this.stage) {//进入第二阶段
           this.stage = false
           this.complete = false
@@ -470,7 +488,11 @@ export default {
           console.log('进入第三阶段')
         }
       }
-      else this.$router.back() //后退
+      else if (this.enterFlag == 0) {//是模块
+        console.log('进下一章')
+      } else {//是单词本
+
+      }
     },
 
     // 循环播放

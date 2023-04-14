@@ -86,13 +86,6 @@ export default {
   },
 
   methods: {
-    // .then((res) => {
-    //   console.log('res', res)
-    //   if (res.code == 200) { }
-    // })
-    // .catch((err) => {
-    //   console.log('err', err)
-    // })
     getBookInfo() {
       const data = {
         bookId: this.bookId,
