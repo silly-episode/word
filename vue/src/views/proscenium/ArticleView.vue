@@ -28,7 +28,7 @@
         {{ isStart ? "Pause" : "Start" }}
       </div>
     </div>
-     <div class="autoCenter wid_1000">
+    <div class="autoCenter wid_1000">
       <div class="hei_70"></div>
       <div class="margin_t_10" v-for="(item, index) in articleArr" :key="index">
         <p class="index_content-row">
@@ -55,7 +55,7 @@
           class="index_content-row"
         />
       </div>
-    </div> 
+    </div>
   </div>
 </template>
 
@@ -66,6 +66,7 @@ export default {
   components: { Timer },
   data() {
     return {
+      articleId: '',
       articleArr: [],
       ansArr: [],
       inputIndex: 0,
@@ -84,8 +85,7 @@ export default {
   },
   methods: {
     getArticle() {
-      const articleId = '294260072538705920'
-      getArticle(articleId)
+      getArticle(this.articleId)
         .then((res) => {
           // console.log('res', res.data)
           if (res.code == 200) {
@@ -165,7 +165,16 @@ export default {
     }
   },
   created() {
-    this.getArticle()
+    if (this.$route.params.articleId) {
+      window.sessionStorage.setItem('articleId', this.$route.params.articleId)
+      this.articleId = this.$route.params.articleId
+      this.getArticle()
+    } else {
+      const articleId = window.sessionStorage.getItem('articleId')
+      this.articleId = articleId
+      this.getArticle()
+    }
+
   },
 }
 </script>

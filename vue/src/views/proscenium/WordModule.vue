@@ -104,7 +104,6 @@ export default {
         this.$refs.plan.show({ wordCount: this.moduleInfo.wordCount, moduleId: this.moduleId })
         this.planExist = true
       }
-
     },
 
     goTo(num) {

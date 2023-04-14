@@ -26,40 +26,45 @@
       </div>
       <div class="margin_t_30">
         <h2>
-          <i></i>正在背诵的词表:{{ mainPlan.moduleName || "暂未选择词表" }}
+          <i></i>正在背诵的词表:
+          <span v-if="mainPlan">{{ mainPlan.moduleName }}</span>
+          <span v-else>暂未选择词表</span>
         </h2>
         <p class="font_16 font_bold margin_l_20 margin_t_20">主计划</p>
         <div
           class="font_16 border_ccc flex_between_center padding_20 margin_t_20"
         >
-          <div class="wid_per70">
-            <p>计划名：{{ mainPlan.planName }}</p>
-            <p class="margin_t_20">
-              开始背诵时间：{{ mainPlan.planCreateTime }}
-            </p>
-
-            <p class="margin_t_20">每日完成量：{{ mainPlan.dayWord }}</p>
-            <div class="flex_center margin_t_20">
-              <div class="wid_per50">
-                <el-progress :percentage="percentage"></el-progress>
-              </div>
-              <p>
-                单词量：
-                <span class="blue font_bold">{{ mainPlan.finishedWord }}</span
-                >/{{ mainPlan.allWord }}
+          <template v-if="mainPlan">
+            <div class="wid_per70">
+              <p>计划名：{{ mainPlan.planName }}</p>
+              <p class="margin_t_20">
+                开始背诵时间：{{ mainPlan.planCreateTime }}
               </p>
+
+              <p class="margin_t_20">每日完成量：{{ mainPlan.dayWord }}</p>
+              <div class="flex_center margin_t_20">
+                <div class="wid_per50">
+                  <el-progress :percentage="percentage"></el-progress>
+                </div>
+                <p>
+                  单词量：
+                  <span class="blue font_bold">{{ mainPlan.finishedWord }}</span
+                  >/{{ mainPlan.allWord }}
+                </p>
+              </div>
             </div>
-          </div>
-          <div>
-            <el-button
-              type="success"
-              icon="el-icon-edit"
-              @click="editMain"
-            ></el-button>
-            <el-button type="primary" @click="startRecite">
-              开始背诵
-            </el-button>
-          </div>
+            <div>
+              <el-button
+                type="success"
+                icon="el-icon-edit"
+                @click="editMain"
+              ></el-button>
+              <el-button type="primary" @click="startRecite">
+                开始背诵
+              </el-button>
+            </div></template
+          >
+          <template v-else> 暂无主计划</template>
         </div>
         <div>
           <p class="font_16 font_bold margin_l_20 margin_t_20">次计划</p>
@@ -400,7 +405,11 @@ export default {
         swear()
           .then((res) => {
             // console.log('res', res)
-            if (res.code == 200) this.$message.success('发誓成功！')
+            if (res.code == 200) {
+              this.userInfo.swear = true
+              window.sessionStorage.setItem('userInfo', JSON.stringify(this.userInfo))
+              this.$message.success('发誓成功！')
+            }
           })
           .catch((err) => {
             console.log('err', err)
@@ -414,6 +423,7 @@ export default {
       this.getIntegralList()
       this.getSwearList()
       const userInfo = JSON.parse(window.sessionStorage.getItem('userInfo'))
+      console.log('userInfo', userInfo)
       if (userInfo) {
         this.userInfo = userInfo
         this.btnDisable = userInfo.swear
@@ -423,11 +433,10 @@ export default {
   created() {
     const token = window.sessionStorage.getItem('token')
     this.token = token
-
     if (token) this.init()
   },
   mounted() {
-    console.log('token',this.token)
+    console.log('token', this.token)
     if (!this.token) this.$refs.login.showLogin()
   }
 
