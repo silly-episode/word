@@ -38,7 +38,7 @@
             {{ item.moduleName }}
           </p>
           <p class="line_hei_18">
-            {{ (item.wordCount / 20).toFixed(0) }}课，{{ item.wordCount }}词
+            {{ parseInt(item.wordCount / 20) }}课，{{ item.wordCount }}词
           </p>
           <p class="line_hei_18">{{ item.studyNumber }}人背诵</p>
         </div>

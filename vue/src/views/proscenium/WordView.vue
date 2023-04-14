@@ -92,9 +92,9 @@
         {{ enterFlag == 1 ? (stage ? "第一阶段" : "第二阶段") : "" }}已完成！
       </div>
       <div class="hei_100"></div>
-      <div class="flex_between_center font_22">
-        <div @click="again" class="btn">Again</div>
-        <div @click="next" class="btn">Next</div>
+      <div :class="`flex_${stage ? 'between' : 'center'}_center font_22`">
+        <div v-if="stage" @click="again" class="btn">Again</div>
+        <div @click="next" class="btn">{{ isBack ? "Back" : "Next" }}</div>
       </div>
     </div>
     <div v-else>
@@ -143,6 +143,7 @@
               >
             </div>
             <i
+              v-if="stage"
               slot="reference"
               :class="`el-icon-star-${
                 collectList[wordIndex] ? 'on orange' : 'off grey'
@@ -195,8 +196,9 @@ export default {
   components: { Timer },
   data() {
     return {
-      pageNum: 1,
-      pageSize: 10,
+      isBack: false,
+      pages: 0,
+      params: {},
       stage: true,//ture第一阶段，false第二阶段
       enterFlag: 0,//计划进的练习页面1,模块进的0,单词本进的-1，
       skipSum: 0,
@@ -288,12 +290,14 @@ export default {
       else if (params.bookId) {
         this.enterFlag = -1
         bookInfo({
-          bookId: params.bookId, pageNum: this.pageNum,
-          pageSize: this.pageSize
+          bookId: params.bookId,
+          pageNum: params.pageNum,
+          pageSize: params.pageSize
         })
           .then((res) => {
             // console.log('res', res.data.word)
             if (res.code == 200) {
+              this.pages = res.data.word.pages
               this.List = res.data.word.records
               this.title = res.data.book.bookName
               for (let i = 0; i < this.List.length; i++) {
@@ -467,33 +471,55 @@ export default {
 
     // 再练一次
     again() {
-      this.complete = false
-      this.wordIndex = 0
-      this.getWord(this.List[0].content.word)
-      this.Start()
+      this.afresh(this.params)
+      if (this.enterFlag == -1) this.getWord(this.List[0])//计划
+      else this.getWord(this.List[0].content.word)
     },
 
     // 下一阶段/返回
     next() {
-      if (this.enterFlag == 1) {//是计划
-        if (this.stage) {//进入第二阶段
-          this.stage = false
-          this.complete = false
-          this.wordIndex = 0
-          this.showZh = false
-          this.showEng = false
-          this.getWord(this.List[0].content.word)
-
-          this.Start()
-        } else {
-          console.log('进入第三阶段')
+      if (this.isBack) this.$router.back()
+      else {
+        if (this.enterFlag == 1) {//是计划
+          if (this.stage) {//进入第二阶段
+            this.stage = false
+            this.complete = false
+            this.wordIndex = 0
+            this.showZh = false
+            this.showEng = false
+            this.getWord(this.List[0].content.word)
+            this.Start()
+          } else {
+            console.log('进入第三阶段')
+            this.$router.push({ name: 'exam', params: { handSum: this.skipSum } })
+          }
+        }
+        else if (this.enterFlag == 0) {//是模块
+          if (this.params.max > this.params.num) {
+            this.params.num++
+            this.afresh(this.params)
+          } else {
+            this.isBack = true
+            this.$message.warning('已经到最后一页了！')
+          }
+        } else {//是单词本
+          if (this.pages > this.params.pageNum) {
+            this.params.pageNum++
+            this.afresh(this.params)
+          } else {
+            this.isBack = true
+            this.$message.warning('已经到最后一页了！')
+          }
         }
       }
-      else if (this.enterFlag == 0) {//是模块
-        console.log('进下一章')
-      } else {//是单词本
 
-      }
+    },
+
+    afresh(params) {
+      this.getList(params)
+      this.complete = false
+      this.wordIndex = 0
+      this.Start()
     },
 
     // 循环播放
@@ -542,13 +568,16 @@ export default {
     }
   },
   created() {
-    console.log(this.$route.params)
+    // console.log(this.$route.params)
+    this.params = this.$route.params
     if (JSON.stringify(this.$route.params) !== "{}") {
-      console.log(this.$route.params)
+      // console.log(this.$route.params)
       window.sessionStorage.setItem('params', JSON.stringify(this.$route.params))
-      this.getList(this.$route.params)
+      this.params = this.$route.params
+      this.getList(this.params)
     } else {
       const params = JSON.parse(window.sessionStorage.getItem('params'))
+      this.params = params
       this.getList(params)
     }
 

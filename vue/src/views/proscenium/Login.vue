@@ -154,7 +154,7 @@ export default {
       telLogin: false,
       codeDisabled: true,
       codeText: '发送',
-      signUp: true,
+      signUp: false,
       visible: false,
       loginForm: {
         loginAccount: "",

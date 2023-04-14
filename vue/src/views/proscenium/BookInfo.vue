@@ -13,7 +13,7 @@
         <router-link
           :to="{
             name: 'word',
-            params: { bookId },
+            params: { bookId, pageNum, pageSize },
           }"
           >开始练习</router-link
         >
@@ -56,22 +56,23 @@
           </template>
         </el-table-column>
       </el-table>
-      <el-pagination
-        align="center"
-        @current-change="handleCurrentChange"
-        :current-page="pageNum"
-        :page-sizes="[1, 2, 5, 10]"
-        :page-size="pageSize"
-        layout="prev, pager, next"
-        :total="total"
-      >
-      </el-pagination>
+
+      <div class="flex_center_center">
+        <lh-pagination
+          v-show="total > 0"
+          :limit.sync="pageSize"
+          :page.sync="pageNum"
+          :total="total"
+          @pagination="getBookInfo"
+        />
+      </div>
     </div>
   </div>
 </template>
 
 <script>
 import { bookInfo, deleteWord, deleteBook, editBook } from '@/api/wordList'
+import LhPagination from "@/components/lhPublic/lhPagination";
 export default {
   data() {
     return {
@@ -84,7 +85,7 @@ export default {
       total: 0
     }
   },
-
+  components: { LhPagination },
   methods: {
     getBookInfo() {
       const data = {
@@ -151,7 +152,12 @@ export default {
         })
     },
 
-    handleCurrentChange(newPage) {// 监听页码值改变
+    // 监听pagesize的改变
+    handleSizeChange(newSize) {
+      this.getBookInfo();
+    },
+    // 监听页码值改变
+    handleCurrentChange(newPage) {
       this.pageNum = newPage;
       this.getBookInfo();
     },

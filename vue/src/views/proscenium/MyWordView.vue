@@ -148,7 +148,7 @@
       <div
         class="box-size border_ccc wid_215 font_14 margin_t_20 padding_10 margin_l_20 flex_column_center_center"
       >
-        <el-tabs :stretch="true">
+        <el-tabs :stretch="true" v-model="activeName">
           <el-tab-pane label="总积分排行" name="1">
             <div class="flex_between_center margin_b_20">
               <span>排名</span><span>用户名</span><span>分数</span>
@@ -156,7 +156,7 @@
             <div
               v-for="(item, index) in IntegralList"
               :key="item.userId"
-              class="flex_between_center"
+              class="flex_between_center margin_b_10"
             >
               <span
                 :class="`${
@@ -223,6 +223,7 @@ import Login from './Login.vue'
 export default {
   data() {
     return {
+      activeName:'1',
       token: '',
       visible: false,
       percentage: 0,

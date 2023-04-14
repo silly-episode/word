@@ -89,7 +89,7 @@ export default {
             this.planExist = res.data.planExist
             this.moduleInfo = res.data.wordModule
             this.path = imageUrl(this.moduleId)
-            this.sum = (res.data.wordModule.wordCount / 20).toFixed(0) - 0
+            this.sum = parseInt(res.data.wordModule.wordCount / 20)
             this.remainder = res.data.wordModule.wordCount % 20
           }
         })
@@ -109,7 +109,7 @@ export default {
     goTo(num) {
       this.$router.push({
         name: 'word',
-        params: { num, moduleId: this.moduleId }
+        params: { num, moduleId: this.moduleId, max: this.sum + 1 }
       })
     },
 

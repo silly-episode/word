@@ -1,4 +1,4 @@
-const BaseUrl = 'http://ern2yb.natappfree.cc'
+const BaseUrl = 'http://rj7c4k.natappfree.cc'
 
 function imageUrl(fileId) {
   return `${BaseUrl}/word/wordModuleImage/${fileId}`;

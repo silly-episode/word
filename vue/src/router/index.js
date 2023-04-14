@@ -14,6 +14,7 @@ import Assist from "@/views/proscenium/Assist.vue";
 import Own from "@/views/proscenium/Own.vue";
 
 import WordView from "@/views/proscenium/WordView.vue";
+import ExamView from "@/views/proscenium/ExamView.vue";
 import ArticleView from "@/views/proscenium/ArticleView.vue";
 import BookInfo from "@/views/proscenium/BookInfo.vue";
 
@@ -123,6 +124,11 @@ const routes = [
     path: "/word",
     name: 'word',
     component: WordView,
+  },
+  {
+    path: "/exam",
+    name: 'exam',
+    component: ExamView,
   },
   {
     path: "/article",

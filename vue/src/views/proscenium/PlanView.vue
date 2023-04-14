@@ -67,7 +67,7 @@ export default {
     },
 
     changeOptions() {
-      let days = (this.wordCount / this.dayWord).toFixed(0)
+      let days = parseInt(this.wordCount / this.dayWord)
       if (this.wordCount % this.dayWord) days++
       this.days = '预计' + days + '天完成'
     },

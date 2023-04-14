@@ -50,6 +50,7 @@
           :ref="`input${index}`"
           :maxlength="item.length - 1"
           @input="input"
+          @keydown.delete.prevent
           :readonly="!(index == inputIndex && isStart)"
           type="text"
           class="index_content-row"
@@ -87,9 +88,9 @@ export default {
     getArticle() {
       getArticle(this.articleId)
         .then((res) => {
-          // console.log('res', res.data)
+          // console.log('res', res.data
           if (res.code == 200) {
-            const articleArr = this.fnAddBr(res.data.content).split('+')
+            const articleArr = this.fnAddBr(res.data.content)
             let ansArr = []
             articleArr.forEach((item, index) => {
               let arr = []
@@ -101,7 +102,7 @@ export default {
             });
             this.articleArr = articleArr
             this.ansArr = ansArr
-            console.log(articleArr)
+            // console.log(articleArr)
           }
         })
         .catch((err) => {
@@ -115,6 +116,7 @@ export default {
 
     input(e) {
       const { value, name } = e.target
+      // console.log('value', value)
       // console.log('value.length', value.length)
       // console.log('this.articleArr[name].length', this.articleArr[name].length)
       if (value.length >= this.articleArr[name].length - 1) {
@@ -126,7 +128,9 @@ export default {
         let ss = this.trunTime(this.$refs.jishi.content)
         if (ss > 0) this.info.velocity = (this.info.inputNum / ss).toFixed(2);
 
-        if (this.articleArr[name][value.length - 1] == e.data) {
+        // console.log(this.articleArr[name][value.length - 1])
+        // console.log(e.data)
+        if (this.articleArr[name][value.length - 1].toLowerCase() == e.data) {
           this.$set(this.ansArr[name], value.length - 1, 1)
           this.info.correctNum++
         }
@@ -143,25 +147,11 @@ export default {
       return arr[0] * 60 + arr[1]
     },
 
-    fnAddBr(sStr) {
-      if (sStr.length <= 70) {
-        return sStr;
-      }
-      let str = "";
-      let l = 0;
-      let schar;
-      for (let i = 0; schar = sStr.charAt(i); i++) {
-        str += schar;
-        l += 1;
-        if (l >= 70) {
-          //判断是不是空格
-          if (schar == " ") {
-            str += "+";
-            l = 0;
-          }
-        }
-      }
-      return str;
+    fnAddBr(str) {
+      // const regex = new RegExp(`(?<=\\S{79})(?=\\S)`, 'g');
+      // return str.replace(regex, '-\n');
+      return [...str.match(/.{1,75}/g)];
+      // return str;
     }
   },
   created() {
