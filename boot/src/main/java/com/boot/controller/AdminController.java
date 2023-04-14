@@ -88,7 +88,7 @@ public class AdminController {
      * @Date: 2023/4/7 19:48
      */
     @PostMapping("commonAdmin")
-    public Result commonAdmin(@RequestBody Admin admin) {
+    public Result commonAdmin(@RequestBody Admin admin, HttpServletRequest request) {
         if ("".equals(admin.getAccount())) {
             return Result.error("参数缺失,请填写账户号");
         }
@@ -104,6 +104,7 @@ public class AdminController {
                 .setAddCreateTime(LocalDateTime.now());
 
         if (adminService.save(admin)) {
+            actionLogUtils.saveActionLog(request, actionLogUtils.INSERT, "添加了持有人为 " + admin.getKeepName() + " 的管理员");
             return Result.success("添加管理员成功");
         } else {
             return Result.error("添加管理员失败");
@@ -140,7 +141,9 @@ public class AdminController {
      * @Date: 2023/4/8 10:11
      */
     @PostMapping("adminListExcel")
-    public void adminListExcel(@RequestBody AdminSearchDto adminSearchDto, HttpServletResponse response) throws IOException {
+    public void adminListExcel(@RequestBody AdminSearchDto adminSearchDto, HttpServletRequest request, HttpServletResponse response) throws IOException {
+        /*记录日志*/
+        actionLogUtils.saveActionLog(request, actionLogUtils.EXPORT, "导出管理员信息表");
         /*构造条件*/
         LambdaQueryWrapper<Admin> queryWrapper = adminService.getAdminQueryWrapper(adminSearchDto);
         /*查询数据*/
@@ -161,14 +164,17 @@ public class AdminController {
      * @Date: 2023/3/28 9:28
      */
     @PutMapping("password")
-    public Result<String> password(@RequestBody Map<String, Long> map) {
+    public Result<String> password(@RequestBody Map<String, Long> map, HttpServletRequest request) {
+        Long userId = map.get("userId");
         // todo 这里的密码要从数据库中查询出来
         String userResetPassword = "123456";
         UpdateWrapper<User> updateWrapper = new UpdateWrapper<>();
         updateWrapper
-                .eq("user_id", map.get("userId"))
+                .eq("user_id", userId)
                 .set("password", userResetPassword);
         if (userService.update(updateWrapper)) {
+            User user = userService.getById(userId);
+            actionLogUtils.saveActionLog(request, actionLogUtils.UPDATE, "重置用户名为 " + user.getNickName() + " 的用户密码为 " + userResetPassword);
             return Result.success("重置密码成功");
         } else {
             return Result.error("重置密码失败");
@@ -184,14 +190,17 @@ public class AdminController {
      * @Date: 2023/3/28 9:28
      */
     @PutMapping("adminPassword")
-    public Result<String> adminPassword(@RequestBody Map<String, Long> map) {
+    public Result<String> adminPassword(@RequestBody Map<String, Long> map, HttpServletRequest request) {
+        long adminId = map.get("adminId");
         // todo 这里的密码要从数据库中查询出来
         String userResetPassword = "123456";
         UpdateWrapper<Admin> updateWrapper = new UpdateWrapper<>();
         updateWrapper
-                .eq("admin_id", map.get("adminId"))
+                .eq("admin_id", adminId)
                 .set("password", userResetPassword);
         if (adminService.update(updateWrapper)) {
+            Admin admin = adminService.getById(adminId);
+            actionLogUtils.saveActionLog(request, actionLogUtils.UPDATE, "重置了持有人为 " + admin.getKeepName() + " 的管理员密码为 " + userResetPassword);
             return Result.success("重置密码成功");
         } else {
             return Result.error("重置密码失败");
@@ -205,9 +214,18 @@ public class AdminController {
      * @Date: 2023/4/6 20:22
      */
     @DeleteMapping("user/{userId}")
-    public Result<String> user(@PathVariable Long userId) {
+    public Result<String> user(@PathVariable Long userId, HttpServletRequest request) {
+        User user = userService.getById(userId);
+        if (user == null) {
+            return Result.error("该用户不存在");
+        } else {
 
-        return Result.success("删除用户成功");
+
+            actionLogUtils.saveActionLog(request, actionLogUtils.DELETE, "删除了用户名为 " + user.getNickName() + " 的用户");
+            return Result.success("删除用户成功");
+        }
+
+
     }
 
     /**
@@ -217,9 +235,19 @@ public class AdminController {
      * @Date: 2023/4/6 20:22
      */
     @DeleteMapping("admin/{adminId}")
-    public Result<String> admin(@PathVariable Long adminId) {
+    public Result<String> admin(@PathVariable Long adminId, HttpServletRequest request) {
+        Admin admin = adminService.getById(adminId);
+        if (admin == null) {
+            return Result.error("管理员不存在");
+        }
+        if (adminService.removeById(adminId)) {
+            actionLogUtils.saveActionLog(request, actionLogUtils.DELETE, "删除了持有人为 " + admin.getKeepName() + " 的管理员");
+            return Result.success("删除管理员成功");
+        } else {
+            return Result.error("删除管理员失败");
+        }
 
-        return Result.success("删除管理员成功");
+
     }
 
     /**
@@ -230,12 +258,16 @@ public class AdminController {
      * @Date: 2023/3/28 9:29
      */
     @PutMapping("remark")
-    public Result<String> remark(@RequestBody Map<String, String> map) {
+    public Result<String> remark(@RequestBody Map<String, String> map, HttpServletRequest request) {
+        Long userId = Long.valueOf(map.get("userId"));
+        assert userId != null;
         UpdateWrapper<User> updateWrapper = new UpdateWrapper<>();
         updateWrapper
-                .eq("user_id", map.get("userId"))
+                .eq("user_id", userId)
                 .set("remark", map.get("remark"));
         if (userService.update(updateWrapper)) {
+            User user = userService.getById(userId);
+            actionLogUtils.saveActionLog(request, actionLogUtils.UPDATE, "修改了用户名为 " + user.getNickName() + " 的用户描述");
             return Result.success("修改描述成功");
         } else {
             return Result.error("修改描述失败");
@@ -251,12 +283,15 @@ public class AdminController {
      * @Date: 2023/3/28 9:29
      */
     @PutMapping("adminRemark")
-    public Result<String> adminRemark(@RequestBody Map<String, String> map) {
+    public Result<String> adminRemark(@RequestBody Map<String, String> map, HttpServletRequest request) {
+        Long userId = Long.valueOf(map.get("adminId"));
         UpdateWrapper<Admin> updateWrapper = new UpdateWrapper<>();
         updateWrapper
-                .eq("admin_id", map.get("adminId"))
+                .eq("admin_id", userId)
                 .set("remark", map.get("remark"));
         if (adminService.update(updateWrapper)) {
+            Admin admin = adminService.getById(userId);
+            actionLogUtils.saveActionLog(request, actionLogUtils.UPDATE, "修改了持有人为 " + admin.getKeepName() + " 的管理员描述");
             return Result.success("修改描述成功");
         } else {
             return Result.error("修改描述失败");
@@ -270,7 +305,7 @@ public class AdminController {
      * @Date: 2023/4/7 11:17
      */
     @PutMapping("user")
-    public Result<String> user(@RequestBody User user) {
+    public Result<String> user(@RequestBody User user, HttpServletRequest request) {
         String delete = "待删除";
         String lock = "锁定";
         String userStatus = user.getUserStatus();
@@ -287,6 +322,7 @@ public class AdminController {
             user.setUserStatus("0");
         }
         if (userService.updateById(user)) {
+            actionLogUtils.saveActionLog(request, actionLogUtils.UPDATE, "修改了用户名为 " + user.getNickName() + " 的用户基础信息");
             return Result.success("修改用户信息成功");
         } else {
             return Result.error("修改用户信息失败");
@@ -301,7 +337,7 @@ public class AdminController {
      * @Date: 2023/4/7 11:17
      */
     @PutMapping("admin")
-    public Result<String> admin(@RequestBody Admin admin) {
+    public Result<String> admin(@RequestBody Admin admin, HttpServletRequest request) {
         String lock = "锁定";
         String superRole = "0";
         String adminStatus = admin.getUserStatus();
@@ -318,6 +354,7 @@ public class AdminController {
             admin.setUserStatus("0");
         }
         if (adminService.updateById(admin)) {
+            actionLogUtils.saveActionLog(request, actionLogUtils.UPDATE, "修改了持有人为 " + admin.getKeepName() + " 的管理员基础信息");
             return Result.success("修改管理员信息成功");
         } else {
             return Result.error("修改管理员信息失败");
@@ -332,7 +369,7 @@ public class AdminController {
      * @Date: 2023/3/28 9:43
      */
     @PutMapping("lockOrUnLockUser")
-    public Result<String> lockOrUnLockUser(@RequestBody Map<String, String> map) {
+    public Result<String> lockOrUnLockUser(@RequestBody Map<String, String> map, HttpServletRequest request) {
         System.out.println(map.toString());
         String lockStatus = "lock";
         String lockType = null;
@@ -356,6 +393,12 @@ public class AdminController {
             updateWrapper.set("user_status", "0");
         }
         if (userService.update(updateWrapper)) {
+            User user = userService.getById(userId);
+            if (lockStatus.equals(lockType)) {
+                actionLogUtils.saveActionLog(request, actionLogUtils.UPDATE, "锁定了用户名为 " + user.getNickName() + " 的用户");
+            } else {
+                actionLogUtils.saveActionLog(request, actionLogUtils.UPDATE, "解锁了用户名为 " + user.getNickName() + " 的用户");
+            }
             return Result.success("锁定/解锁成功");
         } else {
             return Result.error("锁定/解锁失败");
@@ -371,7 +414,7 @@ public class AdminController {
      * @Date: 2023/3/28 9:43
      */
     @PutMapping("lockOrUnLockAdmin")
-    public Result<String> lockOrUnLockAdmin(@RequestBody Map<String, String> map) {
+    public Result<String> lockOrUnLockAdmin(@RequestBody Map<String, String> map, HttpServletRequest request) {
         String lockStatus = "lock";
         String lockType = null;
         Long adminId = null;
@@ -394,6 +437,12 @@ public class AdminController {
             updateWrapper.set("user_status", "0");
         }
         if (adminService.update(updateWrapper)) {
+            Admin admin = adminService.getById(adminId);
+            if (lockStatus.equals(lockType)) {
+                actionLogUtils.saveActionLog(request, actionLogUtils.UPDATE, "锁定了持有人为 " + admin.getKeepName() + " 的用户");
+            } else {
+                actionLogUtils.saveActionLog(request, actionLogUtils.UPDATE, "解锁了持有人为 " + admin.getKeepName() + " 的用户");
+            }
             return Result.success("锁定/解锁成功");
         } else {
             return Result.error("锁定/解锁失败");
@@ -432,7 +481,9 @@ public class AdminController {
      * @Date: 2023/3/17 14:13
      */
     @PostMapping("userListExcel")
-    public void userListExcel(@RequestBody UserSearchDto userSearchDto, HttpServletResponse response) throws IOException {
+    public void userListExcel(@RequestBody UserSearchDto userSearchDto, HttpServletRequest request, HttpServletResponse response) throws IOException {
+        /*记录日志*/
+        actionLogUtils.saveActionLog(request, actionLogUtils.EXPORT, "导出了用户信息表");
         /*查询条件*/
         LambdaQueryWrapper<User> userQueryWrapper = adminService.getUserQueryWrapper(userSearchDto);
         /*查询数据*/
@@ -472,7 +523,9 @@ public class AdminController {
      * @Date: 2023/3/27 10:03
      */
     @PostMapping("logExcelImport")
-    public void logExcelImport(@RequestBody LoginLogSearchDto logSearch, HttpServletResponse response) throws IOException {
+    public void logExcelImport(@RequestBody LoginLogSearchDto logSearch, HttpServletRequest request, HttpServletResponse response) throws IOException {
+        /*记录操作日志*/
+        actionLogUtils.saveActionLog(request, actionLogUtils.EXPORT, "导出用户登录日志");
         /*获取查询条件*/
         LambdaQueryWrapper<LoginLog> queryWrapper = adminService.getLoginLogQueryWrapper(logSearch);
         /*查询数据*/
@@ -480,7 +533,7 @@ public class AdminController {
         /*类型转换，方便Excel导出*/
         List<LoginLogExcel> list = BeanDtoVoUtils.convertList(logList, LoginLogExcel.class);
         /*开始导出，并放入response*/
-        adminService.importExcel(response, "Word-日志", LoginLogExcel.class, list);
+        adminService.importExcel(response, "Word-登录日志", LoginLogExcel.class, list);
     }
 
 

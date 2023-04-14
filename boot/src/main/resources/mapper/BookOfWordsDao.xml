@@ -6,13 +6,13 @@
         <result property="wordId" column="word_id" jdbcType="INTEGER"/>
         <result property="bookId" column="book_id" jdbcType="INTEGER"/>
         <result property="word" column="word" jdbcType="VARCHAR"/>
-        <result property="meaning" column="meaning" jdbcType="VARCHAR"/>
-        <result property="ukphone" column="ukphone" jdbcType="VARCHAR"/>
+        <result property="meaning" column="trans" jdbcType="VARCHAR"/>
+        <result property="ukphone" column="pos" jdbcType="VARCHAR"/>
     </resultMap>
 
     <!-- 批量插入 -->
     <insert id="insertBatch" keyProperty="" useGeneratedKeys="true">
-        insert into word.book_of_words(word_id, book_id, word, meaning, ukphone)
+        insert into word.book_of_words(word_id, book_id, word, trans, pos)
         values
         <foreach collection="entities" item="entity" separator=",">
             (#{entity.wordId}, #{entity.bookId}, #{entity.word}, #{entity.meaning}, #{entity.ukphone})
@@ -20,14 +20,14 @@
     </insert>
     <!-- 批量插入或按主键更新 -->
     <insert id="insertOrUpdateBatch" keyProperty="" useGeneratedKeys="true">
-        insert into word.book_of_words(word_id, book_id, word, meaning, ukphone)
+        insert into word.book_of_words(word_id, book_id, word, trans, pos)
         values
         <foreach collection="entities" item="entity" separator=",">
             (#{entity.wordId}, #{entity.bookId}, #{entity.word}, #{entity.meaning}, #{entity.ukphone})
         </foreach>
         on duplicate key update
-        word_id = values(word_id) , book_id = values(book_id) , word = values(word) , meaning = values(meaning) ,
-        ukphone = values(ukphone)
+        word_id = values(word_id) , book_id = values(book_id) , word = values(word) , trans = values(trans) ,
+        pos = values(pos)
     </insert>
 
 </mapper>

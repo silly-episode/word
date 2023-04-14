@@ -22,6 +22,7 @@ import com.boot.entity.WordModule;
 import com.boot.service.PlanService;
 import com.boot.service.UserService;
 import com.boot.service.WordModuleService;
+import com.boot.utils.ActionLogUtils;
 import com.boot.utils.MinIOUtils;
 import com.boot.utils.SnowFlakeUtil;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -32,6 +33,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.time.LocalDateTime;
@@ -78,6 +80,9 @@ public class WordModuleController {
     private PlanService planService;
 
 
+    @Resource
+    private ActionLogUtils actionLogUtils;
+
     /**
      * @param file:       词源和模块头像文件
      * @param wordModule: 单词模块dto
@@ -88,7 +93,7 @@ public class WordModuleController {
      */
     @PostMapping("wordModule")
     @Transactional
-    public Result wordModule(@RequestParam MultipartFile file, WordModule wordModule) throws IOException {
+    public Result wordModule(@RequestParam MultipartFile file, WordModule wordModule, HttpServletRequest request) throws IOException {
         String bucketName = "word";
         Long moduleId = SnowFlakeUtil.getNextId();
         String wordFileType = "application/json";
@@ -156,6 +161,7 @@ public class WordModuleController {
                     .setWordCount(wordCount);
             wordModuleService.save(wordModule);
             log.info("存入mysql正常");
+            actionLogUtils.saveActionLog(request, actionLogUtils.INSERT_BATCH, "导入了 《" + wordModule.getModuleName() + "》 单词模块");
             return Result.success(201, "存入ES正常");
         }
         return Result.success("图片和Mysql正常");
@@ -169,7 +175,7 @@ public class WordModuleController {
      * @Date: 2023/4/11 23:50
      */
     @PostMapping("changeEsWordModule")
-    public Result changeEsWordModule(@RequestParam MultipartFile file, WordModule module) throws IOException {
+    public Result changeEsWordModule(@RequestParam MultipartFile file, WordModule module, HttpServletRequest request) throws IOException {
 
         System.out.println(module);
         Long moduleId = module.getModuleId();
@@ -217,6 +223,7 @@ public class WordModuleController {
                 .set(Plan::getAllWord, wordCount);
         planService.update(updateWrapper);
 
+
 //        删除索引
         try {
             boolean value = elasticsearchClient.exists(builder -> builder.index(oldEsIndex)).value();
@@ -227,7 +234,8 @@ public class WordModuleController {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
+        /*记录日志*/
+        actionLogUtils.saveActionLog(request, actionLogUtils.UPDATE, "更新了 《" + wordModule.getModuleName() + "》 的词源，并删除了旧词源。");
         return Result.success("更换成功");
     }
 
@@ -239,8 +247,9 @@ public class WordModuleController {
      * @Date: 2023/3/31 17:29
      */
     @PutMapping("wordModule")
-    public Result<String> wordModule(@RequestBody WordModule wordModule) {
+    public Result<String> wordModule(@RequestBody WordModule wordModule, HttpServletRequest request) {
         if (wordModuleService.updateById(wordModule)) {
+            actionLogUtils.saveActionLog(request, actionLogUtils.UPDATE, "更新了 《" + wordModule.getModuleName() + "》 单词模块的基础信息");
             return Result.success("更新成功");
         } else {
             return Result.error("更新失败");
@@ -380,7 +389,14 @@ public class WordModuleController {
      * @Date: 2023/4/1 9:25
      */
     @DeleteMapping("wordModule/{moduleId}")
-    public Result wordModule(@PathVariable Long moduleId) {
+    public Result wordModule(@PathVariable Long moduleId, HttpServletRequest request) {
+
+        WordModule wordModule = wordModuleService.getById(moduleId);
+        if (wordModule == null) {
+            return Result.error("该单词模块不存在");
+        }
+
+        actionLogUtils.saveActionLog(request, actionLogUtils.DELETE, "删除了 《" + wordModule.getModuleName() + "》 单词模块");
 
         return Result.success();
     }
@@ -394,7 +410,7 @@ public class WordModuleController {
      * @Date: 2023/3/28 9:43
      */
     @PutMapping("lockOrUnLockModule")
-    public Result<String> lockOrUnLockModule(@RequestBody Map<String, String> map) {
+    public Result<String> lockOrUnLockModule(@RequestBody Map<String, String> map, HttpServletRequest request) {
         System.out.println(map.toString());
         String lockStatus = "lock";
         String lockType = null;
@@ -418,6 +434,12 @@ public class WordModuleController {
             updateWrapper.set("word_module_status", "0");
         }
         if (wordModuleService.update(updateWrapper)) {
+            WordModule wordModule = wordModuleService.getById(moduleId);
+            if (lockStatus.equals(lockType)) {
+                actionLogUtils.saveActionLog(request, actionLogUtils.UPDATE, "锁定了 《" + wordModule.getModuleName() + "》 单词模块");
+            } else {
+                actionLogUtils.saveActionLog(request, actionLogUtils.UPDATE, "解锁了 《" + wordModule.getModuleName() + "》 单词模块");
+            }
             return Result.success("锁定/解锁成功");
         } else {
             return Result.error("锁定/解锁失败");

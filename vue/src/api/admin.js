@@ -37,7 +37,7 @@ export function adminSearch(params) {
 
 
 /**
- * 修改用户信息
+ * 修改管理员信息 log ok
  * @param data
  * @returns {*}
  */
@@ -50,7 +50,7 @@ export function updateAdmin(data) {
 }
 
 /**
- * 管理员信息的导出（excel）
+ * 管理员信息的导出（excel） log ok
  * @returns {*}
  */
 export function adminListExcel(data) {
@@ -63,7 +63,7 @@ export function adminListExcel(data) {
 }
 
 /**
- * 管理员删除用户
+ * 删除管理员 log ok
  * @param params
  * @returns {*}
  */
@@ -75,7 +75,7 @@ export function deleteAdmin(params) {
 }
 
 /**
- * 重置管理员密码
+ * 重置管理员密码 log ok
  * @returns {*}
  */
 export function resetAdminPwd(data) {
@@ -87,7 +87,7 @@ export function resetAdminPwd(data) {
 }
 
 /**
- * 修改管理员描述
+ * 修改管理员描述 log ok
  * @param data
  * @returns {*}
  */
@@ -100,7 +100,7 @@ export function updateAdminRemark(data) {
 }
 
 /**
- * 锁定和解锁管理员
+ * 锁定和解锁管理员 log ok
  * @param data
  * @returns {*}
  */
@@ -114,7 +114,7 @@ export function lockOrUnLockAdmin(data) {
 
 
 /**
- * 添加管理员
+ * 添加管理员 log ok
  * @param data
  * @returns {*}
  */
@@ -128,7 +128,7 @@ export function addAdmin(data) {
 
 
 /**
- * 用户信息的导出（excel）
+ * 用户信息的导出（excel） log ok
  * @returns {*}
  */
 export function userListExcel(data) {
@@ -142,7 +142,7 @@ export function userListExcel(data) {
 
 
 /**
- * 管理员重置密码
+ * 管理员重置密码 log ok
  * @returns {*}
  */
 export function resetPwd(data) {
@@ -154,7 +154,7 @@ export function resetPwd(data) {
 }
 
 /**
- * 修改用户信息
+ * 修改用户信息 log ok
  * @param data
  * @returns {*}
  */
@@ -167,7 +167,7 @@ export function updateUser(data) {
 }
 
 /**
- * 管理员修改描述
+ * 管理员修改描述 log ok
  * @param data
  * @returns {*}
  */
@@ -180,7 +180,7 @@ export function updateRemark(data) {
 }
 
 /**
- * 锁定和解锁用户
+ * 锁定和解锁用户 log ok
  * @param data
  * @returns {*}
  */
@@ -193,7 +193,7 @@ export function lockOrUnLockUser(data) {
 }
 
 /**
- * 管理员删除用户
+ * 管理员删除用户 log ok
  * @param params
  * @returns {*}
  */
@@ -205,7 +205,7 @@ export function deleteUser(params) {
 }
 
 /**
- * 登录日志
+ * 登录日志查询
  * @param data
  * @returns {*}
  */
@@ -218,7 +218,7 @@ export function commonUserLog(data) {
 }
 
 /**
- * 登录日志导出
+ * 登录日志导出 log ok
  * @param data
  * @returns {*}
  */
@@ -246,7 +246,7 @@ export function emotionWordsSearch(data) {
 }
 
 /**
- * 励志语的一条录入
+ * 励志语的一条录入 log ok
  * @param data
  * @returns {*}
  */
@@ -260,7 +260,7 @@ export function insertWord(data) {
 
 /**
  * 批量删除
- * @param data
+ * @param data log ok
  * @returns {*}
  */
 export function deleteWords(data) {
@@ -273,7 +273,7 @@ export function deleteWords(data) {
 
 
 /**
- * 更新一条励志语
+ * 更新一条励志语 log ok
  * @param data
  * @returns {*}
  */
@@ -301,7 +301,7 @@ export function moduleSearch(data) {
 
 
 /**
- * 更新一个单词模块
+ * 更新一个单词模块 log ok
  * @param data
  * @returns {*}
  */
@@ -314,7 +314,7 @@ export function updateModule(data) {
 }
 
 /**
- * 删除一个单词模块
+ * 删除一个单词模块 log ok
  * @param params
  * @returns {*}
  */
@@ -327,7 +327,7 @@ export function deleteModule(params) {
 
 
 /**
- * 锁定/解锁一个单词模块
+ * 锁定/解锁一个单词模块 log ok
  * @param data
  * @returns {*}
  */
@@ -341,7 +341,7 @@ export function lockOrUnLockModule(data) {
 
 
 /**
- * 上传单模块
+ * 上传单模块 log ok
  * @returns {*}
  * @param data
  */
@@ -355,7 +355,7 @@ export function uploadModule(data) {
 
 
 /**
- * 更换词源
+ * 更换词源 log ok
  * @returns {*}
  * @param data
  */
@@ -383,7 +383,7 @@ export function articleSearch(data) {
 
 
 /**
- * 修改文章
+ * 修改文章 log ok
  * @returns {*}
  * @param data
  */

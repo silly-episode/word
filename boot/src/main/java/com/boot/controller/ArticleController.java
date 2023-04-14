@@ -4,10 +4,7 @@ import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.elasticsearch._types.SortOptionsBuilders;
 import co.elastic.clients.elasticsearch._types.SortOrder;
 import co.elastic.clients.elasticsearch._types.query_dsl.QueryBuilders;
-import co.elastic.clients.elasticsearch.core.DeleteRequest;
-import co.elastic.clients.elasticsearch.core.DeleteResponse;
-import co.elastic.clients.elasticsearch.core.IndexResponse;
-import co.elastic.clients.elasticsearch.core.SearchRequest;
+import co.elastic.clients.elasticsearch.core.*;
 import co.elastic.clients.elasticsearch.core.search.Hit;
 import co.elastic.clients.json.JsonData;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -126,41 +123,21 @@ public class ArticleController {
      * @Description: 修改文章
      * @Date: 2023/3/20 11:44
      */
-//    @PutMapping("article")
-//    public Result articleChange(@RequestBody Map<String, String> map,HttpServletRequest request) throws IOException {
-//        long articleId = Long.parseLong(map.get("articleId"));
-//
-//        /*判断是否存在*/
-//        SearchRequest searchRequest = new SearchRequest.Builder()
-//                //去哪个索引里搜索
-//                .index("article")
-//                .query(
-//                        QueryBuilders
-//                                .term()
-//                                .field("articleId")
-//                                .value(articleId)
-//                                .build()._toQuery()
-//                )
-//                .size(1)
-//                .build();
-//        List<Hit<Article>> hits = elasticsearchClient.search(searchRequest, Article.class).hits().hits();
-//        Article article = 1 == hits.size() ? hits.get(0).source() : null;
-//
-//        // 构建修改文档的请求
-//        UpdateResponse<Article> response = elasticsearchClient
-//                .update(e -> e.index("article")
-//                        .id(article.get("articleId"))
-//                        .doc(article), Article.class);
-//        // 打印请求结果
-//        System.out.println(response.result());
-//        if ("updated".equals(response.result().jsonValue())) {
-//            actionLogUtils.saveActionLog(request,actionLogUtils.UPDATE,"修改了 《"+article.getArticleTitle()+"》 的文章");
-//
-//            return Result.success("修改成功");
-//        } else {
-//            return Result.error("修改失败");
-//        }
-//    }
+    @PutMapping("article")
+    public Result articleChange(@RequestBody Article article, HttpServletRequest request) throws IOException {
+
+        // 构建修改文档的请求
+        UpdateResponse<Article> response = elasticsearchClient
+                .update(e -> e.index("article")
+                        .id(article.getArticleId())
+                        .doc(article), Article.class);
+        if ("updated".equals(response.result().jsonValue())) {
+            actionLogUtils.saveActionLog(request, actionLogUtils.UPDATE, "修改了 《" + article.getArticleTitle() + "》 的文章");
+            return Result.success("修改成功");
+        } else {
+            return Result.error("修改失败");
+        }
+    }
 
     /**
      * @param articleSearchDto:

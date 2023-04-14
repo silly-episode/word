@@ -34,6 +34,8 @@ import java.time.LocalTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 
@@ -166,8 +168,12 @@ public class UserController {
                 userService.updateById(userBean);
             }
             loginLog.setResult(successResult).setLogRemark("用户登录成功");
-            System.out.println(loginLog.toString());
-            return Result.success("登录成功", jwtUtils.sign(String.valueOf(userBean.getUserId())));
+            Map<String, Object> map = new HashMap<>(2);
+            String token = jwtUtils.sign(String.valueOf(userBean.getUserId()));
+            UserMsgDto userInfo = BeanDtoVoUtils.convert(userBean, UserMsgDto.class);
+            map.put("token", token);
+            map.put("userInfo", userInfo);
+            return Result.success("登录成功", map);
         }
         return Result.error("系统异常");
     }

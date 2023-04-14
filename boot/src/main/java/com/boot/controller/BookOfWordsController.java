@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.boot.common.result.Result;
 import com.boot.dto.BookOfWordSearchDto;
+import com.boot.dto.CollectWordsDto;
 import com.boot.entity.BookOfWords;
 import com.boot.entity.WordBooks;
 import com.boot.service.BookOfWordsService;
@@ -16,9 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * (BookOfWords)表控制层
@@ -49,7 +48,18 @@ public class BookOfWordsController {
      */
     @DeleteMapping("word/{wordId}")
     public Result words(@PathVariable Long wordId) {
+
+        BookOfWords word = bookOfWordsService.getById(wordId);
+        if (word == null) {
+            return Result.error("单词不存在");
+        }
         if (bookOfWordsService.removeById(wordId)) {
+            /*修改单词本*/
+            WordBooks wordBooks = wordBooksService.getById(word.getBookId());
+            wordBooks
+                    .setWordCount(wordBooks.getWordCount() - 1)
+                    .setBookUpdateTime(LocalDateTime.now());
+            wordBooksService.updateById(wordBooks);
             return Result.success("删除成功");
         } else {
             return Result.error("删除失败");
@@ -78,20 +88,53 @@ public class BookOfWordsController {
     }
 
     /**
-     * @param bookOfWords:
      * @Return: Result
      * @Author: DengYinzhe
      * @Description: TODO 收藏单词
      * @Date: 2023/2/27 19:28
      */
     @PostMapping("word")
-    public Result word(@RequestBody BookOfWords bookOfWords) {
-        bookOfWords.setWordInsertTime(LocalDateTime.now());
-        if (bookOfWordsService.save(bookOfWords)) {
-            return Result.success("插入成功");
-        } else {
-            return Result.error("插入失败");
+    public Result word(@RequestBody CollectWordsDto collectWordsDto) {
+
+        if (collectWordsDto.getBookId().size() == 0) {
+            return Result.error("未选择单词本");
         }
+        /*去重和计数初始化*/
+        List<Long> bookIdList = new ArrayList<Long>(new LinkedHashSet<Long>(collectWordsDto.getBookId()));
+        Map<Long, Integer> map = new HashMap<>(bookIdList.size());
+        for (Long aLong : bookIdList) {
+            map.put(aLong, 0);
+        }
+        /*计数和拼装数据*/
+        List<BookOfWords> wordList = new ArrayList<>(collectWordsDto.getBookId().size());
+        for (Long aLong : collectWordsDto.getBookId()) {
+            BookOfWords word = new BookOfWords()
+                    .setWord(collectWordsDto.getWord())
+                    .setWordInsertTime(LocalDateTime.now())
+                    .setBookId(aLong)
+                    .setMeaning(collectWordsDto.getMeaning())
+                    .setUkphone(collectWordsDto.getUkphone());
+            wordList.add(word);
+            map.put(aLong, map.get(aLong) + 1);
+        }
+
+        /*拼装数据*/
+        List<WordBooks> booksList = new ArrayList<>(bookIdList.size());
+        map.forEach((aLong, integer) -> {
+            WordBooks wordBooks = wordBooksService.getById(aLong);
+            wordBooks
+                    .setBookUpdateTime(LocalDateTime.now())
+                    .setWordCount(wordBooks.getWordCount() + integer);
+            booksList.add(wordBooks);
+        });
+        /*存数*/
+        if (bookOfWordsService.saveBatch(wordList) && wordBooksService.updateBatchById(booksList)) {
+            return Result.success("收藏成功");
+        } else {
+            return Result.error("收藏失败");
+        }
+
+
     }
 
     /**

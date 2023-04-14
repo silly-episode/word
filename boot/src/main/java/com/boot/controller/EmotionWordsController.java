@@ -9,11 +9,13 @@ import com.boot.common.result.Result;
 import com.boot.dto.EmotionWordsSearchDto;
 import com.boot.entity.EmotionWords;
 import com.boot.service.EmotionWordsService;
+import com.boot.utils.ActionLogUtils;
 import com.boot.utils.ThreadLocalUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -34,6 +36,8 @@ public class EmotionWordsController {
      */
     @Resource
     private EmotionWordsService emotionWordsService;
+    @Resource
+    private ActionLogUtils actionLogUtils;
 
     /**
      * @param emotionWords:
@@ -43,9 +47,10 @@ public class EmotionWordsController {
      * @Date: 2023/3/29 17:10
      */
     @PostMapping("emotionWords")
-    public Result<String> emotionWords(@RequestBody EmotionWords emotionWords) {
+    public Result<String> emotionWords(@RequestBody EmotionWords emotionWords, HttpServletRequest request) {
         emotionWords.setEmoCreateTime(LocalDateTime.now());
         if (emotionWordsService.save(emotionWords)) {
+            actionLogUtils.saveActionLog(request, actionLogUtils.INSERT, "录入了一条ID为 " + emotionWords.getEmoId() + " 的励志语");
             return Result.success("插入成功");
         } else {
             return Result.success("插入失败");
@@ -60,7 +65,7 @@ public class EmotionWordsController {
      * @Date: 2023/3/31 14:07
      */
     @PostMapping("emotionWordsExcel")
-    public Result emotionWordsExcel(MultipartFile file) throws IOException {
+    public Result emotionWordsExcel(MultipartFile file, HttpServletRequest request) throws IOException {
         System.out.println("开始导入");
         try {
             EasyExcel.read(
@@ -70,8 +75,10 @@ public class EmotionWordsController {
                     .sheet().doRead();
             List<String> errorList = (List<String>) ThreadLocalUtils.get("errorMsg");
             if (errorList.size() > 0) {
+                actionLogUtils.saveActionLog(request, actionLogUtils.INSERT_BATCH, "批量导入了励志语,失败了 " + errorList.size() + " 条");
                 return Result.result(4077, "部分导入成功", errorList);
             } else {
+                actionLogUtils.saveActionLog(request, actionLogUtils.INSERT_BATCH, "批量导入了励志语,全都成功了");
                 return Result.success("导入成功");
             }
         } catch (IOException e) {
@@ -89,9 +96,10 @@ public class EmotionWordsController {
      * @Date: 2023/3/29 17:17
      */
     @PutMapping("emotionWords")
-    public Result<String> emotionWord(@RequestBody EmotionWords emotionWords) {
+    public Result<String> emotionWord(@RequestBody EmotionWords emotionWords, HttpServletRequest request) {
         emotionWords.setEmoCreateTime(LocalDateTime.now());
         if (emotionWordsService.updateById(emotionWords)) {
+            actionLogUtils.saveActionLog(request, actionLogUtils.UPDATE, "更新了ID为 " + emotionWords.getEmoId() + " 的励志语");
             return Result.success("更新成功");
         } else {
             return Result.success("更新失败");
@@ -106,8 +114,9 @@ public class EmotionWordsController {
      * @Date: 2023/3/29 17:20
      */
     @DeleteMapping("emotionWords")
-    public Result<String> emotionWord(@RequestBody List<EmotionWords> emotionWordsList) {
+    public Result<String> emotionWord(@RequestBody List<EmotionWords> emotionWordsList, HttpServletRequest request) {
         if (emotionWordsService.removeBatchByIds(emotionWordsList)) {
+            actionLogUtils.saveActionLog(request, actionLogUtils.DELETE_BATCH, "批量删除了 " + emotionWordsList.size() + " 条励志语");
             return Result.success("批量删除成功");
         } else {
             return Result.success("批量删除失败");
