@@ -57,6 +57,7 @@
       </div>
     </el-main>
     <PlanView ref="plan"></PlanView>
+    <Login ref="login" @beLogin="getWordModule"></Login>
   </div>
 </template>
 
@@ -64,10 +65,12 @@
 import { wordModuleById } from '@/api/wordList'
 import { imageUrl } from '@/utils/img.js'
 import PlanView from './PlanView.vue'
+import Login from './Login.vue'
 export default {
   name: 'WordModule',
   data() {
     return {
+      token: '',
       path: '',
       planExist: false,
       moduleId: '',
@@ -76,16 +79,16 @@ export default {
       remainder: 0
     }
   },
-  components: { PlanView },
+  components: { PlanView, Login },
   methods: {
-    getWordModule(moduleId) {
-      wordModuleById(moduleId)
+    getWordModule() {
+      wordModuleById(this.moduleId)
         .then((res) => {
-          // console.log(res)
+          // console.log('单词模块信息',res)
           if (res.code == 200) {
             this.planExist = res.data.planExist
             this.moduleInfo = res.data.wordModule
-            this.path = imageUrl(moduleId)
+            this.path = imageUrl(this.moduleId)
             this.sum = (res.data.wordModule.wordCount / 20).toFixed(0) - 0
             this.remainder = res.data.wordModule.wordCount % 20
           }
@@ -96,8 +99,12 @@ export default {
     },
 
     joinPlan() {
-      this.$refs.plan.show({ wordCount: this.moduleInfo.wordCount, moduleId: this.moduleId })
-      this.planExist = true
+      if (!this.token) this.$refs.login.showLogin()
+      else {
+        this.$refs.plan.show({ wordCount: this.moduleInfo.wordCount, moduleId: this.moduleId })
+        this.planExist = true
+      }
+
     },
 
     goTo(num) {
@@ -109,14 +116,15 @@ export default {
 
   },
   created() {
+    this.token = window.sessionStorage.getItem('token')
     if (this.$route.params.moduleId) {
       window.sessionStorage.setItem('moduleId', this.$route.params.moduleId)
       this.moduleId = this.$route.params.moduleId
-      this.getWordModule(this.moduleId)
+      this.getWordModule()
     } else {
       const moduleId = window.sessionStorage.getItem('moduleId')
       this.moduleId = moduleId
-      this.getWordModule(moduleId)
+      this.getWordModule()
     }
   }
 }

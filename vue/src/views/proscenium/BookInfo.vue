@@ -40,9 +40,9 @@
           min-width="10%"
         ></el-table-column>
         <el-table-column prop="word" label="单词"> </el-table-column>
-        <el-table-column prop="ukphone" label="词性" width="50px">
+        <el-table-column prop="pos" label="词性" width="50px">
         </el-table-column>
-        <el-table-column prop="meaning" label="释义"> </el-table-column>
+        <el-table-column prop="trans" label="释义"> </el-table-column>
         <el-table-column prop="wordInsertTime" label="加入时间">
         </el-table-column>
         <el-table-column label="操作" width="80px">

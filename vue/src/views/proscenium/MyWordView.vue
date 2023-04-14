@@ -19,7 +19,7 @@
               创建时间：{{ item.bookCreateTime.substring(0, 10) }}
             </p>
           </div>
-          <div class="li flex_center_center" @click="visibleAdd = true">
+          <div class="li flex_center_center" @click="showAddBook">
             <i class="el-icon-plus font_30 grey"></i>
           </div>
         </div>
@@ -54,16 +54,10 @@
             <el-button
               type="success"
               icon="el-icon-edit"
-              @click="$refs.plan.show(mainPlan)"
+              @click="editMain"
             ></el-button>
-            <el-button type="primary">
-              <router-link
-                :to="{
-                  name: 'word',
-                  params: { userId: userInfo.userId },
-                }"
-                >开始背诵</router-link
-              >
+            <el-button type="primary" @click="startRecite">
+              开始背诵
             </el-button>
           </div>
         </div>
@@ -206,7 +200,8 @@
         <el-button type="primary" @click="addBook">确 定</el-button>
       </span>
     </el-dialog>
-    <PlanView ref="plan"></PlanView>
+    <PlanView ref="plan" @ok="getPlanList"></PlanView>
+    <Login ref="login" @beLogin="init"></Login>
   </el-container>
 </template>
 
@@ -215,9 +210,12 @@ import { allBook, allPlan, deletePlan, setMain, addBook, hotIntegration, swearSe
 import { userInfo } from '@/api/user'
 import { avatarUrl } from '@/utils/img.js'
 import PlanView from './PlanView.vue'
+import Login from './Login.vue'
+
 export default {
   data() {
     return {
+      token: '',
       visible: false,
       percentage: 0,
       userName: '测试号1',
@@ -242,7 +240,7 @@ export default {
       btnDisable: false,
     }
   },
-  components: { PlanView },
+  components: { PlanView, Login },
   methods: {
     getBookList() {
       allBook()
@@ -262,7 +260,7 @@ export default {
           if (res.code == 200) {
             this.mainPlan = res.data.mainPlan
             this.planList = res.data.commonPlan
-            this.percentage = (this.mainPlan.finishedWord * 100) / this.mainPlan.allWord - 0
+            if (this.mainPlan) this.percentage = (this.mainPlan.finishedWord * 100) / this.mainPlan.allWord - 0
           }
         })
         .catch((err) => {
@@ -275,9 +273,7 @@ export default {
         .then((res) => {
           // console.log(res)
           if (res.code == 200) {
-            this.userInfo = res.data
 
-            this.btnDisable = res.data.swear
           }
         })
         .catch((err) => {
@@ -288,9 +284,8 @@ export default {
     getIntegralList() {
       hotIntegration(this.queryInfo1)
         .then((res) => {
-          console.log(res)
+          // console.log(res)
           if (res.code == 200) {
-            console.log('积分')
             this.IntegralList = res.data.records
             this.total1 = res.data.total
           }
@@ -303,9 +298,8 @@ export default {
     getSwearList() {
       swearSearch(this.queryInfo2)
         .then((res) => {
-          console.log(res)
+          // console.log(res)
           if (res.code == 200) {
-            console.log('发誓列表')
             this.SwearList = this.trunImg(res.data.records)
             this.total2 = res.data.total
           }
@@ -321,7 +315,6 @@ export default {
         list[index].headImage = avatarUrl(item.userId)
       })
       return list
-
     },
 
     removePlan(planId) {
@@ -356,12 +349,15 @@ export default {
           console.log('err', err)
         })
     },
-
+    showAddBook() {
+      if (this.token) this.visibleAdd = true
+      else this.$refs.login.showLogin()
+    },
     addBook() {
       const bookName = this.bookName
       addBook({ bookName })
         .then((res) => {
-          console.log(res)
+          // console.log(res)
           if (res.code == 200) {
             this.visibleAdd = false
             this.$message.success('新增成功！')
@@ -376,34 +372,65 @@ export default {
       this.visibleAdd = false
       this.bookName = ''
     },
+
+    editMain() {
+      if (this.token) this.$refs.plan.show(this.mainPlan)
+      else this.$refs.login.showLogin()
+    },
+
+    startRecite() {
+      if (this.token) this.$router.push({
+        name: 'word',
+        params: { userId: this.userInfo.userId }
+      })
+      else this.$refs.login.showLogin()
+    },
+
     goTo(bookId) {
       this.$router.push({
         name: 'bookInfo',
         params: { bookId }
       })
     },
-
     // 发誓
     vow() {
-      this.btnDisable = true
       this.visible = false
-      swear()
-        .then((res) => {
-          console.log('res', res)
-          if (res.code == 200) this.$message.success('发誓成功！')
-        })
-        .catch((err) => {
-          console.log('err', err)
-        })
+      if (this.token) {
+        this.btnDisable = true
+        swear()
+          .then((res) => {
+            // console.log('res', res)
+            if (res.code == 200) this.$message.success('发誓成功！')
+          })
+          .catch((err) => {
+            console.log('err', err)
+          })
+      } else this.$refs.login.showLogin()
+
+    },
+    init() {
+      this.getBookList()
+      this.getPlanList()
+      this.getIntegralList()
+      this.getSwearList()
+      const userInfo = JSON.parse(window.sessionStorage.getItem('userInfo'))
+      if (userInfo) {
+        this.userInfo = userInfo
+        this.btnDisable = userInfo.swear
+      }
     }
   },
   created() {
-    this.getBookList()
-    this.getPlanList()
-    this.getUserInfo()
-    this.getIntegralList()
-    this.getSwearList()
+    const token = window.sessionStorage.getItem('token')
+    this.token = token
+
+    if (token) this.init()
+  },
+  mounted() {
+    console.log('token',this.token)
+    if (!this.token) this.$refs.login.showLogin()
   }
+
 }
 </script>
 

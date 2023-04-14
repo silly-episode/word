@@ -49,7 +49,7 @@
         <div class="bg_grey font_14 font_bold padding_10">新增词表</div>
         <ol class="cibiao">
           <li
-            class="flex_center"
+            class="flex_center pointer"
             v-for="(item, index) in rotationChart"
             :key="item.moduleId"
             @click="goTo(item.moduleId)"
@@ -63,7 +63,7 @@
         <div class="bg_grey font_14 font_bold padding_10">热门词表</div>
         <ol class="cibiao">
           <li
-            class="flex_center"
+            class="flex_center pointer"
             v-for="(item, index) in hotList"
             :key="item.moduleId"
             @click="goTo(item.moduleId)"

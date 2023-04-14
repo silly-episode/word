@@ -86,6 +86,7 @@ export default {
           // console.log(res)
           if (res.code == 200) {
             this.closedPlan()
+            this.$emit('ok')
             this.$message.success(`${this.editFlag ? '修改' : '加入'}成功！`)
           }
 
@@ -101,6 +102,7 @@ export default {
       this.dayWord = ''
       this.days = ''
       this.planId = ''
+      this.options = []
     },
   }
 }

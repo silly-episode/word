@@ -52,7 +52,7 @@
               :class="`${
                 showZh ? 'purple' : 'deep_grey'
               } font_26 iconfont icon-wangluo`"
-              @click="showZh = !showZh"
+              @click="zh"
             ></span>
           </el-tooltip>
         </el-col>
@@ -88,11 +88,15 @@
       </el-row>
     </div>
     <div v-if="complete" class="complete">
-      <div class="font_60">已完成！</div>
+      <div class="font_40">
+        {{ planView ? (stage ? "第一阶段" : "第二阶段") : "" }}已完成！
+      </div>
       <div class="hei_100"></div>
       <div class="flex_between_center font_22">
         <div @click="again" class="btn">Again</div>
-        <div @click="back" class="btn">Back</div>
+        <div @click="back" class="btn">
+          {{ planView ? "Next" : "Back" }}
+        </div>
       </div>
     </div>
     <div v-else>
@@ -115,14 +119,44 @@
               class="lineBottom redBottom"
             ></div>
           </div>
+          <el-popover placement="right" width="240" v-model="visible">
+            <p class="font_bold font_16 margin_b_10 text_center">
+              请选择单词本
+            </p>
+            <el-checkbox-group v-model="checkList" class="padding_10">
+              <el-checkbox
+                v-for="item in bookList"
+                :key="item.bookId"
+                :label="item.bookId"
+                class="margin_b_10 block"
+                >{{ item.bookName }}</el-checkbox
+              >
+            </el-checkbox-group>
+
+            <div style="text-align: right; margin: 0">
+              <el-button size="mini" type="text" @click="visible = false"
+                >取消</el-button
+              >
+              <el-button type="primary" size="mini" @click="collectWord"
+                >确定</el-button
+              >
+            </div>
+            <i
+              slot="reference"
+              :class="`el-icon-star-${
+                collectList[wordIndex] ? 'on orange' : 'off grey'
+              } font_30 margin_l_30`"
+            ></i>
+          </el-popover>
         </div>
         <div
-          v-show="showZh"
           class="wordZh"
           :style="`left: calc(50% - ${sentenceLength * 5.4}px)`"
         >
-          <div class="margin_b_15">例句：{{ sentenceEn }}</div>
-          <div class="margin_b_15">例句释义：{{ sentenceZh }}</div>
+          <div v-show="showZh">
+            <div class="margin_b_15">例句：{{ sentenceEn }}</div>
+            <div class="margin_b_15">例句释义：{{ sentenceZh }}</div>
+          </div>
           <span class="margin_r_10">{{ pos }}</span>
           <span>{{ trans }}</span>
         </div>
@@ -152,12 +186,18 @@
 </template>
 <script>
 import Timer from '@/components/Timer.vue'
-import { getWordByUserId, getWordByNum, getWordByBookId } from '@/api/word.js'
+import { getWordByUserId, getWordByNum, getWordByBookId, collectWord } from '@/api/word.js'
+import { allBook } from '@/api/wordList'
 export default {
   name: "WordView",
   components: { Timer },
   data() {
     return {
+      stage: true,//ture第一阶段，false第二阶段
+      planView: false,//是否是计划进的练习页面
+      skipSum: 0,
+      visible: false,//展示选择收藏单词本的弹窗
+      checkList: [],
       complete: false,//二十个单词都完成了
       wordIndex: 0,
       title: '',
@@ -166,9 +206,12 @@ export default {
       List: [],//二十个单词对象列表
       wordlength: 0,//单词长度
       sentenceLength: 0,
+      word: '',
       wordArr: [],
       rwList: [],
+      collectList: [],
       inputWord: [],
+      bookList: [],//单词本列表
       sentenceEn: '',
       sentenceZh: '',
       pos: '',
@@ -199,47 +242,62 @@ export default {
   },
   methods: {
     getList(params) {
+      // 模块进
       if (params.num && params.moduleId) getWordByNum(params)
         .then((res) => {
           // console.log('res', res.data.word)
           if (res.code == 200) {
             this.List = res.data.word
             this.title = res.data.wordPlan.moduleName
+            for (let i = 0; i < this.List.length; i++) {
+              this.collectList[i] = false
+            }
             this.getWord(res.data.word[0].content.word)
           }
         })
         .catch((err) => {
           console.log('err', err)
         })
-      else if (params.userId) getWordByUserId({ userId: params.userId })
-        .then((res) => {
-          // console.log('res', res.data.word)
-          if (res.code == 200) {
-            this.List = res.data.word
-            this.title = res.data.wordPlan.moduleName
-            this.getWord(res.data.word[0].content.word)
-          }
-        })
-        .catch((err) => {
-          console.log('err', err)
-        })
+      // 计划进（token
+      else if (params.userId) {
+        this.planView = true
+        getWordByUserId({ userId: params.userId })
+          .then((res) => {
+            // console.log('res', res.data.word)
+            if (res.code == 200) {
+              this.List = res.data.word
+              this.title = res.data.wordPlan.moduleName
+              for (let i = 0; i < this.List.length; i++) {
+                this.collectList[i] = false
+              }
+              this.getWord(res.data.word[0].content.word)
+            }
+          })
+          .catch((err) => {
+            console.log('err', err)
+          })
+      }
+      // 单词本进
       else if (params.bookId) getWordByBookId({ bookId: params.bookId })
         .then((res) => {
           // console.log('res', res.data.word)
           if (res.code == 200) {
             this.List = res.data.word
             this.title = res.data.wordPlan.moduleName
+            for (let i = 0; i < this.List.length; i++) {
+              this.collectList[i] = false
+            }
             this.getWord(res.data.word[0].content.word)
           }
         })
         .catch((err) => {
           console.log('err', err)
         })
-
     },
 
     getWord(data) {
       // console.log(data)
+      this.word = data.wordHead
       this.wordArr = data.wordHead.split('')
       this.sentenceEn = data.content.sentence.sentences[0].sContent
       this.sentenceLength = this.sentenceEn.length
@@ -253,6 +311,44 @@ export default {
         else this.rwList[i] = -1
       }
       this.playWord()
+    },
+
+    getBookList() {
+      allBook()
+        .then((res) => {
+          // console.log(res)
+          if (res.code == 200) this.bookList = res.data
+        })
+        .catch((err) => {
+          console.log('err', err)
+        })
+    },
+
+    // 收藏单词
+    collectWord() {
+      this.visible = false
+      const data = {
+        bookId: this.checkList,
+        word: this.word,
+        trans: this.trans || '',
+        pos: this.pos || '',
+        sentenceEn: this.sentenceEn || '',
+        sentenceZh: this.sentenceZh || ''
+      }
+      // console.log(data)
+      collectWord(data)
+        .then((res) => {
+          console.log(res)
+          if (res.code == 200) {
+            this.$set(this.collectList, this.wordIndex, true)
+            this.checkList = []
+            this.$message.success('收藏成功！')
+          }
+        })
+        .catch((err) => {
+          console.log('err', err)
+        })
+
     },
 
     // 键盘事件
@@ -272,7 +368,7 @@ export default {
             this.audio.autoplay = true;
             this.audio.src = this.clickUrl;
           }
-
+          if (inputLength >= this.wordlength) this.finish()
         }
         else {
           if (this.showEng) this.$set(this.rwList, inputLength - 1, 2)
@@ -282,7 +378,7 @@ export default {
           this.hasWrong()
         }
         this.info.correctRate = (this.info.correctNum / this.info.inputNum).toFixed(2)
-        if (inputLength >= this.wordlength) this.finish()
+
       } else this.Start()
     },
 
@@ -334,6 +430,7 @@ export default {
     // 跳过
     skip() {
       if (this.complete) return;
+      this.word = ''
       this.wordArr = []
       this.inputWord = []
       this.sentenceEn = ''
@@ -357,8 +454,23 @@ export default {
       this.Start()
     },
 
+    // 下一阶段/返回
     back() {
-      this.$router.back() //后退
+      if (this.planView) {
+        if (this.stage) {//进入第二阶段
+          this.stage = false
+          this.complete = false
+          this.wordIndex = 0
+          this.showZh = false
+          this.showEng = false
+          this.getWord(this.List[0].content.word)
+
+          this.Start()
+        } else {
+          console.log('进入第三阶段')
+        }
+      }
+      else this.$router.back() //后退
     },
 
     // 循环播放
@@ -374,12 +486,20 @@ export default {
     },
     // 英文显示
     en() {
-      this.showEng = !this.showEng
-      for (let i = 0; i < this.wordlength; i++) {
-        if (this.rwList[i] == 0) continue;//已经有正确字母了就保存
-        if (this.showEng) this.rwList[i] = 1
-        else this.rwList[i] = -1
+      if (this.stage) {
+        this.showEng = !this.showEng
+        for (let i = 0; i < this.wordlength; i++) {
+          if (this.rwList[i] == 0) continue;//已经有正确字母了就保存
+          if (this.showEng) this.rwList[i] = 1
+          else this.rwList[i] = -1
+        }
       }
+
+    },
+
+    // 中文显示
+    zh() {
+      if (this.stage) this.showZh = !this.showZh
     },
 
     // 时间转换
@@ -399,7 +519,9 @@ export default {
     }
   },
   created() {
+    console.log(this.$route.params)
     if (JSON.stringify(this.$route.params) !== "{}") {
+      console.log(this.$route.params)
       window.sessionStorage.setItem('params', JSON.stringify(this.$route.params))
       this.getList(this.$route.params)
     } else {
@@ -415,6 +537,7 @@ export default {
   mounted() {
     // 绑定监听事件
     window.addEventListener("keydown", this.keyDown);
+    this.getBookList()
     // if (isStart && !isFinish) {
     //   window.addEventListener('keydown', onKeydown)
     // }
@@ -423,7 +546,8 @@ export default {
     document.querySelector('body').setAttribute('style', 'background:#faf9ff')
   },
   beforeDestroy() {
-    window.removeEventListener('keydown')
+    window.removeEventListener('keydown', this.keyDown)
+    document.querySelector('body').setAttribute('style', 'background:#ffffff')
   },
 
 };
@@ -525,9 +649,10 @@ export default {
 
 .complete {
   position: absolute;
-  left: 34%;
+  text-align: center;
+  left: 30%;
   top: 30%;
-  width: 470px;
+  width: 40%;
   text-align: center;
   color: #4b5563;
 }

@@ -28,3 +28,11 @@ export function getWordByBookId(params) {
 //         data: data
 //     })
 // }
+
+export function collectWord(data) {
+    return request({
+        url: '/bookOfWords/word',
+        method: 'post',
+        data: data
+    })
+}

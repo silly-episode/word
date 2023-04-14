@@ -102,6 +102,10 @@ li {
     box-sizing: border-box;
 }
 
+.block {
+    display: block
+}
+
 .relative {
     position: relative;
 }
@@ -442,6 +446,10 @@ li {
 
 .font_30 {
     font-size: 30px;
+}
+
+.font_40 {
+    font-size: 40px;
 }
 
 .font_60 {

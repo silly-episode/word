@@ -23,22 +23,27 @@
         </el-menu-item>
       </el-menu>
 
-      <el-dropdown trigger="click" @command="handleJump">
-        <span class="el-dropdown-link margin_r_20">
-          <el-avatar
-            :size="60"
-            src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"
-          >
-          </el-avatar>
-        </span>
-        <el-dropdown-menu slot="dropdown">
-          <el-dropdown-item command="own"> 个人中心 </el-dropdown-item>
-          <el-dropdown-item command="login">{{
-            isLogin ? "退出登录" : "登录"
-          }}</el-dropdown-item>
-          <el-dropdown-item command="assist"> 用户辅助 </el-dropdown-item>
-        </el-dropdown-menu>
-      </el-dropdown>
+      <div class="margin_r_20 flex_center">
+        <span @click="reciteWord" class="margin_r_20 font_16 pointer"
+          >开始背单词</span
+        >
+        <el-dropdown trigger="click" @command="handleJump">
+          <span class="el-dropdown-link">
+            <el-avatar
+              :size="60"
+              src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"
+            >
+            </el-avatar>
+          </span>
+          <el-dropdown-menu slot="dropdown">
+            <el-dropdown-item command="own"> 个人中心 </el-dropdown-item>
+            <el-dropdown-item command="login">{{
+              isLogin ? "退出登录" : "登录"
+            }}</el-dropdown-item>
+            <el-dropdown-item command="assist"> 用户辅助 </el-dropdown-item>
+          </el-dropdown-menu>
+        </el-dropdown>
+      </div>
     </el-header>
     <el-main>
       <router-view></router-view>
@@ -55,6 +60,7 @@ export default {
   data() {
     return {
       isLogin: false,
+      userInfo: {},
       activeIndex: '/wordlist',
       menulist: [{
         path: 'wordlist',
@@ -93,19 +99,30 @@ export default {
       else this.$router.push({ name })
 
     },
+
     saveNavState(activePath) {
       // console.log(activePath)
       window.sessionStorage.setItem("activePath", activePath);
       this.activePath = activePath;
     },
+
+    reciteWord() {
+      if (this.isLogin) this.$router.push({
+        name: 'word',
+        params: { userId: this.userInfo.userId }
+      })
+      else this.$refs.login.showLogin()
+    },
+
     beLogin() {
       this.isLogin = true
     }
   },
   created() {
     const token = window.sessionStorage.getItem("token");
-    console.log('token', token)
     this.isLogin = token ? true : false
+    this.userInfo = JSON.parse(window.sessionStorage.getItem('userInfo'))
+    // console.log('userInfo',this.userInfo)
     console.log('this.isLogin', this.isLogin)
   }
 };
