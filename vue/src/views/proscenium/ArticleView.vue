@@ -46,14 +46,14 @@
           >
         </p>
         <input
-          :name="index"
-          :ref="`input${index}`"
-          :maxlength="item.length - 1"
-          @input="input"
-          @keydown.delete.prevent
-          :readonly="!(index == inputIndex && isStart)"
-          type="text"
-          class="index_content-row"
+            :name="index"
+            :ref="`input${index}`"
+            :maxlength="item.length"
+            @input="input"
+            @keydown.delete.prevent
+            :readonly="!(index == inputIndex && isStart)"
+            type="text"
+            class="index_content-row"
         />
       </div>
     </div>
@@ -62,9 +62,10 @@
 
 <script>
 import Timer from '@/components/Timer.vue'
-import { getArticle } from '@/api/article.js'
+import {getArticle} from '@/api/article.js'
+
 export default {
-  components: { Timer },
+  components: {Timer},
   data() {
     return {
       articleId: '',
@@ -119,7 +120,7 @@ export default {
       // console.log('value', value)
       // console.log('value.length', value.length)
       // console.log('this.articleArr[name].length', this.articleArr[name].length)
-      if (value.length >= this.articleArr[name].length - 1) {
+      if (value.length >= this.articleArr[name].length) {
         this.inputIndex++
         this.$refs[`input${this.inputIndex}`][0].focus()
       }

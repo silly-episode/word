@@ -188,12 +188,12 @@
 </template>
 <script>
 import Timer from '@/components/Timer.vue'
-import { getWordByUserId, getWordByNum, collectWord } from '@/api/word.js'
-import { allBook } from '@/api/wordList'
-import { bookInfo } from '@/api/wordList'
+import {collectWord, getWordByNum, getWordByUserId} from '@/api/word.js'
+import {allBook, bookInfo} from '@/api/wordList'
+
 export default {
   name: "WordView",
-  components: { Timer },
+  components: {Timer},
   data() {
     return {
       isBack: false,
@@ -370,7 +370,7 @@ export default {
     },
 
     // 键盘事件
-    keyDown(e) {
+    keyUp(e) {
       if (this.isStart) {
         this.info.inputNum++;
         let ss = this.trunTime(this.$refs.jishi.content)
@@ -588,17 +588,14 @@ export default {
   },
   mounted() {
     // 绑定监听事件
-    window.addEventListener("keydown", this.keyDown);
+    window.addEventListener("keyup", this.keyUp);
     this.getBookList()
-    // if (isStart && !isFinish) {
-    //   window.addEventListener('keydown', onKeydown)
-    // }
   },
   beforeCreate() {
     document.querySelector('body').setAttribute('style', 'background:#faf9ff')
   },
   beforeDestroy() {
-    window.removeEventListener('keydown', this.keyDown)
+    window.removeEventListener('keyup', this.keyUp)
     document.querySelector('body').setAttribute('style', 'background:#ffffff')
   },
 
