@@ -9,6 +9,7 @@ create table if not exists plan
     module_id        bigint           not null comment '模块id',
     finished_word    int  default 0   null comment '已完成单词数量',
     day_word         int  default 1   not null comment '计划每天完成单词数量',
+    plan_name        varchar(50)      null comment '计划名称',
     constraint plan_plan_id_uindex
         unique (plan_id)
 )

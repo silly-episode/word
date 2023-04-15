@@ -84,8 +84,7 @@
           </el-form-item>
           <el-button icon="el-icon-search" type="primary" @click="userSearch"
           >查询
-          </el-button
-          >
+          </el-button>
           <el-button
               :icon="`el-icon-${exportLoading?'loading':'download'}`"
               type="success"
