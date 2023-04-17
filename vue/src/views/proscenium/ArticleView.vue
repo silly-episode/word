@@ -96,14 +96,21 @@ export default {
             articleArr.forEach((item, index) => {
               let arr = []
               articleArr[index] = item.split('')
+              /*修改删除前后空格*/
+              if (articleArr[index][0] === " ") {
+                articleArr[index].shift()
+              }
+              if (articleArr[index][articleArr[index].length] === " ") {
+                articleArr[index].pop()
+              }
               articleArr[index].forEach((i, ind) => {
                 arr[ind] = -1
-              })
+              });
               ansArr.push(arr)
             });
             this.articleArr = articleArr
             this.ansArr = ansArr
-            // console.log(articleArr)
+            console.log(articleArr)
           }
         })
         .catch((err) => {
