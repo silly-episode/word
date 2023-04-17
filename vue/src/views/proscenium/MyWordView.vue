@@ -209,7 +209,7 @@
       </span>
     </el-dialog>
     <PlanView ref="plan" @ok="getPlanList"></PlanView>
-    <Login ref="login" @beLogin="init"></Login>
+    <Login ref="login"></Login>
   </el-container>
 </template>
 
@@ -223,7 +223,7 @@ import Login from './Login.vue'
 export default {
   data() {
     return {
-      activeName:'1',
+      activeName: '1',
       token: '',
       visible: false,
       percentage: 0,
@@ -442,8 +442,12 @@ export default {
     if (token) this.init()
   },
   mounted() {
-    console.log('token', this.token)
+    this.$bus.$on('beLogin', this.init)
+    // console.log('token', this.token)
     if (!this.token) this.$refs.login.showLogin()
+  },
+  beforeDestroy() {
+    this.$bus.$off('beLogin')
   }
 
 }

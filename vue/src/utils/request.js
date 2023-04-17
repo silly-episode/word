@@ -1,8 +1,8 @@
 import axios from 'axios'
 import { Notification, MessageBox, Message } from 'element-ui'
 
-axios.defaults.headers['Content-Type'] = 'application/json;charset=utf-8'
-axios.defaults.headers.common['Authorization'] = getJwtAuthorization()
+// axios.defaults.headers['Content-Type'] = 'application/json;charset=utf-8'
+// axios.defaults.headers.common['Authorization'] = getJwtAuthorization()
 
 
 // 创建axios实例
@@ -14,6 +14,8 @@ const service = axios.create({
 })
 // request拦截器
 service.interceptors.request.use(config => {
+    const token = window.sessionStorage.getItem('token')
+    token ? config.headers.Authorization = token : null
     return config
 }, error => {
     console.log(error)
@@ -65,11 +67,5 @@ service.interceptors.response.use(res => {
         return Promise.reject(error)
     }
 )
-
-function getJwtAuthorization() {
-    const token = window.sessionStorage.getItem('token')
-    return token || "";
-    // return 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjI1NDQ3NTkzMzQsInVzZXJJZCI6IjEiLCJpYXQiOjE2ODA3NTkzMzR9.ta5izS2h6QS5pg-fvnDjJ_qXENm6Jw3FVGbfo6PJTHc'
-}
 
 export default service

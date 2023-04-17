@@ -57,7 +57,7 @@
       </div>
     </el-main>
     <PlanView ref="plan"></PlanView>
-    <Login ref="login" @beLogin="getWordModule"></Login>
+    <Login ref="login"></Login>
   </div>
 </template>
 
@@ -125,6 +125,12 @@ export default {
       this.moduleId = moduleId
       this.getWordModule()
     }
+  },
+  mounted() {
+    this.$bus.$on('beLogin', this.getWordModule)
+  },
+  beforeDestroy() {
+    this.$bus.$off('beLogin')
   }
 }
 </script>

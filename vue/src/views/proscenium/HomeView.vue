@@ -48,7 +48,7 @@
     <el-main>
       <router-view></router-view>
     </el-main>
-    <Login ref="login" @beLogin="beLogin"></Login>
+    <Login ref="login"></Login>
   </div>
 </template>
 
@@ -90,6 +90,7 @@ export default {
             type: 'warning'
           }).then(() => {
             window.sessionStorage.clear();
+            window.location.reload()
           }).catch(() => {
             console.log('取消操作');
           });
@@ -124,7 +125,13 @@ export default {
     this.userInfo = JSON.parse(window.sessionStorage.getItem('userInfo'))
     // console.log('userInfo',this.userInfo)
     console.log('this.isLogin', this.isLogin)
-  }
+  },
+  mounted() {
+    this.$bus.$on('beLogin', this.beLogin)
+  },
+  beforeDestroy() {
+    this.$bus.$off('beLogin')
+  },
 };
 </script>
 
