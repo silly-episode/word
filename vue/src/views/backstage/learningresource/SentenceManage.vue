@@ -130,7 +130,7 @@
           </el-table-column>
           <el-table-column align="center" label="创建时间" min-width="15%" prop="emoCreateTime"></el-table-column>
           <el-table-column align="center" label="作者" min-width="15%" prop="emoAuthor"></el-table-column>
-          <el-table-column align="center" label="概念" min-width="5%" prop="frequency"></el-table-column>
+          <el-table-column align="center" label="概率" min-width="5%" prop="frequency"></el-table-column>
           <el-table-column label="中文" min-width="25%" prop="cnContent" show-overflow-tooltip
                            text-align="left"></el-table-column>
           <el-table-column label="英文" min-width="25%" prop="engContent" show-overflow-tooltip

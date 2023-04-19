@@ -111,7 +111,7 @@
           <el-table-column align="center" label="标题" min-width="12%" prop="articleTitle"></el-table-column>
           <el-table-column align="center" label="作者" min-width="11%" prop="articleAuthor"></el-table-column>
           <el-table-column align="center" label="字数" min-width="5%" prop="wordNumber"></el-table-column>
-          <el-table-column align="center" label="练习人数" min-width="6%" prop="articleStudyNumber"></el-table-column>
+          <el-table-column align="center" label="练习次数" min-width="6%" prop="articleStudyNumber"></el-table-column>
           <el-table-column align="center" label="添加时间" min-width="11%" prop="articleCreateTime">
             <template v-slot="scope">
               <span>{{

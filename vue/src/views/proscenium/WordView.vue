@@ -152,15 +152,16 @@
           </el-popover>
         </div>
         <div
-          class="wordZh"
-          :style="`left: calc(50% - ${sentenceLength * 5.4}px)`"
+            class="wordZh"
+            :style="`left: calc(50% - ${sentenceLength * 5.4}px)`"
         >
-          <div v-show="showZh">
-            <div class="margin_b_15">例句：{{ sentenceEn }}</div>
+          <span class="margin_r_10">词性：{{ pos }}</span>
+          <span>词意：{{ trans }}</span>
+          <div v-show="showZh" class="margin_t_10">
             <div class="margin_b_15">例句释义：{{ sentenceZh }}</div>
+            <div>例句：{{ sentenceEn }}</div>
           </div>
-          <span class="margin_r_10">{{ pos }}</span>
-          <span>{{ trans }}</span>
+
         </div>
       </div>
       <div v-else class="tip">按任意键开始</div>
@@ -316,12 +317,18 @@ export default {
       // console.log(data)
       this.word = data.wordHead || data.word
       this.wordArr = this.word.split('')
-      this.sentenceEn = this.enterFlag == -1 ? data.sentenceEn : data.content.sentence.sentences[0].sContent
-      this.sentenceLength = this.sentenceEn.length
-      this.sentenceZh = this.enterFlag == -1 ? data.sentenceZh : data.content.sentence.sentences[0].sCn
-      this.trans = this.enterFlag == -1 ? data.trans : data.content.trans[0].tranCn
-      this.pos = this.enterFlag == -1 ? data.pos : data.content.trans[0].pos
+      if (this.enterFlag == -1 ? data.sentenceEn : data.content.sentence) {
+        this.sentenceEn = this.enterFlag == -1 ? data.sentenceEn : data.content.sentence.sentences[0].sContent
+        this.sentenceLength = this.sentenceEn.length
+        this.sentenceZh = this.enterFlag == -1 ? data.sentenceZh : data.content.sentence.sentences[0].sCn
+      }
 
+
+      this.trans = this.enterFlag == -1 ? data.trans : data.content.trans[0].tranCn
+      if (this.enterFlag == -1 ? data.pos : data.content.syno)
+        this.pos = this.enterFlag == -1 ? data.pos : data.content.syno.synos[0].pos
+
+      console.log('word', this.word)
       this.wordlength = this.wordArr.length
       for (let i = 0; i < this.wordlength; i++) {
         if (this.showEng) this.rwList[i] = 1

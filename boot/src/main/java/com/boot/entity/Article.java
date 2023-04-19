@@ -38,4 +38,6 @@ public class Article {
     private String articleAuthor;
     //    练习人数
     private Integer articleStudyNumber;
+    // 描述
+    private String remark;
 }
