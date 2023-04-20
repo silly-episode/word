@@ -37,10 +37,10 @@ public class ActionLogUtils {
 
     public void saveActionLog(HttpServletRequest request, String actionKind, String remark) {
         Long adminId = jwtUtils.getUserIdFromRequest(request);
-        if (adminId == null) {
+        Admin admin = adminService.getById(adminId);
+        if (admin == null) {
             return;
         }
-        Admin admin = adminService.getById(adminId);
         ActionLog log = new ActionLog()
                 .setAdminId(adminId)
                 .setActionTime(LocalDateTime.now())

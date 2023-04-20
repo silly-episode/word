@@ -101,8 +101,8 @@
       <div v-if="isStart">
         <div
           :class="`${shake ? 'shake' : ''} word flex_center_center fontWidth`"
-          :style="`left: calc(50% - ${wordlength * 18}px)`"
         >
+<!--          :style="`left: calc(50% - ${wordlength * 18}px)`"-->
           <div
             class="wid_36 margin_r_5 text_center"
             v-for="(item, index) in wordArr"
@@ -152,11 +152,12 @@
           </el-popover>
         </div>
         <div
-            class="wordZh"
-            :style="`left: calc(50% - ${sentenceLength * 5.4}px)`"
+            class="wordZh flex_column_center_center"
         >
-          <span class="margin_r_10">词性：{{ pos }}</span>
-          <span>词意：{{ trans }}</span>
+          <!--          :style="`left: calc(50% - ${sentenceLength * 5.4}px)`"-->
+          <div><span class="margin_r_20">词性：{{ pos }}</span>
+            <span>词意：{{ trans }}</span></div>
+
           <div v-show="showZh" class="margin_t_10">
             <div class="margin_b_15">例句释义：{{ sentenceZh }}</div>
             <div>例句：{{ sentenceEn }}</div>
@@ -659,7 +660,7 @@ export default {
 
 .word {
   position: absolute;
-  left: 38%;
+  width: 100%;
   top: 35%;
   font-size: 60px;
   color: #4b5563;
@@ -688,6 +689,7 @@ export default {
   text-align: center;
   position: absolute;
   /* left: 30%; */
+  width: 100%;
   top: 49%;
   font-size: 22px;
   color: #4b5563;
