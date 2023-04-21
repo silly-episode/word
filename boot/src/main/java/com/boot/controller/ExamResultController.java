@@ -1,15 +1,24 @@
 package com.boot.controller;
 
 
+import co.elastic.clients.elasticsearch.ElasticsearchClient;
+import co.elastic.clients.elasticsearch._types.FieldValue;
+import co.elastic.clients.elasticsearch._types.query_dsl.QueryBuilders;
+import co.elastic.clients.elasticsearch.core.SearchRequest;
+import co.elastic.clients.elasticsearch.core.search.Hit;
+import com.boot.bo.WordPlan;
 import com.boot.common.result.Result;
+import com.boot.dto.Question;
 import com.boot.entity.ExamResult;
 import com.boot.service.ExamResultService;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.*;
 
 
 /**
@@ -20,14 +29,15 @@ import java.time.LocalDateTime;
  */
 @RestController
 @RequestMapping("examResult")
-@RequiresAuthentication
+//@RequiresAuthentication
 public class ExamResultController {
     /**
      * 服务对象
      */
     @Resource
     private ExamResultService examResultService;
-
+    @Resource
+    private ElasticsearchClient elasticsearchClient;
 
     /**
      * @param examResult:
@@ -68,5 +78,85 @@ public class ExamResultController {
     }
 
 
+    /**
+     * @Return:
+     * @Author: DengYinzhe
+     * @Description: TODO 生成考试题库
+     * @Date: 2023/4/21 15:58
+     */
+    @PostMapping("questionBank")
+    public Result questionBank(@RequestBody WordPlan wordPlan) throws IOException {
+
+        /*确认选词的序列范围*/
+        int bankTotal = wordPlan.getAllWord();
+        int choiceCount = 4;
+        int start = wordPlan.getFinishedWord() + 1;
+        int end = start + wordPlan.getDayWord();
+        if (end > bankTotal) {
+            end = bankTotal;
+        }
+
+        /*返回结果*/
+        List<Question> questionList = new ArrayList<>(wordPlan.getDayWord());
+        for (int i = start; i <= end; i++) {
+            /*生成题目随机数*/
+            Set<Integer> set = new HashSet<>(choiceCount - 1);
+            Random ran = new Random();
+            while (set.size() != choiceCount - 1) {
+                int r = ran.nextInt(Math.toIntExact(bankTotal)) + 1;
+                if (r != i) {
+                    set.add(r);
+                }
+            }
+
+            /*查找非正确答案选项信息*/
+            Integer answer = ran.nextInt(Math.toIntExact(4));
+            List<FieldValue> list = new ArrayList<FieldValue>();
+            for (Integer integer : set) {
+                list.add(FieldValue.of(String.valueOf(integer)));
+            }
+            Question question = new Question(choiceCount, answer);
+            SearchRequest request = new SearchRequest.Builder()
+                    .index(wordPlan.getEsIndex())
+                    .query(
+                            QueryBuilders.bool().filter(
+                                    QueryBuilders
+                                            .terms()
+                                            .field("wordRank")
+                                            .terms(builder -> builder.value(list))
+                                            .build()._toQuery()
+                            ).build()._toQuery()
+                    )
+                    .size(3)
+                    .build();
+            List<Hit<ObjectNode>> hits = elasticsearchClient.search(request, ObjectNode.class).hits().hits();
+            for (Hit<ObjectNode> hit : hits) {
+                question.getChoice().add(hit.source());
+            }
+
+            /*查找正确答案选项信息*/
+            SearchRequest requestAnswer = new SearchRequest.Builder()
+                    .index(wordPlan.getEsIndex())
+                    .query(
+                            QueryBuilders.bool().filter(
+                                    QueryBuilders
+                                            .term()
+                                            .field("wordRank")
+                                            .value(i)
+                                            .build()._toQuery()
+                            ).build()._toQuery()
+                    )
+                    .size(1)
+                    .build();
+            List<Hit<ObjectNode>> answerHit = elasticsearchClient.search(requestAnswer, ObjectNode.class).hits().hits();
+            for (Hit<ObjectNode> hit : answerHit) {
+                question.getChoice().add(answer, hit.source());
+            }
+            questionList.add(question);
+        }
+
+
+        return Result.success(questionList);
+    }
 }
 

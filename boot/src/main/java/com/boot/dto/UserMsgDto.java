@@ -30,7 +30,7 @@ public class UserMsgDto {
     private String qq;
     //微信
     private String wechat;
-
+    /**/
     private String signature;
 
     private Integer integration;
