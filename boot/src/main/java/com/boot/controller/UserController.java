@@ -289,7 +289,7 @@ public class UserController {
      * @Date: 2023/2/9 11:44
      */
     @PutMapping("user")
-    @RequiresAuthentication
+//    @RequiresAuthentication
     public Result user(@RequestBody UserMsgDto userMsgDto) {
         if (userService.updateById(BeanDtoVoUtils.convert(userMsgDto, User.class))) {
             return Result.success();
