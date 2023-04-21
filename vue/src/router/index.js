@@ -34,6 +34,8 @@ import ServiceInformation from '@/views/backstage/system/ServiceInformation.vue'
 import CacheList from '@/views/backstage/system/CacheList.vue'
 import DbInformation from '@/views/backstage/system/DbInformation.vue'
 
+import AdminLogin from "@/views/backstage/AdminLogin";
+
 Vue.use(VueRouter);
 
 const routes = [
@@ -84,39 +86,39 @@ const routes = [
     path: "/admin",
     name: "admin",
     component: Admin,
-    redirect: '/welcome',
+    // redirect: '/adminLogin',
     children: [{
-      path: '/welcome',
+      path: '/admin/welcome',
       component: Welcome
     }, {
-      path: '/usermanage',
+      path: '/admin/usermanage',
       component: UserManage
     }, {
-      path: '/adminmanage',
+      path: '/admin/adminmanage',
       component: AdminManage
     }, {
-      path: '/loginlog',
+      path: '/admin/loginlog',
       component: LoginLog
     }, {
-      path: '/wordmanage',
+      path: '/admin/wordmanage',
       component: WordManage
     }, {
-      path: '/articlemanage',
+      path: '/admin/articlemanage',
       component: ArticleManage
     }, {
-      path: '/sentencemanage',
+      path: '/admin/sentencemanage',
       component: SentenceManage
     }, {
-      path: '/operationlog',
+      path: '/admin/operationlog',
       component: OperationLog
     }, {
-      path: '/serviceinformation',
+      path: '/admin/serviceinformation',
       component: ServiceInformation
     }, {
-      path: '/cachelist',
+      path: '/admin/cachelist',
       component: CacheList
     }, {
-      path: '/dbinformation',
+      path: '/admin/dbinformation',
       component: DbInformation
     }]
   },
@@ -134,6 +136,9 @@ const routes = [
     path: "/article",
     name: 'article',
     component: ArticleView,
+  }, {
+    path: "/adminLogin",
+    component: AdminLogin,
   },
 ];
 
@@ -144,12 +149,15 @@ const router = new VueRouter({
 });
 
 // 挂载路由导航守卫，控制页面访问权限
-// router.beforeEach((to, from, next) => {
-//   if (to.path === '/login') return next()
-//   // 访问其他页面则要检查是否有token
-//   const tokenStr = window.sessionStorage.getItem('token')
-//   if (!tokenStr) return next('/login')
-//   next()
-// })
+router.beforeEach((to, from, next) => {
+  if (to.path.substring(0, 6) === "/admin") {
+    if (to.path === '/adminLogin') return next()
+    // 访问其他页面则要检查是否有token
+    const tokenStr = window.sessionStorage.getItem('adminToken')
+    if (!tokenStr) return next('/adminLogin')
+    next()
+  } else next()
+
+})
 
 export default router;

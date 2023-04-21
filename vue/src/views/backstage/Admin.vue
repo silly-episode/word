@@ -27,7 +27,7 @@
             router
         >
           <el-menu-item
-              index="/welcome"
+              index="/admin/welcome"
               @click="saveNavState('/' + subItem.path)"
           >
             <template slot="title">
@@ -79,11 +79,11 @@ export default {
           children: [{
             id: '21',
             authName: '用户管理',
-            path: 'usermanage'
+            path: 'admin/usermanage'
           }, {
             id: '22',
             authName: '管理员管理',
-            path: 'adminmanage'
+            path: 'admin/adminmanage'
           }]
         }, {
           id: 3,
@@ -92,17 +92,17 @@ export default {
           children: [{
             id: '31',
             authName: '单词管理',
-            path: 'wordmanage'
+            path: 'admin/wordmanage'
           },
             {
               id: '32',
               authName: '文章管理',
-              path: 'articlemanage'
+              path: 'admin/articlemanage'
             },
             {
               id: '33',
               authName: '励志语管理',
-              path: 'sentencemanage'
+              path: 'admin/sentencemanage'
             }]
         }, {
           id: 4,
@@ -111,23 +111,23 @@ export default {
           children: [{
             id: '41',
             authName: '管理员操作日志',
-            path: 'operationlog'
+            path: 'admin/operationlog'
           }, {
             id: '42',
             authName: '用户登录日志',
-            path: 'loginlog'
+            path: 'admin/loginlog'
           }, {
             id: '43',
             authName: '服务信息',
-            path: 'serviceinformation'
+            path: 'admin/serviceinformation'
           }, {
             id: '44',
             authName: '缓存列表',
-            path: 'cachelist'
+            path: 'admin/cachelist'
           }, {
             id: '45',
             authName: '数据库表信息',
-            path: 'dbinformation'
+            path: 'admin/dbinformation'
           }]
         }],
       //   侧边栏是否折叠
@@ -143,7 +143,7 @@ export default {
   methods: {
     logout() {
       window.sessionStorage.clear();
-      this.$router.push("/login");//   重定向到登录页
+      this.$router.push("/admin/adminLogin");//   重定向到登录页
     },
 
     toggleCollapse() { // 点击折叠、展开侧边栏
