@@ -11,7 +11,7 @@ import KeyboardView from "@/views/proscenium/KeyboardView.vue";
 import WordModule from "@/views/proscenium/WordModule.vue";
 
 import Assist from "@/views/proscenium/Assist.vue";
-import Own from "@/views/proscenium/Own.vue";
+import Own from "@/views/proscenium/own/index.vue";
 
 import WordView from "@/views/proscenium/WordView.vue";
 import ExamView from "@/views/proscenium/ExamView.vue";
