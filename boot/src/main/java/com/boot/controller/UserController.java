@@ -204,9 +204,11 @@ public class UserController {
      * @Description: 修改用户头像 已测试
      * @Date: 2023/2/9 10:53
      */
-    @PutMapping("userImage")
-    @RequiresAuthentication
-    public Result userImage(@RequestParam MultipartFile file, @RequestParam("userId") Long userId) {
+    @PostMapping("userImage")
+//    @RequiresAuthentication
+    public Result userImage(@RequestParam MultipartFile file, UserOfId userOfId) {
+
+        Long userId = Long.valueOf(userOfId.getUserId());
         User user = userService.getById(userId);
         String fileName = "user_image_" + userId.toString() + "_"
                 + String.valueOf(LocalDateTime.now().toEpochSecond(ZoneOffset.of("+8"))

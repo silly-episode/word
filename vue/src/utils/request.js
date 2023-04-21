@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { Notification, MessageBox, Message } from 'element-ui'
+import {Message, MessageBox, Notification} from 'element-ui'
 
 // axios.defaults.headers['Content-Type'] = 'application/json;charset=utf-8'
 // axios.defaults.headers.common['Authorization'] = getJwtAuthorization()
@@ -15,7 +15,10 @@ const service = axios.create({
 // request拦截器
 service.interceptors.request.use(config => {
     const token = window.sessionStorage.getItem('token')
-    token ? config.headers.Authorization = token : null
+    const adminToken = window.sessionStorage.getItem('adminToken')
+    token ? config.headers.Authorization = token : null;
+    adminToken ? config.headers.Authorization = adminToken : null;
+
     return config
 }, error => {
     console.log(error)

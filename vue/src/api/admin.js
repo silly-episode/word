@@ -9,6 +9,20 @@ import request from "@/utils/request";
 
 
 /**
+ * 管理员登录
+ * @param params
+ * @returns {*}
+ */
+export function adminLogin(params) {
+    return request({
+        url: 'admin/login',
+        method: 'post',
+        data: params
+    })
+}
+
+
+/**
  * 多条件查询用户列表
  * @param params
  * @returns {*}

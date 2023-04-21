@@ -125,7 +125,8 @@
 </template>
 
 <script>
-import { sms, register, login } from '@/api/user'
+import {login, register, sms} from '@/api/user'
+
 export default {
   name: 'Login',
   data() {
@@ -242,6 +243,7 @@ export default {
           .then((res) => {
             if (res.code == 200) {
               // console.log(res)
+              window.sessionStorage.removeItem("adminToken")
               window.sessionStorage.setItem("token", res.data.token);
               window.sessionStorage.setItem('userInfo', JSON.stringify(res.data.userInfo))
               // this.$emit('beLogin')

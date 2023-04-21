@@ -11,24 +11,47 @@
     <div class="top"></div>
     <div class="bottom"></div>
     <div class="center">
-      <h2>Please Sign In</h2>
-      <input placeholder="email" type="email"/>
-      <input placeholder="password" type="password"/>
+      <h2 style="margin-bottom: 30px">Word Management</h2>
+      <input v-model.trim="loginMessage.loginAccount" placeholder="Account" type="text"/>
+      <input v-model.trim="loginMessage.loginPassword" placeholder="Password" type="password"/>
+      <el-button style="margin-Top: 15px" type="warning" @click="adminLogin">LOGIN</el-button>
       <h2>&nbsp;</h2>
     </div>
   </div>
 </template>
 
 <script>
+import {adminLogin} from "@/api/admin.js"
+
 export default {
-  name: "AdminLogin"
-}
+  name: "AdminLogin",
+  data() {
+    return {
+      loginMessage: {
+        loginAccount: "",
+        loginPassword: "",
+      }
+    }
+  },
+  methods: {
+    adminLogin() {
+      adminLogin(this.loginMessage)
+          .then((res) => {
+            window.sessionStorage.clear();
+            window.sessionStorage.setItem("adminToken", res.data);
+            this.$router.push('/admin/welcome')
+          })
+          .catch((err) => {
+            console.log(err)
+          })
+    },
+  },
+
+
+};
 </script>
 
 <style scoped>
-
-
-@import url("https://fonts.googleapis.com/css?family=Raleway:400,700");
 
 *, *:before, *:after {
   box-sizing: border-box;
