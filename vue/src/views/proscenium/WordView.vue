@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div :class="`${isDeep ? 'bg_dk' : 'bg_fa'} hei_per100`">
     <img class="wordLog" src="@/assets/wordLog.png" alt="" />
     <div :class="`${isDeep ? 'bg_drak grey' : 'bg_white'} card onOffCard`">
       <el-row :gutter="2" type="flex" align="middle">
@@ -61,7 +61,7 @@
           <el-tooltip effect="dark" content="开关深色模式" placement="top">
             <span
               :class="`font_26 purple iconfont icon-${isDeep ? 'moon' : 'sun'}`"
-              @click="deep"
+              @click="isDeep = !isDeep"
             ></span>
           </el-tooltip>
         </el-col>
@@ -102,7 +102,7 @@
         <div
           :class="`${shake ? 'shake' : ''} word flex_center_center fontWidth`"
         >
-<!--          :style="`left: calc(50% - ${wordlength * 18}px)`"-->
+          <!--          :style="`left: calc(50% - ${wordlength * 18}px)`"-->
           <div
             class="wid_36 margin_r_5 text_center"
             v-for="(item, index) in wordArr"
@@ -151,18 +151,17 @@
             ></i>
           </el-popover>
         </div>
-        <div
-            class="wordZh flex_column_center_center"
-        >
+        <div class="wordZh flex_column_center_center">
           <!--          :style="`left: calc(50% - ${sentenceLength * 5.4}px)`"-->
-          <div><span class="margin_r_20">词性：{{ pos }}</span>
-            <span>词意：{{ trans }}</span></div>
+          <div>
+            <span class="margin_r_20">词性：{{ pos }}</span>
+            <span>词意：{{ trans }}</span>
+          </div>
 
           <div v-show="showZh" class="margin_t_10">
             <div class="margin_b_15">例句释义：{{ sentenceZh }}</div>
             <div>例句：{{ sentenceEn }}</div>
           </div>
-
         </div>
       </div>
       <div v-else class="tip">按任意键开始</div>
@@ -190,12 +189,12 @@
 </template>
 <script>
 import Timer from '@/components/Timer.vue'
-import {collectWord, getWordByNum, getWordByUserId} from '@/api/word.js'
-import {allBook, bookInfo} from '@/api/wordList'
+import { collectWord, getWordByNum, getWordByUserId } from '@/api/word.js'
+import { allBook, bookInfo } from '@/api/wordList'
 
 export default {
   name: "WordView",
-  components: {Timer},
+  components: { Timer },
   data() {
     return {
       isBack: false,
@@ -535,12 +534,6 @@ export default {
       this.isCirculate = !this.isCirculate
       this.audioWord.loop = this.isCirculate;
     },
-    // 深色模式
-    deep() {
-      this.isDeep = !this.isDeep
-      if (this.isDeep) this.bgDark()
-      else this.bgWhite()
-    },
     // 英文显示
     en() {
       if (this.stage) {
@@ -566,14 +559,6 @@ export default {
       arr[1] = arr[1] - 0
       return arr[0] * 60 + arr[1]
     },
-
-    bgWhite() {
-      document.querySelector('body').setAttribute('style', 'background:#faf9ff')
-    },
-
-    bgDark() {
-      document.querySelector('body').setAttribute('style', 'background:#111726')
-    }
   },
   created() {
     // console.log(this.$route.params)
@@ -599,12 +584,9 @@ export default {
     window.addEventListener("keyup", this.keyUp);
     this.getBookList()
   },
-  beforeCreate() {
-    document.querySelector('body').setAttribute('style', 'background:#faf9ff')
-  },
+
   beforeDestroy() {
     window.removeEventListener('keyup', this.keyUp)
-    document.querySelector('body').setAttribute('style', 'background:#ffffff')
   },
 
 };

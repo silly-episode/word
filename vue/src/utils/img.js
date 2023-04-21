@@ -1,11 +1,9 @@
-const BaseUrl = 'http://4x3yuu.natappfree.cc'
-
 function imageUrl(fileId) {
-  return `${BaseUrl}/word/wordModuleImage/${fileId}`;
+  return `api/word/wordModuleImage/${fileId}`;
 }
 
 function avatarUrl(userId) {
-  return `${BaseUrl}/user/userImage/${userId}`;
+  return `api/user/userImage/${userId}`;
 }
 
 function imageId(url) {

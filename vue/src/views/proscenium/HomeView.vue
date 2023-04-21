@@ -90,7 +90,9 @@ export default {
             type: 'warning'
           }).then(() => {
             window.sessionStorage.clear();
-            window.location.reload()
+            // window.location.reload()
+            this.$router.push("/home");
+            window.sessionStorage.setItem("activePath",'/wordlist');
           }).catch(() => {
             console.log('取消操作');
           });

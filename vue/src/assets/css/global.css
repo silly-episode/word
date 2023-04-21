@@ -68,6 +68,10 @@ li {
     background-color: rgba(0, 0, 0, 0.5);
 }
 
+.pull-right {
+	float: right !important;
+}
+
 .el-breadcrumb {
     margin-bottom: 15px;
     /* font-size: 12px; */
@@ -545,6 +549,10 @@ li {
     background-color: #f9f9f9;
 }
 
+.bg_fa {
+    background-color: #faf9ff;
+}
+
 .border_blue {
     border: 1px solid #1296db;
 }
@@ -562,6 +570,10 @@ li {
 }
 
 /* 背景色 */
+.bg_dk {
+    background-color: #111726;
+}
+
 .bg_drak {
     background-color: #1f2937;
 }
@@ -773,6 +785,10 @@ li {
 
 .wid_1000 {
     width: 1000px;
+}
+
+.wid_1200 {
+    width: 1200px;
 }
 
 .hei_10 {

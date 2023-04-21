@@ -422,12 +422,10 @@ export default {
 
     },
     init() {
+      if (!this.token) this.token = window.sessionStorage.getItem('token')
       this.getBookList()
       this.getPlanList()
-      // this.getIntegralList()
-      // this.getSwearList()
       const userInfo = JSON.parse(window.sessionStorage.getItem('userInfo'))
-      console.log('userInfo', userInfo)
       if (userInfo) {
         this.userInfo = userInfo
         this.btnDisable = userInfo.swear

@@ -15,24 +15,21 @@ export function register(data) {
     })
 }
 
-
-export function userInfo() {
-    return request({
-        url: `/user/user`,
-        method: 'get',
-    })
-}
-
-
-
-
-export function login(params) {
+export function login(data) {
     return request({
         url: '/user/login',
         method: 'post',
-        data: params
+        data
     })
 }
 
+
+export function editUser(data) {
+    return request({
+        url: `/user/user`,
+        method: 'put',
+        data
+    })
+}
 
 
