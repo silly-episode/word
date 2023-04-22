@@ -7,7 +7,7 @@
         text-color="#000"
         active-text-color="#818cf8"
         :router="true"
-        :default-active="activeIndex"
+        :default-active="activePath"
         class="el-menu-demo"
         mode="horizontal"
       >
@@ -61,7 +61,7 @@ export default {
     return {
       isLogin: false,
       userInfo: {},
-      activeIndex: '/wordlist',
+      activePath: '/wordlist',
       menulist: [{
         path: 'wordlist',
         authName: '单词列表'
@@ -92,7 +92,7 @@ export default {
             window.sessionStorage.clear();
             // window.location.reload()
             this.$router.push("/home");
-            window.sessionStorage.setItem("activePath",'/wordlist');
+            window.sessionStorage.setItem("activePath", '/wordlist');
           }).catch(() => {
             console.log('取消操作');
           });
@@ -118,10 +118,13 @@ export default {
     },
 
     beLogin() {
+      console.log('home的login')
       this.isLogin = true
     }
   },
   created() {
+    const activePath = window.sessionStorage.getItem("activePath");
+    this.activePath = activePath || '/wordlist'
     const token = window.sessionStorage.getItem("token");
     this.isLogin = token ? true : false
     this.userInfo = JSON.parse(window.sessionStorage.getItem('userInfo'))

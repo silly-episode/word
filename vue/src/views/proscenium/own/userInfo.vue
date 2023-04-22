@@ -25,10 +25,7 @@
       </el-input>
     </el-form-item>
     <el-form-item class="flex_center_center">
-      <div>
-        <el-button type="primary" size="mini" @click="submit">保存</el-button>
-        <el-button type="danger" size="mini" @click="close">关闭</el-button>
-      </div>
+      <el-button type="primary" size="mini" @click="submit">保存</el-button>
     </el-form-item>
   </el-form>
 </template>
@@ -75,14 +72,7 @@ export default {
             trigger: ["blur", "change"]
           }
         ],
-        tel: [
-          { required: true, message: "手机号码不能为空", trigger: "blur" },
-          {
-            pattern: /^1[3|4|5|6|7|8|9][0-9]\d{8}$/,
-            message: "请输入正确的手机号码",
-            trigger: "blur"
-          }
-        ]
+
       }
     };
   },
@@ -92,17 +82,16 @@ export default {
         if (valid) {
           editUser(this.userInfo).then(res => {
             //  console.log('res', res)
-            if (res.code == 200)
-              // this.$modal.msgSuccess(");
+            if (res.code == 200) {
+              window.sessionStorage.setItem('userInfo', JSON.stringify(this.userInfo))
+              this.$emit('refresh')
               this.$message.success("修改成功")
-            window.sessionStorage.setItem('userInfo', JSON.stringify(this.userInfo))
+            }
+
           });
         }
       });
     },
-    close() {
-      this.$tab.closePage();
-    }
   }
 };
 </script>

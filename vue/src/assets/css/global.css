@@ -69,7 +69,7 @@ li {
 }
 
 .pull-right {
-	float: right !important;
+    float: right !important;
 }
 
 .el-breadcrumb {
@@ -113,6 +113,11 @@ li {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+}
+
+/* 文字间距 */
+.letter-spacing10 {
+    letter-spacing: 10px
 }
 
 /* 多行超出省略号 */
@@ -355,6 +360,10 @@ li {
 
 .margin_b_30 {
     margin-bottom: 30px;
+}
+
+.margin_b_50 {
+    margin-bottom: 50px;
 }
 
 .margin_l_r_10 {
@@ -618,6 +627,14 @@ li {
     background-color: #fff;
 }
 
+.bg_green {
+    background-color: rgb(170, 203, 170);
+}
+
+.bg_red {
+    background-color: rgb(254, 204, 204);
+}
+
 .line_hei_18 {
     line-height: 18px;
 }
@@ -783,6 +800,10 @@ li {
     width: 380px;
 }
 
+.wid_500 {
+    width: 500px;
+}
+
 .wid_1000 {
     width: 1000px;
 }
@@ -840,4 +861,9 @@ li {
 .el-tooltip__popper {
     max-width: 25%;
     font-size: 16px;
+}
+
+
+.fontWidth {
+    font-family: "Lucida Console";
 }

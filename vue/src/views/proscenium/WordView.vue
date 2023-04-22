@@ -197,6 +197,7 @@ export default {
   components: { Timer },
   data() {
     return {
+      wordPlan: {},
       isBack: false,
       pages: 0,
       params: {},
@@ -276,6 +277,8 @@ export default {
             // console.log('res', res.data.word)
             if (res.code == 200) {
               this.List = res.data.word
+              this.wordPlan = res.data.wordPlan
+              // console.log('wordPlan', this.wordPlan)
               this.title = res.data.wordPlan.moduleName
               for (let i = 0; i < this.List.length; i++) {
                 this.collectList[i] = false
@@ -322,13 +325,11 @@ export default {
         this.sentenceLength = this.sentenceEn.length
         this.sentenceZh = this.enterFlag == -1 ? data.sentenceZh : data.content.sentence.sentences[0].sCn
       }
-
-
       this.trans = this.enterFlag == -1 ? data.trans : data.content.trans[0].tranCn
       if (this.enterFlag == -1 ? data.pos : data.content.syno)
         this.pos = this.enterFlag == -1 ? data.pos : data.content.syno.synos[0].pos
 
-      console.log('word', this.word)
+      // console.log('word', this.word)
       this.wordlength = this.wordArr.length
       for (let i = 0; i < this.wordlength; i++) {
         if (this.showEng) this.rwList[i] = 1
@@ -498,7 +499,13 @@ export default {
             this.Start()
           } else {
             console.log('进入第三阶段')
-            this.$router.push({ name: 'exam', params: { handSum: this.skipSum } })
+            this.$router.push({
+              name: 'exam',
+              params: {
+                handSum: this.skipSum,
+                wordPlan: this.wordPlan
+              }
+            })
           }
         }
         else if (this.enterFlag == 0) {//是模块
@@ -724,7 +731,5 @@ export default {
   }
 }
 
-.fontWidth {
-  font-family: "Lucida Console";
-}
+
 </style>

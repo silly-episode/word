@@ -15,11 +15,13 @@
                   action="api/user/userImage"
                   :data="UserOfId"
                   :file-list="fileList"
-                  :on-change="handlePreview"
-                  :on-success="handleSuccess"
                 >
-                  <el-avatar :src="avatarSrc" :size="120" :fit="fit">
-                  </el-avatar>
+                  <el-image
+                    class="radius_per50"
+                    :src="avatarSrc"
+                    style="width: 120px; height: 120px"
+                    :fit="fit"
+                  ></el-image>
                 </el-upload>
               </div>
               <ul class="list-group list-group-striped">
@@ -39,31 +41,45 @@
         </el-col>
         <el-col :span="16" :xs="24">
           <el-card>
-            <div slot="header" class="clearfix">
+            <div slot="header" class="clearfix flex_between_center">
               <span class="font_22">基本资料</span>
+              <el-button size="medium" @click="logOff" type="danger"
+                >注销账号</el-button
+              >
             </div>
             <el-tabs v-model="activeTab">
               <el-tab-pane label="基本资料" name="userinfo">
-                <userInfo :user="user" />
+                <userInfo :user="user" @refresh="getUser" />
               </el-tab-pane>
-              <el-tab-pane label="修改密码" name="resetPwd">
-                <resetPwd />
+              <el-tab-pane label="修改密码" name="editPwd">
+                <editPwd />
+              </el-tab-pane>
+              <el-tab-pane label="修改手机号" name="resetTel">
+                <resetTel @refresh="getUser" />
+              </el-tab-pane>
+              <el-tab-pane label="重置密码" name="resetPwd">
+                <resetPwd @refresh="getUser" />
               </el-tab-pane>
             </el-tabs>
           </el-card>
         </el-col>
       </el-row>
     </div>
+    <Login ref="login"></Login>
   </div>
 </template>
 
 <script>
 import userInfo from "./userInfo";
+import editPwd from "./editPwd";
 import resetPwd from "./resetPwd";
+import resetTel from "./resetTel";
+import { logOff } from '@/api/user.js'
 import { avatarUrl } from '@/utils/img.js'
+import Login from '../Login.vue'
 export default {
   name: "own",
-  components: { userInfo, resetPwd },
+  components: { userInfo, editPwd, resetPwd, resetTel, Login },
   data() {
     return {
       fileList: [],
@@ -118,14 +134,24 @@ export default {
       user: {},
       avatarSrc: '',
       UserOfId: { userId: '' },
-      fit: 'contain',
+      fit: 'cover',
       roleGroup: {},
       postGroup: {},
       activeTab: "userinfo"
     };
   },
   created() {
-    this.getUser();
+    const token = window.sessionStorage.getItem('token')
+    this.token = token
+    if (token) this.getUser();
+  },
+  mounted() {
+    this.$bus.$on('beLogin', this.getUser)
+    // console.log('token', this.token)
+    if (!this.token) this.$refs.login.showLogin()
+  },
+  beforeDestroy() {
+    this.$bus.$off('beLogin')
   },
   methods: {
     getUser() {
@@ -136,12 +162,21 @@ export default {
         this.UserOfId.userId = userInfo.userId
       }
     },
-
-    handlePreview(file) { console.log('file', file.url) },
-    handleSuccess(res, file, fileList) {
-      console.log('res', res)
-      console.log('file', file.url)
-      console.log('fileList', fileList)
+    logOff() {
+      this.$confirm('下个月初将彻底删除账户，重新登录将撤销注销。', '危险行为！', {
+        cancelButtonText: "取消",
+        confirmButtonText: "确认",
+        showClose: true,
+        center: true,
+        type: "warning"
+      })
+        .then(() => {
+          console.log('确认')
+          logOff()
+            .then((res) => {
+              console.log('res', res)
+            })
+        })
     }
   }
 };

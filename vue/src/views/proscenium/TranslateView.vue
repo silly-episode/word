@@ -64,6 +64,14 @@
         <div class="textarea">
           {{ transWord }}
         </div>
+        <div class="bottomBtn">
+          <el-button type="primary" @click="changeName(0)"
+            >小驼峰命名</el-button
+          >
+          <el-button type="primary" @click="changeName(1)"
+            >大驼峰命名</el-button
+          >
+        </div>
         <div class="copy" @click="copyText(transWord)">
           <i class="iconfont icon-fuzhi margin_r_5" style="font-size: 20px"></i>
           <div class="pointer">复制</div>
@@ -144,6 +152,22 @@ export default {
         .catch((err) => {
           console.log(err.message)
         })
+    },
+    changeName(e) {
+      if (e == 0) {
+        // 将字符串转换为小驼峰命名
+        const camelCaseString = this.transWord.replace(/(?:^\w|[A-Z]|\b\w)/g, (word, index) => {
+          return index === 0 ? word.toLowerCase() : word.toUpperCase();
+        }).replace(/\s+/g, '');
+        this.transWord = camelCaseString
+      } else if (e == 1) {
+        // 将字符串转换为大驼峰命名
+        const pascalCaseString = this.transWord.replace(/(?:^\w|[A-Z]|\b\w)/g, (word) => {
+          return word.toUpperCase();
+        }).replace(/\s+/g, '');
+        this.transWord = pascalCaseString
+      }
+      // console.log(' this.transWord', this.transWord)
     },
 
     copyText(copytext) {
@@ -257,6 +281,14 @@ export default {
   top: 26px;
   right: 16px;
   cursor: pointer;
+}
+
+.bottomBtn {
+  position: absolute;
+  bottom: 16px;
+  left: 80px;
+  display: flex;
+  align-items: center;
 }
 
 .copy {

@@ -247,6 +247,7 @@ export default {
               window.sessionStorage.setItem("token", res.data.token);
               window.sessionStorage.setItem('userInfo', JSON.stringify(res.data.userInfo))
               // this.$emit('beLogin')
+              debugger
               this.$bus.$emit('beLogin')
               this.closed()
               this.$message.success("登录成功！");

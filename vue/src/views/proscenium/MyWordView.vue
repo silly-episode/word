@@ -269,7 +269,7 @@ export default {
           if (res.code == 200) {
             this.mainPlan = res.data.mainPlan
             this.planList = res.data.commonPlan
-            if (this.mainPlan) this.percentage = (this.mainPlan.finishedWord * 100) / this.mainPlan.allWord - 0
+            if (this.mainPlan) this.percentage = parseInt((this.mainPlan.finishedWord * 100) / this.mainPlan.allWord) - 0
           }
         })
         .catch((err) => {
@@ -422,6 +422,7 @@ export default {
 
     },
     init() {
+      console.log('word的login')
       if (!this.token) this.token = window.sessionStorage.getItem('token')
       this.getBookList()
       this.getPlanList()

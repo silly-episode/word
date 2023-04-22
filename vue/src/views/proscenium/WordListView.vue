@@ -46,6 +46,25 @@
     </el-main>
     <el-aside width="29%">
       <div class="sidebox">
+        <div class="bg_grey font_14 font_bold padding_10">文嘉《明日歌》</div>
+        <ol class="cibiao">
+          <li class="text_center font_18" v-for="item in poem" :key="item">
+            {{ item }}
+          </li>
+        </ol>
+        <div class="margin_b_15">
+          <el-statistic
+            ref="statistic"
+            @finish="hilarity"
+            format="HH:mm:ss"
+            :value="deadline"
+            title="距离明日："
+            time-indices
+          >
+          </el-statistic>
+        </div>
+      </div>
+      <div class="sidebox">
         <div class="bg_grey font_14 font_bold padding_10">新增词表</div>
         <ol class="cibiao">
           <li
@@ -91,10 +110,12 @@ import { imageUrl } from '@/utils/img.js'
 export default {
   data() {
     return {
+      deadline: Date.now() + (new Date().setHours(23, 59, 59) - Date.now()),
       currentIndex: 0,
       rotationChart: [],//轮播图/新增 词表
       hotList: [],  //热门词表
       bookList: [],  //中间放的词表
+      poem: ['明日复明日', '明日何其多', '我生待明日', '万事成蹉跎'],
       lis: [
         {
           name: '出国必用',
@@ -166,7 +187,15 @@ export default {
         name: 'module',
         params: { moduleId }
       })
-    }
+    },
+
+    hilarity() {
+      this.$notify({
+        title: '提示',
+        message: '时间已到，你可知寸金难买寸光阴？',
+        duration: 0,
+      });
+    },
   },
   created() {
     this.getRotationChart()

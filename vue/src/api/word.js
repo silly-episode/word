@@ -21,6 +21,29 @@ export function getWordByBookId(params) {
     })
 }
 
+export function exam(data) {
+    return request({
+        url: 'examResult/questionBank',
+        method: 'post',
+        data
+    })
+}
+
+export function examResult(data) {
+    return request({
+        url: 'examResult/examResult',
+        method: 'post',
+        data
+    })
+}
+
+export function planScore(planId) {
+    return request({
+        url: `word/dayWord/${planId}`,
+        method: 'put'
+    })
+}
+
 // export function sayHello(data) {
 //     return request({
 //         url: '/hello/name',
