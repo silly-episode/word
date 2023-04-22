@@ -48,7 +48,10 @@
               >
             </div>
             <el-tabs v-model="activeTab">
-              <el-tab-pane label="基本资料" name="userinfo">
+              <el-tab-pane label="成绩分析" name="analysis">
+                <analysis />
+              </el-tab-pane>
+              <el-tab-pane label="修改资料" name="userinfo">
                 <userInfo :user="user" @refresh="getUser" />
               </el-tab-pane>
               <el-tab-pane label="修改密码" name="editPwd">
@@ -70,6 +73,7 @@
 </template>
 
 <script>
+import analysis from "./analysis";
 import userInfo from "./userInfo";
 import editPwd from "./editPwd";
 import resetPwd from "./resetPwd";
@@ -79,7 +83,7 @@ import { avatarUrl } from '@/utils/img.js'
 import Login from '../Login.vue'
 export default {
   name: "own",
-  components: { userInfo, editPwd, resetPwd, resetTel, Login },
+  components: { analysis, userInfo, editPwd, resetPwd, resetTel, Login },
   data() {
     return {
       fileList: [],
