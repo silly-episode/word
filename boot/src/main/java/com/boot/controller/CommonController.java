@@ -45,6 +45,21 @@ public class CommonController {
         return Result.success(community);
     }
 
+
+    /**
+     * @Return:
+     * @Author: DengYinzhe
+     * @Description: TODO 系统信息
+     * @Date: 2023/4/22 15:35
+     */
+    @GetMapping("systemInfo")
+    public Result systemInfo() {
+
+
+        return Result.success();
+    }
+
+
     /**
      * @Return: Result
      * @Author: DengYinzhe

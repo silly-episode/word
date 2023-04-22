@@ -620,9 +620,12 @@ public class WordModuleController {
      * @Description: 完成日常单词后
      * @Date: 2023/2/14 18:05
      */
-    @PutMapping("dayWord/{userId}/{planId}")
+    @PutMapping("dayWord/{planId}")
     @Transactional
-    public Result dayWord(@PathVariable Long userId, @PathVariable Long planId) {
+    public Result dayWord(@PathVariable Long planId, HttpServletRequest request) {
+
+        Long userId = jwtUtils.getUserIdFromRequest(request);
+
 //        更新计划表
         Plan plan = planService.getById(planId);
         plan.setFinishedWord(plan.getFinishedWord() + plan.getDayWord());

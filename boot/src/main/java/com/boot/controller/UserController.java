@@ -105,6 +105,25 @@ public class UserController {
         }
     }
 
+
+    /**
+     * @Return:
+     * @Author: DengYinzhe
+     * @Description: TODO 已经登录的发送验证码 需要认证
+     * @Date: 2023/4/22 10:47
+     */
+    @GetMapping("smsLogined/{phone}")
+    public Result getCodeLogined(@PathVariable("phone") String phone) {
+        String code = RandomUtils.getSixBitRandom();
+        if (smsUtils.sendMessage(phone, code)) {
+            redisUtils.add(codePre + phone, code, 5L, TimeUnit.MINUTES);
+            return Result.success("发送短信成功");
+        } else {
+            return Result.error("发送短信失败");
+        }
+    }
+
+
     /**
      * @param loginMessage: 登录信息
      * @Return: String
@@ -338,9 +357,11 @@ public class UserController {
      * @Description: 注销账户，月初彻底删除  已测试
      * @Date: 2023/2/9 14:27
      */
-    @DeleteMapping("user/{userId}")
+    @DeleteMapping("user")
     @RequiresAuthentication
-    public Result userDelete(@PathVariable("userId") Long userId) {
+    public Result userDelete(HttpServletRequest request) {
+        Long userId = jwtUtils.getUserIdFromRequest(request);
+        assert userId != null;
         UpdateWrapper<User> wrapper = new UpdateWrapper<>();
         wrapper.set("user_status", '2').eq("user_id", userId);
         boolean result = userService.update(wrapper);
@@ -391,10 +412,21 @@ public class UserController {
      * @Date: 2023/2/14 20:09
      */
     @PutMapping("password")
-    @RequiresAuthentication
-    public Result password(@RequestParam Long userId, @RequestParam String password) {
+//    @RequiresAuthentication
+    public Result password(@RequestBody PasswordDto passwordDto, HttpServletRequest request) {
+        Long userId = jwtUtils.getUserIdFromRequest(request);
+        if (userId == null) {
+            return Result.error("token异常");
+        }
+        User user = userService.getById(userId);
+        if (!user.getPassword().equals(passwordDto.getOldPassword())) {
+            return Result.error("旧密码不正确");
+        }
+        if (user.getPassword().equals(passwordDto.getNewPassword())) {
+            return Result.error("旧密码和新密码相同");
+        }
         UpdateWrapper<User> updateWrapper = new UpdateWrapper<>();
-        updateWrapper.set("password", password).eq("user_id", userId);
+        updateWrapper.set("password", passwordDto.getNewPassword()).eq("user_id", userId);
         if (userService.update(updateWrapper)) {
             return Result.success("修改密码成功");
         } else {
@@ -412,9 +444,14 @@ public class UserController {
      * @Date: 2023/2/14 20:36
      */
     @PostMapping("tel")
-    @RequiresAuthentication
-    public Result tel(@RequestParam Long userId, @RequestParam String tel, @RequestParam String code) {
-
+//    @RequiresAuthentication
+    public Result tel(@RequestBody SmsCodeDto smsCodeDto, HttpServletRequest request) {
+        Long userId = jwtUtils.getUserIdFromRequest(request);
+        if (userId == null) {
+            return Result.error("token异常");
+        }
+        String tel = smsCodeDto.getTel();
+        String code = smsCodeDto.getCode();
         if (null != userService.getUserByTel(tel)) {
             return Result.error(111, "手机号已被绑定");
         }
@@ -456,19 +493,25 @@ public class UserController {
      * @param code:
      * @Return: Result
      * @Author: DengYinzhe
-     * @Description: TODO 更换密码
+     * @Description: TODO 重置密码
      * @Date: 2023/2/14 20:58
      */
-    @PutMapping("password/{tel}/{password}")
-    @RequiresAuthentication
-    public Result password(@PathVariable String tel, @PathVariable String password) {
-        UpdateWrapper<User> updateWrapper = new UpdateWrapper<>();
-        updateWrapper.set("password", password).eq("tel", tel);
-        if (userService.update(updateWrapper)) {
-            return Result.success("重置密码成功");
+    @PutMapping("resetPassword")
+//    @RequiresAuthentication
+    public Result password(@RequestBody ResetPasswordDto resetPasswordDto) {
+        if (resetPasswordDto.getCode().equals(redisUtils.get(codePre + resetPasswordDto.getTel()))) {
+            UpdateWrapper<User> updateWrapper = new UpdateWrapper<>();
+            updateWrapper.set("password", resetPasswordDto.getPassword()).eq("tel", resetPasswordDto.getTel());
+            if (userService.update(updateWrapper)) {
+                return Result.success("重置密码成功");
+            } else {
+                return Result.error("更换密码失败");
+            }
         } else {
-            return Result.error("更换密码失败");
+            return Result.error("验证码不正确");
         }
+
+
     }
 
     /**

@@ -11,10 +11,12 @@ import com.boot.common.result.Result;
 import com.boot.dto.Question;
 import com.boot.entity.ExamResult;
 import com.boot.service.ExamResultService;
+import com.boot.utils.JwtUtils;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -38,6 +40,8 @@ public class ExamResultController {
     private ExamResultService examResultService;
     @Resource
     private ElasticsearchClient elasticsearchClient;
+    @Resource
+    private JwtUtils jwtUtils;
 
     /**
      * @param examResult:
@@ -47,8 +51,12 @@ public class ExamResultController {
      * @Date: 2023/2/20 14:38
      */
     @PostMapping("examResult")
-    public Result examResult(@RequestBody ExamResult examResult) {
-        examResult.setExamTime(LocalDateTime.now());
+    public Result examResult(@RequestBody ExamResult examResult, HttpServletRequest request) {
+        Long userId = jwtUtils.getUserIdFromRequest(request);
+
+        examResult
+                .setExamTime(LocalDateTime.now())
+                .setUserId(userId);
         if (examResultService.save(examResult)) {
             return Result.success("录入成绩成功");
         } else {
@@ -91,7 +99,7 @@ public class ExamResultController {
         int bankTotal = wordPlan.getAllWord();
         int choiceCount = 4;
         int start = wordPlan.getFinishedWord() + 1;
-        int end = start + wordPlan.getDayWord();
+        int end = start + wordPlan.getDayWord() - 1;
         if (end > bankTotal) {
             end = bankTotal;
         }

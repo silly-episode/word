@@ -38,6 +38,8 @@ public class ExamResult extends Model<ExamResult> {
     private Long planId;
     // 用户id
     private Long userId;
+    // 用时
+    private String usageTime;
 
     /**
      * 获取主键值
