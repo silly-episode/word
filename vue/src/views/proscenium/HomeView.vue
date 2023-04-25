@@ -29,11 +29,13 @@
         >
         <el-dropdown trigger="click" @command="handleJump">
           <span class="el-dropdown-link">
-            <el-avatar
-              :size="60"
-              src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"
-            >
-            </el-avatar>
+            <el-image
+              class="radius_per50"
+              :src="avatarSrc"
+              style="width: 60px; height: 60px"
+              :fit="fit"
+            ></el-image>
+            <!-- <el-avatar :size="60" :src="avatarSrc"> </el-avatar> -->
           </span>
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item command="own"> 个人中心 </el-dropdown-item>
@@ -54,11 +56,14 @@
 
 <script>
 import Login from './Login.vue'
+import { avatarUrl } from '@/utils/img.js'
 export default {
   name: "HomeView",
   components: { Login },
   data() {
     return {
+      fit: 'cover',
+      avatarSrc: '',
       isLogin: false,
       userInfo: {},
       activePath: '/wordlist',
@@ -81,6 +86,7 @@ export default {
     }
   },
   methods: {
+    // 跳转
     handleJump(name) {
       if (name == 'login') {
         if (this.isLogin) {
@@ -91,7 +97,8 @@ export default {
           }).then(() => {
             window.sessionStorage.clear();
             // window.location.reload()
-            this.$router.push("/home");
+            this.avatarSrc = 'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png'
+            if (this.activePath != '/wordlist') this.$router.push("/home");
             window.sessionStorage.setItem("activePath", '/wordlist');
           }).catch(() => {
             console.log('取消操作');
@@ -103,12 +110,14 @@ export default {
 
     },
 
+    // 保存选择菜单路径
     saveNavState(activePath) {
       // console.log(activePath)
       window.sessionStorage.setItem("activePath", activePath);
       this.activePath = activePath;
     },
 
+    // 去背单词
     reciteWord() {
       if (this.isLogin) this.$router.push({
         name: 'word',
@@ -117,22 +126,23 @@ export default {
       else this.$refs.login.showLogin()
     },
 
-    beLogin() {
-      console.log('home的login')
-      this.isLogin = true
-    }
+    init() {
+      // console.log('home的login')
+      const activePath = window.sessionStorage.getItem("activePath");
+      this.activePath = activePath || '/wordlist'
+      const token = window.sessionStorage.getItem("token");
+      this.isLogin = token ? true : false
+      this.userInfo = JSON.parse(window.sessionStorage.getItem('userInfo'))
+      if (this.userInfo) this.avatarSrc = avatarUrl(this.userInfo.userId)
+      else this.avatarSrc = 'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png'
+    },
   },
   created() {
-    const activePath = window.sessionStorage.getItem("activePath");
-    this.activePath = activePath || '/wordlist'
-    const token = window.sessionStorage.getItem("token");
-    this.isLogin = token ? true : false
-    this.userInfo = JSON.parse(window.sessionStorage.getItem('userInfo'))
-    // console.log('userInfo',this.userInfo)
-    console.log('this.isLogin', this.isLogin)
+    this.init()
+    // console.log('this.isLogin', this.isLogin)
   },
   mounted() {
-    this.$bus.$on('beLogin', this.beLogin)
+    this.$bus.$on('beLogin', this.init)
   },
   beforeDestroy() {
     this.$bus.$off('beLogin')

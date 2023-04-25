@@ -43,7 +43,11 @@
           <el-card>
             <div slot="header" class="clearfix flex_between_center">
               <span class="font_22">基本资料</span>
-              <el-button size="medium" @click="logOff" type="danger"
+              <el-button
+                disabled="!isLogin"
+                size="medium"
+                @click="logOff"
+                type="danger"
                 >注销账号</el-button
               >
             </div>
@@ -86,6 +90,7 @@ export default {
   components: { analysis, userInfo, editPwd, resetPwd, resetTel, Login },
   data() {
     return {
+      isLogin: false,
       fileList: [],
       cols: [{
         lable: '账号',
@@ -164,7 +169,7 @@ export default {
         this.avatarSrc = avatarUrl(userInfo.userId)
         this.user = userInfo
         this.UserOfId.userId = userInfo.userId
-      }
+      } else this.isLogin = false
     },
     logOff() {
       this.$confirm('下个月初将彻底删除账户，重新登录将撤销注销。', '危险行为！', {

@@ -116,11 +116,17 @@
       <div
         class="border_ccc wid_215 font_14 padding_b_10 margin_l_20 flex_column_center_center"
       >
-        <el-avatar
+        <!-- <el-avatar
           :size="100"
           src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"
         >
-        </el-avatar>
+        </el-avatar> -->
+        <el-image
+          class="radius_per50 margin_t_10"
+          :src="avatarSrc"
+          style="width: 100px; height: 100px"
+          fit="cover"
+        ></el-image>
         <p class="margin_t_20">{{ userInfo.nickName }}</p>
         <p class="margin_t_b_10">
           积分:<span class="blue font_bold margin_l_10">{{
@@ -215,7 +221,7 @@
 
 <script>
 import { allBook, allPlan, deletePlan, setMain, addBook, hotIntegration, swearSearch, swear } from '@/api/wordList'
-import { userInfo } from '@/api/user'
+// import { userInfo } from '@/api/user'
 import { avatarUrl } from '@/utils/img.js'
 import PlanView from './PlanView.vue'
 import Login from './Login.vue'
@@ -223,6 +229,7 @@ import Login from './Login.vue'
 export default {
   data() {
     return {
+      avatarSrc:'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png',
       activeName: '1',
       token: '',
       visible: false,
@@ -270,19 +277,6 @@ export default {
             this.mainPlan = res.data.mainPlan
             this.planList = res.data.commonPlan
             if (this.mainPlan) this.percentage = parseInt((this.mainPlan.finishedWord * 100) / this.mainPlan.allWord) - 0
-          }
-        })
-        .catch((err) => {
-          console.log('err', err)
-        })
-    },
-
-    getUserInfo() {
-      userInfo()
-        .then((res) => {
-          // console.log(res)
-          if (res.code == 200) {
-
           }
         })
         .catch((err) => {
@@ -429,6 +423,7 @@ export default {
       const userInfo = JSON.parse(window.sessionStorage.getItem('userInfo'))
       if (userInfo) {
         this.userInfo = userInfo
+        this.avatarSrc = avatarUrl(this.userInfo.userId)
         this.btnDisable = userInfo.swear
       }
     }

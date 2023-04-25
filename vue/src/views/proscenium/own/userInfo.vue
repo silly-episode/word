@@ -40,7 +40,7 @@ export default {
   },
   data() {
     return {
-      userInfo: JSON.parse(JSON.stringify(this.user)),
+      // userInfo: JSON.parse(JSON.stringify(this.user)),
       cols: [
         {
           lable: '昵称',
@@ -75,6 +75,9 @@ export default {
 
       }
     };
+  },
+  created() {
+    console.log('this.user', JSON.parse(JSON.stringify(this.user)))
   },
   methods: {
     submit() {
