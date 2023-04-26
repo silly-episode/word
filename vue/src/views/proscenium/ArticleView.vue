@@ -27,6 +27,12 @@
       >
         {{ isStart ? "Pause" : "Start" }}
       </div>
+      <div
+        @click="End"
+        class="white bg_purple radius_10 text_center pointer wid_100 hei_50 flex_center_center font_18"
+      >
+        End
+      </div>
     </div>
     <div class="autoCenter wid_1000">
       <div class="hei_70"></div>
@@ -46,14 +52,14 @@
           >
         </p>
         <input
-            :name="index"
-            :ref="`input${index}`"
-            :maxlength="item.length"
-            @input="input"
-            @keydown.delete.prevent
-            :readonly="!(index == inputIndex && isStart)"
-            type="text"
-            class="index_content-row"
+          :name="index"
+          :ref="`input${index}`"
+          :maxlength="item.length"
+          @input="input"
+          @keydown.delete.prevent
+          :readonly="!(index == inputIndex && isStart)"
+          type="text"
+          class="index_content-row"
         />
       </div>
     </div>
@@ -62,10 +68,10 @@
 
 <script>
 import Timer from '@/components/Timer.vue'
-import {getArticle} from '@/api/article.js'
+import { getArticle } from '@/api/article.js'
 
 export default {
-  components: {Timer},
+  components: { Timer },
   data() {
     return {
       articleId: '',
@@ -160,6 +166,17 @@ export default {
       // return str.replace(regex, '-\n');
       return [...str.match(/.{1,75}/g)];
       // return str;
+    },
+
+    // 结束练习
+    End() {
+      let time = this.trunTime(this.$refs.jishi.content)
+      if (time == 0) return
+      let { info } = this
+      info.time = time
+      console.log('info', this.info)
+      //提交数据代码
+      this.$router.back()
     }
   },
   created() {

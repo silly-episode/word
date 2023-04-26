@@ -44,7 +44,7 @@
             <div slot="header" class="clearfix flex_between_center">
               <span class="font_22">基本资料</span>
               <el-button
-                disabled="!isLogin"
+                :disabled="!isLogin"
                 size="medium"
                 @click="logOff"
                 type="danger"
@@ -150,17 +150,16 @@ export default {
     };
   },
   created() {
+    this.$bus.$off('own').$on('own', () => {
+      this.getUser()
+      console.log('调用个人中心')
+    })
     const token = window.sessionStorage.getItem('token')
     this.token = token
     if (token) this.getUser();
   },
   mounted() {
-    this.$bus.$on('beLogin', this.getUser)
-    // console.log('token', this.token)
     if (!this.token) this.$refs.login.showLogin()
-  },
-  beforeDestroy() {
-    this.$bus.$off('beLogin')
   },
   methods: {
     getUser() {
@@ -169,6 +168,7 @@ export default {
         this.avatarSrc = avatarUrl(userInfo.userId)
         this.user = userInfo
         this.UserOfId.userId = userInfo.userId
+        this.isLogin = true
       } else this.isLogin = false
     },
     logOff() {
@@ -187,7 +187,7 @@ export default {
             })
         })
     }
-  }
+  },
 };
 </script>
 

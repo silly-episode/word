@@ -98,7 +98,7 @@ export default {
             window.sessionStorage.clear();
             // window.location.reload()
             this.avatarSrc = 'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png'
-            if (this.activePath != '/wordlist') this.$router.push("/home");
+            if (this.$route.path != '/wordlist') this.$router.push("/home");
             window.sessionStorage.setItem("activePath", '/wordlist');
           }).catch(() => {
             console.log('取消操作');
@@ -127,7 +127,6 @@ export default {
     },
 
     init() {
-      // console.log('home的login')
       const activePath = window.sessionStorage.getItem("activePath");
       this.activePath = activePath || '/wordlist'
       const token = window.sessionStorage.getItem("token");
@@ -138,15 +137,14 @@ export default {
     },
   },
   created() {
+    this.$bus.$off('beLogin').$on('beLogin', () => {
+      this.init()
+      console.log('调用home')
+    });
     this.init()
     // console.log('this.isLogin', this.isLogin)
   },
-  mounted() {
-    this.$bus.$on('beLogin', this.init)
-  },
-  beforeDestroy() {
-    this.$bus.$off('beLogin')
-  },
+
 };
 </script>
 

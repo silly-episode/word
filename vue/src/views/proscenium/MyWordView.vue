@@ -229,7 +229,7 @@ import Login from './Login.vue'
 export default {
   data() {
     return {
-      avatarSrc:'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png',
+      avatarSrc: 'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png',
       activeName: '1',
       token: '',
       visible: false,
@@ -416,7 +416,6 @@ export default {
 
     },
     init() {
-      console.log('word的login')
       if (!this.token) this.token = window.sessionStorage.getItem('token')
       this.getBookList()
       this.getPlanList()
@@ -429,6 +428,10 @@ export default {
     }
   },
   created() {
+    this.$bus.$off('myword').$on('myword', () => {
+      this.init()
+      console.log('调用我的单词')
+    })
     const token = window.sessionStorage.getItem('token')
     this.token = token
     this.getIntegralList()
@@ -436,14 +439,8 @@ export default {
     if (token) this.init()
   },
   mounted() {
-    this.$bus.$on('beLogin', this.init)
-    // console.log('token', this.token)
     if (!this.token) this.$refs.login.showLogin()
   },
-  beforeDestroy() {
-    this.$bus.$off('beLogin')
-  }
-
 }
 </script>
 

@@ -1,12 +1,41 @@
 <template>
   <div :class="`bgcolor-${isDark ? 'off' : 'on'}`">
+    <div class="fixBtn flex_center">
+      <div
+        @click="again"
+        class="padding_0_30 bg_purple radius_10 line_hei_50 text_center pointer margin_r_30"
+      >
+        Again
+      </div>
+      <div
+        @click="visible = true"
+        class="padding_0_30 bg_purple radius_10 line_hei_50 text_center pointer"
+      >
+        Tip
+      </div>
+    </div>
     <div class="flex_column_center hei_per84">
       <div class="hei_100"></div>
       <h1 :class="`title title-${isDark ? 'off' : 'on'}`">
         Cool keyboard game
       </h1>
-      <h1 :class="`title title-${isDark ? 'off' : 'on'}`" id="score">
-        Score : {{ score }}
+      <h1
+        :class="`flex_center_center title title-${isDark ? 'off' : 'on'}`"
+        id="score"
+      >
+        <span class="margin_r_150"> Total : {{ total }}</span>
+        <span class="margin_r_150"> Score : {{ score }}</span>
+        <div class="flex_center font_20">
+          Time:
+          <el-statistic
+            class="width_per20"
+            @finish="hilarity"
+            :value="deadline"
+            format="mm:ss"
+            time-indices
+          >
+          </el-statistic>
+        </div>
       </h1>
       <div class="">
         <!-- First row : ESC, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, -, + and BACK -->
@@ -59,7 +88,6 @@
         </ul>
       </div>
     </div>
-
     <div class="toggle beer-pong">
       <input id="beer-pong" type="checkbox" @click="isDark = !isDark" />
       <label class="toggle-item" for="beer-pong"></label>
@@ -67,6 +95,15 @@
         <div class="lid"></div>
       </div>
     </div>
+    <el-dialog
+      :visible="visible"
+      width="70%"
+      title="键盘手势图"
+      center="true"
+      @close="visible = false"
+    >
+      <img style="width: 100%" src="@/assets/tip.png" alt="" />
+    </el-dialog>
   </div>
 </template>
 
@@ -74,11 +111,15 @@
 export default {
   data() {
     return {
+      visible: false,//显示弹窗
+      isStart: true,//键盘禁用状态，为false禁用键盘
+      deadline: Date.now() + 1000 * 60,
       keys: [..."ABCDEFGHIJKLMNOPQRSTUVWXYZ"],
+      total: 0,
       score: 0,
       code: '',//按键的ASCII码
       selected: '',//随机晃动的键
-      isDark: true,
+      isDark: false,
       row0: [
         { class: "color0", id: "Esc" },
         { class: "color0", id: "1" },
@@ -144,6 +185,23 @@ export default {
     }
   },
   methods: {
+    closedImg() {
+      this.visible = false
+    },
+    again() {
+      this.score = 0
+      this.total = 0
+      this.deadline = Date.now() + 1000 * 60
+      this.isStart = true
+    },
+    hilarity() {
+      this.isStart = false
+      this.$notify({
+        title: '提示',
+        message: '时间已到',
+        duration: 0,
+      });
+    },
     // 获得0到25(密钥)之间的随机数
     getRandomNumber(min, max) {
       min = Math.ceil(min);
@@ -158,11 +216,13 @@ export default {
 
     // 当键盘被按下时
     keyDown(event) {
+      if (!this.isStart) return;
+      this.total++
       this.code = String.fromCharCode(event.keyCode)//当前敲的键
       if (this.code == this.selected) {
         this.score++
         this.targetRandomKey();
-      }
+      }else this.score--
     },
 
     keyUp() {
@@ -179,6 +239,25 @@ export default {
 </script>
 
 <style scoped>
+.fixBtn {
+  position: absolute;
+  top: 20%;
+  right: 10%;
+  color: white;
+  font-size: 20px;
+}
+
+.title .el-statistic {
+  width: auto !important;
+  color: rgba(250, 1, 1, 0.7) !important;
+  font-size: 1em !important;
+  line-height: 0 !important;
+}
+
+/* .title .el-statistic .con .number {
+  font-size: 18px !important;
+} */
+
 * {
   margin: 0;
   padding: 0;

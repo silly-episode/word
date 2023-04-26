@@ -125,7 +125,7 @@
 </template>
 
 <script>
-import {login, register, sms} from '@/api/user'
+import { login, register, sms } from '@/api/user'
 
 export default {
   name: 'Login',
@@ -248,6 +248,10 @@ export default {
               window.sessionStorage.setItem('userInfo', JSON.stringify(res.data.userInfo))
               // this.$emit('beLogin')
               // debugger
+              // console.log('path', this.$route.path)
+              if (this.$route.path == '/myword') this.$bus.$emit('myword')
+              if (this.$route.path == '/own') this.$bus.$emit('own')
+              if (this.$route.path == '/module') this.$bus.$emit('module')
               this.$bus.$emit('beLogin')
               this.closed()
               this.$message.success("登录成功！");

@@ -115,6 +115,10 @@ export default {
 
   },
   created() {
+    this.$bus.$off('module').$on('module', () => {
+      console.log('单词模块')
+      this.getWordModule()
+    })
     this.token = window.sessionStorage.getItem('token')
     if (this.$route.params.moduleId) {
       window.sessionStorage.setItem('moduleId', this.$route.params.moduleId)
@@ -126,12 +130,6 @@ export default {
       this.getWordModule()
     }
   },
-  mounted() {
-    this.$bus.$on('beLogin', this.getWordModule)
-  },
-  beforeDestroy() {
-    this.$bus.$off('beLogin')
-  }
 }
 </script>
 

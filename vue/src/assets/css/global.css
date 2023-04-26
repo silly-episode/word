@@ -330,6 +330,10 @@ li {
     margin-right: 40px;
 }
 
+.margin_r_150 {
+    margin-right: 150px;
+}
+
 .margin_l_10 {
     margin-left: 10px;
 }
@@ -483,6 +487,10 @@ li {
     font-size: 18px;
 }
 
+.font_20 {
+    font-size: 20px;
+}
+
 .font_22 {
     font-size: 22px;
 }
@@ -633,6 +641,10 @@ li {
 
 .bg_red {
     background-color: rgb(254, 204, 204);
+}
+
+.line_hei_14 {
+    line-height: 14px;
 }
 
 .line_hei_18 {
