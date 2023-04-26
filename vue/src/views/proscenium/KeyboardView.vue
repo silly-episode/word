@@ -201,6 +201,12 @@ export default {
         message: '时间已到',
         duration: 0,
       });
+      if (window.sessionStorage.getItem("token")) {
+        //请求代码
+        console.log({ score: this.score, total: this.total })
+      } else console.log('未登录')
+
+
     },
     // 获得0到25(密钥)之间的随机数
     getRandomNumber(min, max) {
@@ -222,7 +228,7 @@ export default {
       if (this.code == this.selected) {
         this.score++
         this.targetRandomKey();
-      }else this.score--
+      } else this.score--
     },
 
     keyUp() {

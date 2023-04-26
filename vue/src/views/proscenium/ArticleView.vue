@@ -172,10 +172,12 @@ export default {
     End() {
       let time = this.trunTime(this.$refs.jishi.content)
       if (time == 0) return
-      let { info } = this
-      info.time = time
-      console.log('info', this.info)
-      //提交数据代码
+      if (window.sessionStorage.getItem("token")) {
+        let { info } = this
+        info.time = time
+        console.log('info', this.info)
+        //提交数据代码
+      } else console.log('未登录')
       this.$router.back()
     }
   },
