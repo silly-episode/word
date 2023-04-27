@@ -83,7 +83,7 @@ public class PlanController {
                     .setUserId(userId);
             LambdaQueryWrapper<Plan> queryWrapper = new LambdaQueryWrapper<>();
             queryWrapper.eq(Plan::getUserId, userId);
-            /*没用主计划则设置其为主计划*/
+            /*没有主计划则设置其为主计划*/
             long count = planService.count(queryWrapper);
             if (count == 0) {
                 plan.setPlanStatus("1");

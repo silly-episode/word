@@ -385,8 +385,8 @@ public class UserController {
         Long userId = IdUtils.getSnowFlakeInstance().nextId();
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("account", registerMessage.getAccount());
-        User UserFromDb = userService.getOne(queryWrapper);
-        if (UserFromDb != null) {
+        User userFromDb = userService.getOne(queryWrapper);
+        if (userFromDb != null) {
             return Result.error("该账号已经存在");
         }
         User user = BeanDtoVoUtils
