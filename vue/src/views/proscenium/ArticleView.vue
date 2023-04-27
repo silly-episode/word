@@ -69,6 +69,7 @@
 <script>
 import Timer from '@/components/Timer.vue'
 import { getArticle } from '@/api/article.js'
+import { examResult } from '@/api/word.js'
 
 export default {
   components: { Timer },
@@ -175,8 +176,13 @@ export default {
       if (window.sessionStorage.getItem("token")) {
         let { info } = this
         info.time = time
-        console.log('info', this.info)
-        //提交数据代码
+        info.resultType = 1
+        // console.log('info', info)
+        examResult(info)
+          .then(res => {
+            console.log('res', res)
+            if (res.code == 200) this.$message.success(res.msg)
+          })
       } else console.log('未登录')
       this.$router.back()
     }

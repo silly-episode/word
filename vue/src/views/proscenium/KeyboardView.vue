@@ -108,6 +108,7 @@
 </template>
 
 <script>
+import { examResult } from '@/api/word.js'
 export default {
   data() {
     return {
@@ -202,8 +203,12 @@ export default {
         duration: 0,
       });
       if (window.sessionStorage.getItem("token")) {
-        //请求代码
-        console.log({ score: this.score, total: this.total })
+        const data = { resultType: 2, score: this.score, total: this.total }
+        examResult(data)
+          .then(res => {
+            // console.log('res', res)
+            if (res.code == 200) this.$message.success(res.msg)
+          })
       } else console.log('未登录')
 
 

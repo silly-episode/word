@@ -91,7 +91,7 @@
 
 <script>
 import Timer from '@/components/Timer.vue'
-import { exam,examResult, planScore } from '@/api/word'
+import { exam, examResult, planScore } from '@/api/word'
 
 export default {
   components: { Timer },
@@ -172,6 +172,7 @@ export default {
       this.isStart = false
       this.sumScore = parseInt(((this.handSum + this.count) * 50) / this.examList.length)
       const data = {
+        resultType: 0,
         grade: this.sumScore,
         planId: this.wordPlan.planId,
         usageTime: ''
