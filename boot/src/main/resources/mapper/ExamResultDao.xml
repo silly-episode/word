@@ -7,25 +7,44 @@
         <result property="grade" column="grade" jdbcType="INTEGER"/>
         <result property="examTime" column="exam_time" jdbcType="TIMESTAMP"/>
         <result property="planId" column="plan_id" jdbcType="INTEGER"/>
+        <result property="userId" column="user_id" jdbcType="INTEGER"/>
+        <result property="usageTime" column="usage_time" jdbcType="VARCHAR"/>
+        <result property="resultType" column="result_type" jdbcType="VARCHAR"/>
+        <result property="score" column="score" jdbcType="INTEGER"/>
+        <result property="correctRate" column="correct_rate" jdbcType="NUMERIC"/>
+        <result property="content" column="content" jdbcType="INTEGER"/>
+        <result property="correctNum" column="correct_num" jdbcType="INTEGER"/>
+        <result property="total" column="total" jdbcType="INTEGER"/>
+        <result property="inputNum" column="input_num" jdbcType="INTEGER"/>
+        <result property="velocity" column="velocity" jdbcType="NUMERIC"/>
     </resultMap>
 
     <!-- 批量插入 -->
     <insert id="insertBatch" keyProperty="resultId" useGeneratedKeys="true">
-        insert into word.exam_result(grade, exam_time, plan_id)
+        insert into word.exam_result(grade, exam_time, plan_id, user_id, usage_time, result_type, score, correct_rate,
+        content, correct_num, total, input_num, velocity)
         values
         <foreach collection="entities" item="entity" separator=",">
-            (#{entity.grade}, #{entity.examTime}, #{entity.planId})
+            (#{entity.grade}, #{entity.examTime}, #{entity.planId}, #{entity.userId}, #{entity.usageTime},
+            #{entity.resultType}, #{entity.score}, #{entity.correctRate}, #{entity.content}, #{entity.correctNum},
+            #{entity.total}, #{entity.inputNum}, #{entity.velocity})
         </foreach>
     </insert>
     <!-- 批量插入或按主键更新 -->
     <insert id="insertOrUpdateBatch" keyProperty="resultId" useGeneratedKeys="true">
-        insert into word.exam_result(grade, exam_time, plan_id)
+        insert into word.exam_result(grade, exam_time, plan_id, user_id, usage_time, result_type, score, correct_rate,
+        content, correct_num, total, input_num, velocity)
         values
         <foreach collection="entities" item="entity" separator=",">
-            (#{entity.grade}, #{entity.examTime}, #{entity.planId})
+            (#{entity.grade}, #{entity.examTime}, #{entity.planId}, #{entity.userId}, #{entity.usageTime},
+            #{entity.resultType}, #{entity.score}, #{entity.correctRate}, #{entity.content}, #{entity.correctNum},
+            #{entity.total}, #{entity.inputNum}, #{entity.velocity})
         </foreach>
         on duplicate key update
-        grade = values(grade) , exam_time = values(exam_time) , plan_id = values(plan_id)
+        grade = values(grade) , exam_time = values(exam_time) , plan_id = values(plan_id) , user_id = values(user_id) ,
+        usage_time = values(usage_time) , result_type = values(result_type) , score = values(score) , correct_rate =
+        values(correct_rate) , content = values(content) , correct_num = values(correct_num) , total = values(total) ,
+        input_num = values(input_num) , velocity = values(velocity)
     </insert>
 
 </mapper>

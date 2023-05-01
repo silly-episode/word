@@ -383,6 +383,20 @@ export function changeEsWordModule(data) {
 
 
 /**
+ * 更换图片
+ * @returns {*}
+ * @param data
+ */
+export function changePicture(data) {
+    return request({
+        url: 'word/uploadImage',
+        method: 'post',
+        data,
+    })
+}
+
+
+/**
  * 文章分页搜索
  * @returns {*}
  * @param data

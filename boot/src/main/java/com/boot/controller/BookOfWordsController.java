@@ -12,10 +12,10 @@ import com.boot.entity.WordBooks;
 import com.boot.service.BookOfWordsService;
 import com.boot.service.WordBooksService;
 import com.boot.utils.PdfUtils;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -27,7 +27,7 @@ import java.util.*;
  */
 @RestController
 @RequestMapping("bookOfWords")
-@RequiresAuthentication
+//@RequiresAuthentication
 public class BookOfWordsController {
     /**
      * 服务对象
@@ -147,14 +147,14 @@ public class BookOfWordsController {
      * @Date: 2023/2/25 15:30
      */
     @GetMapping("book/{bookId}")
-    public byte[] book(@PathVariable Long bookId) throws Exception {
+    public void book(@PathVariable Long bookId, HttpServletResponse response) throws Exception {
         Map<String, Object> map = new HashMap<>(10);
         map.put("book_id", bookId);
         List<BookOfWords> bookOfWords = bookOfWordsService.listByMap(map);
         QueryWrapper<WordBooks> queryWrapper = new QueryWrapper<>();
         queryWrapper.select("book_name").eq("book_id", bookId);
         String title = wordBooksService.getOne(queryWrapper).getBookName();
-        return pdfUtils.pdfExport(bookOfWords, title);
+        pdfUtils.pdfExport(bookOfWords, title, response);
     }
 
 

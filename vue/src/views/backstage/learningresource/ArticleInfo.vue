@@ -67,8 +67,15 @@
         </el-row>
 
         <el-row>
+          <el-form-item label="描述" prop="remark">
+            <el-input v-model="articleMessage.remark" :disabled="superFlag" :rows="2" maxlength="100" show-word-limit
+                      type="textarea"></el-input>
+          </el-form-item>
+        </el-row>
+
+        <el-row>
           <el-form-item label="内容" prop="content">
-            <el-input v-model="articleMessage.content" :disabled="superFlag" :rows="13" maxlength="5000" show-word-limit
+            <el-input v-model="articleMessage.content" :disabled="superFlag" :rows="9" maxlength="5000" show-word-limit
                       type="textarea"></el-input>
           </el-form-item>
         </el-row>

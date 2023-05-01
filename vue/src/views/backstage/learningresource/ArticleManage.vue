@@ -78,7 +78,7 @@
                 @input="() => $forceUpdate()"
             ></el-input>
           </el-form-item>
-          <el-button icon="el-icon-search" type="primary" @click="articleSearch">
+          <el-button icon="el-icon-search" type="primary" @click="articleSearch(true)">
             查询
           </el-button>
           <el-button icon="el-icon-plus" type="warning" @click="show('article')">
@@ -120,7 +120,7 @@
             </template>
           </el-table-column>
 
-          <el-table-column label="内容" min-width="28%" prop="content" show-overflow-tooltip
+          <el-table-column label="描述" min-width="28%" prop="remark" show-overflow-tooltip
                            text-align="left"></el-table-column>
           <el-table-column align="center" label="操作" min-width="9%">
             <template v-slot="scope">
@@ -161,7 +161,7 @@
       <!-- 分页区 -->
       <div class="flex_center_center">
         <lh-pagination v-show="total > 0" :limit.sync="queryInfo.pageSize" :page.sync="queryInfo.pageNum"
-                       :total="total" @pagination="articleSearch"/>
+                       :total="total" @pagination="articleSearch(true)"/>
       </div>
 
     </el-card>
@@ -215,7 +215,7 @@ export default {
   components: {LhPagination, ArticleInfo},
   created() {
     // 发送数据请求，获取用户列表数据
-    this.articleSearch();
+    this.articleSearch(true);
   },
   methods: {
     // 查看管理员详情
@@ -223,13 +223,23 @@ export default {
       this.$refs.ArticleInfo.showEditDialog(row);
     },
 
+    delay(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
+    },
+
+
     //查询
-    articleSearch() {
-      this.queryInfo.beginTime = dayjs(this.pickDate.beginDate).valueOf()
+    async articleSearch(flag) {
+      /*延时查询等待ES数据处理*/
+      if (!flag) {
+        await this.delay(500); // 等待0.5秒
+      }
+
+      this.queryInfo.beginTime = dayjs(this.pickDate.beginDate).valueOf();
       this.queryInfo.endTime = dayjs(this.pickDate.endDate).valueOf()
       let params = this.queryInfo;
       this.searchLoading = true;
-      console.log(params)
+      // console.log(params)
       articleSearch(params)
           .then((res) => {
             console.log(res)
@@ -266,13 +276,13 @@ export default {
     // 监听pagesize的改变
     handleSizeChange(newSize) {
       this.queryInfo.pagesize = newSize;
-      this.articleSearch();
+      this.articleSearch(true);
     },
     // 监听页码值改变
     handleCurrentChange(newPage) {
       this.queryInfo.pagenum = newPage;
       // 页码值改变则发起新的数据请求
-      this.articleSearch();
+      this.articleSearch(true);
     },
 
     // 根据id删除对应的用户信息

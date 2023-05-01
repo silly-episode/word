@@ -113,10 +113,10 @@
             </template>
           </el-table-column>
           <el-table-column
-            align="center"
-            label="标题"
-            min-width="12%"
-            prop="articleTitle"
+              align="center"
+              label="标题"
+              min-width="18%"
+              prop="articleTitle"
           ></el-table-column>
           <el-table-column
             align="center"
@@ -131,10 +131,10 @@
             prop="wordNumber"
           ></el-table-column>
           <el-table-column
-            align="center"
-            label="练习人数"
-            min-width="8%"
-            prop="articleStudyNumber"
+              align="center"
+              label="练习次数"
+              min-width="8%"
+              prop="articleStudyNumber"
           ></el-table-column>
           <el-table-column
             align="center"
@@ -152,11 +152,11 @@
           </el-table-column>
 
           <el-table-column
-            label="内容概览"
-            min-width="31%"
-            prop="content"
-            show-overflow-tooltip
-            text-align="left"
+              label="内容描述"
+              min-width="25%"
+              prop="remark"
+              show-overflow-tooltip
+              text-align="left"
           ></el-table-column>
           <el-table-column align="center" label="Action" min-width="10%">
             <template v-slot="scope">
@@ -190,7 +190,7 @@
 
 <script>
 
-import { articleSearch } from "@/api/admin.js"
+import {articleSearch} from "@/api/admin.js"
 import dayjs from "dayjs";
 import LhPagination from "@/components/lhPublic/lhPagination";
 

@@ -53,7 +53,9 @@ public class ExamResultController {
     @PostMapping("examResult")
     public Result examResult(@RequestBody ExamResult examResult, HttpServletRequest request) {
         Long userId = jwtUtils.getUserIdFromRequest(request);
-
+        if (userId == null) {
+            return null;
+        }
         examResult
                 .setExamTime(LocalDateTime.now())
                 .setUserId(userId);

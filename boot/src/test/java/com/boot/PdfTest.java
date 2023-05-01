@@ -37,6 +37,6 @@ public class PdfTest {
         map.put("book_id", bookId);
 
         List<BookOfWords> bookOfWords = bookOfWordsService.listByMap(map);
-        pdfUtils.pdfExport(bookOfWords, "单词本");
+//        pdfUtils.pdfExport(bookOfWords, "单词本");
     }
 }

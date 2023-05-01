@@ -20,10 +20,16 @@
       </el-button>
       <div>
         <el-button type="primary" @click="editFlag = true"
-          >修改单词本</el-button
+        >修改单词本
+        </el-button
         >
         <el-button type="danger" @click="deleteBook">删除该单词本</el-button>
-        <el-button type="danger">导出</el-button>
+        <el-button
+            :icon="`el-icon-${exportLoading?'loading':'download'}`"
+            type="success"
+            @click="wordListPdf">
+          导出
+        </el-button>
       </div>
     </div>
 
@@ -71,11 +77,15 @@
 </template>
 
 <script>
-import { bookInfo, deleteWord, deleteBook, editBook } from '@/api/wordList'
+import {bookInfo, deleteBook, deleteWord, editBook, wordListPdf} from '@/api/wordList'
 import LhPagination from "@/components/lhPublic/lhPagination";
+import dayjs from "dayjs";
+import fileDownload from "js-file-download";
+
 export default {
   data() {
     return {
+      exportLoading: false,
       editFlag: false,
       bookId: '',
       bookName: '',
@@ -87,6 +97,24 @@ export default {
   },
   components: { LhPagination },
   methods: {
+
+    // 导出
+    wordListPdf() {
+      let dateTime = dayjs().format('YYYY-MM-DD hh:mm:ss');
+      this.exportLoading = true;
+      wordListPdf(this.bookId)
+          .then(response => {
+            fileDownload(response, this.bookName + "(" + dateTime + ").pdf")
+          })
+          .catch((err) => {
+            this.$message.error("导出失败")
+          })
+          .finally(() => {
+            this.exportLoading = false;
+          })
+    },
+
+
     getBookInfo() {
       const data = {
         bookId: this.bookId,
@@ -94,8 +122,8 @@ export default {
         pageSize: this.pageSize
       }
       bookInfo(data)
-        .then((res) => {
-          // console.log('res', res)
+          .then((res) => {
+            // console.log('res', res)
           if (res.code == 200) {
             this.bookName = res.data.book.bookName
             this.list = res.data.word.records

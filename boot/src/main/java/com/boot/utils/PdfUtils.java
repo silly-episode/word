@@ -6,6 +6,7 @@ import com.itextpdf.text.pdf.*;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayOutputStream;
 import java.util.List;
 
@@ -31,7 +32,7 @@ public class PdfUtils {
     // 最大宽度
     private static int maxWidth = 530;
     //  标题
-    private String title = "收藏的单词";
+    private String title = "单词本";
 
     // 字体静态代码块
     static {
@@ -201,7 +202,7 @@ public class PdfUtils {
     public PdfPTable createHead() {
         Boolean Finalytype = false;
         // 8个单元格所占比例
-        PdfPTable table = createTable(new float[]{0.069f, 0.152f, 0.236f, 0.04f, 0.069f, 0.152f, 0.236f, 0.04f});
+        PdfPTable table = createTable(new float[]{0.07f, 0.23f, 0.16f, 0.04f, 0.07f, 0.23f, 0.16f, 0.04f});
 //        表格上方信息
         table.addCell(createCell("Title: " + this.title, headfont, Element.ALIGN_LEFT, 6, false));
         table.addCell(createCell("Date:    /    /  ", headfont, Element.ALIGN_LEFT, 4, false));
@@ -263,9 +264,6 @@ public class PdfUtils {
         int i = 0;
         for (int j = 0; j <= totalWord; j += 2) {
 //            拼接词性和词义
-            String trans = bookOfWordsList.get(j).getTrans();
-            String pos = bookOfWordsList.get(j).getPos();
-            bookOfWordsList.get(j).setTrans(pos + "   " + trans);
             i += 2;
 //            当页结束时，设置最下方的单元格的底部为实线
             if ((i) % 50 == 0 || (j == totalWord - 2) || (totalWord % 2 != 0 && j == totalWord - 1)) {
@@ -275,12 +273,26 @@ public class PdfUtils {
             }
 //              如果j没有遍历到totalWord，即还有剩余单词则继续填入表格
             if (j != totalWord) {
+                /*将词义和词性整合到一个单元格中*/
+                String trans = bookOfWordsList.get(j).getTrans();
+                String pos = bookOfWordsList.get(j).getPos();
+                bookOfWordsList.get(j).setTrans(("".equals(pos) ? "   " : pos) + "—" + trans);
+                /*添加数据到单元格*/
+                /*序号*/
                 table.addCell(createCell(String.valueOf(j + 1), keyfont, CellType.NoCell, Finalytype));
+                /*单词*/
                 table.addCell(createCell(bookOfWordsList.get(j).getWord(), keyfont, CellType.WordOrMeaningCell, Finalytype));
+                /*翻译*/
                 table.addCell(createCell(bookOfWordsList.get(j).getTrans(), textfont, CellType.WordOrMeaningCell, Finalytype));
+//              /*黑框*/
                 table.addCell(createCell("", keyfont, CellType.BlankCell, Finalytype, img));
 //              如果是奇数单词数，则最好一行只显示左侧单词
                 if (totalWord - j != 1) {
+                    /*将词义和词性整合到一个单元格中*/
+                    trans = bookOfWordsList.get(j + 1).getTrans();
+                    pos = bookOfWordsList.get(j + 1).getPos();
+                    bookOfWordsList.get(j + 1).setTrans(("".equals(pos) ? "   " : pos) + "—" + trans);
+                    /*添加数据到单元格*/
                     table.addCell(createCell(String.valueOf(j + 2), keyfont, CellType.NoCell, Finalytype));
                     table.addCell(createCell(bookOfWordsList.get(j + 1).getWord(), keyfont, CellType.WordOrMeaningCell, Finalytype));
                     table.addCell(createCell(bookOfWordsList.get(j + 1).getTrans(), textfont, CellType.WordOrMeaningCell, Finalytype));
@@ -324,12 +336,17 @@ public class PdfUtils {
      * @Description:
      * @Date: 2023/2/28 12:50 收藏的单词
      */
-    public byte[] pdfExport(List<BookOfWords> bookOfWordsList, String title) throws Exception {
+    public void pdfExport(List<BookOfWords> bookOfWordsList, String title, HttpServletResponse response) throws Exception {
         byte[] content = new byte[0];
         if (null != title) {
             this.title = title;
         }
         try {
+            // 0.设置response
+            response.setContentType("application/pdf");
+            response.setHeader("Content-Disposition", "attachment;filename=Word-Pdf.pdf");
+
+
             // 1.新建document对象
             Document document = new Document(PageSize.A4);// 建立一个Document对象
 
@@ -359,11 +376,11 @@ public class PdfUtils {
             //获取流里的数据
             content = baos.toByteArray();
 
+            response.getOutputStream().write(content);
+
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return content;
-
     }
 
     /*--------------------------创建表格的方法start------------------- ---------*/

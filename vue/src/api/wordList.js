@@ -129,6 +129,19 @@ export function editBook(data) {
 }
 
 
+/**
+ * 单词本单词导出
+ * @returns {*}
+ */
+export function wordListPdf(bookId) {
+    return request({
+        url: `bookOfWords/book/${bookId}`,
+        method: 'get',
+        'responseType': 'blob'
+    })
+}
+
+
 
 
 

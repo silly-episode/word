@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
  * (ExamResult)表服务实现类
  *
  * @author makejava
- * @since 2023-02-20 14:22:15
+ * @since 2023-04-27 14:42:40
  */
 @Service("examResultService")
 public class ExamResultServiceImpl extends ServiceImpl<ExamResultDao, ExamResult> implements ExamResultService {

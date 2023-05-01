@@ -3,7 +3,6 @@ package com.boot.dao;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.boot.entity.ExamResult;
 import org.apache.ibatis.annotations.Param;
-import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
@@ -11,9 +10,8 @@ import java.util.List;
  * (ExamResult)表数据库访问层
  *
  * @author makejava
- * @since 2023-02-20 14:22:15
+ * @since 2023-04-27 14:42:25
  */
-@Repository
 public interface ExamResultDao extends BaseMapper<ExamResult> {
 
     /**
