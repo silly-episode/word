@@ -10,11 +10,12 @@
             <div>
               <div class="text_center margin_b_10">
                 <el-upload
-                  class="upload-demo"
-                  ref="upload"
-                  action="api/user/userImage"
-                  :data="UserOfId"
-                  :file-list="fileList"
+                    class="upload-demo"
+                    ref="upload"
+                    action="api/user/userImage"
+                    :data="UserOfId"
+                    :headers="headers"
+                    :file-list="fileList"
                 >
                   <el-image
                     class="radius_per50"
@@ -26,11 +27,11 @@
               </div>
               <ul class="list-group list-group-striped">
                 <li
-                  v-for="item in cols"
-                  :key="item.lable"
-                  class="list-group-item font_30"
+                    v-for="item in cols"
+                    :key="item.label"
+                    class="list-group-item font_30"
                 >
-                  <i :class="`el-icon-${item.icon}`"></i>{{ item.lable }}
+                  <i :class="`el-icon-${item.icon}`"></i>{{ item.label }}
                   <div class="pull-right">
                     {{ user[item.props] || "暂未填写" }}
                   </div>
@@ -82,62 +83,66 @@ import userInfo from "./userInfo";
 import editPwd from "./editPwd";
 import resetPwd from "./resetPwd";
 import resetTel from "./resetTel";
-import { logOff } from '@/api/user.js'
-import { avatarUrl } from '@/utils/img.js'
+import {logOff} from '@/api/user.js'
+import {avatarUrl} from '@/utils/img.js'
 import Login from '../Login.vue'
+
 export default {
   name: "own",
-  components: { analysis, userInfo, editPwd, resetPwd, resetTel, Login },
+  components: {analysis, userInfo, editPwd, resetPwd, resetTel, Login},
   data() {
     return {
+      headers: {
+        Authorization: window.sessionStorage.getItem('token')
+      },
       isLogin: false,
       fileList: [],
       cols: [{
-        lable: '账号',
+        label: '账号',
         props: 'account',
         icon: 'user-solid'
       },
-      {
-        lable: '昵称',
-        props: 'nickName',
-        icon: 'user'
-      },
-      {
-        lable: '电话',
-        props: 'tel',
-        icon: 'phone-outline'
-      },
-      {
-        lable: 'QQ',
-        props: 'qq',
-        icon: 'user-magic-stick'
-      },
+        {
+          label: '昵称',
+          props: 'nickName',
+          icon: 'user'
+        },
+        {
+          label: '电话',
+          props: 'tel',
+          icon: 'phone-outline'
+        },
+        {
+          label: 'QQ',
+          props: 'qq',
+          icon: 'user-magic-stick'
+        },
 
-      {
-        lable: '微信号',
-        props: 'wechat',
-        icon: 'mobile'
-      },
-      {
-        lable: '邮箱',
-        props: 'email',
-        icon: 'tickets'
-      },
-      {
-        lable: '积分',
-        props: 'integration',
-        icon: 's-goods'
-      },
-      {
-        lable: '注册时间',
-        props: 'registerTime',
-        icon: 'date'
-      },
-      {
-        lable: '签名',
-        props: 'signature',
-        icon: 'user-paperclip'
-      },
+        {
+          label: '微信号',
+          props: 'wechat',
+          icon: 'mobile'
+        },
+        {
+          label: '邮箱',
+          props: 'email',
+          icon: 'tickets'
+        },
+        {
+          label: '积分',
+          props: 'integration',
+          icon: 's-goods'
+        },
+        {
+          label: '注册时间',
+          props: 'registerTime',
+          icon: 'date'
+        },
+        {
+          label: '签名',
+          props: 'signature',
+          icon: 'user-paperclip'
+        },
 
       ],
       user: {},

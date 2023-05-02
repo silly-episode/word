@@ -31,7 +31,7 @@ service.interceptors.response.use(res => {
     const code = res.data.code || 200;
     // 获取错误信息
     const message = res.data.msg
-    if (code === 401) {
+    if (code === 4010) {
         MessageBox.confirm(
             '登录状态已过期，您可以继续留在该页面，或者重新登录',
             '系统提示',

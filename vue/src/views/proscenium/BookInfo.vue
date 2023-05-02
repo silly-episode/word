@@ -1,67 +1,98 @@
 <template>
   <div class="container">
+<!--  表头  -->
     <div class="title flex_between_center border_ccc">
       <input
-        @blur="edit"
-        :disabled="!editFlag"
-        class="font_22 font_bold"
-        type="text"
-        :value="bookName"
+          @blur="edit"
+          :disabled="!editFlag"
+          class="font_22 font_bold"
+          type="text"
+          ref='changeBookNameInput'
+          :value="bookName"
       />
       <!-- <span class="font_22 font_bold">{{ bookName }}</span> -->
-      <el-button type="success">
-        <router-link
-          :to="{
+
+      <div>
+        <el-button icon="el-icon-s-promotion" type="success">
+          <router-link
+              :to="{
             name: 'word',
             params: { bookId, pageNum, pageSize },
           }"
-          >开始练习</router-link
-        >
-      </el-button>
-      <div>
-        <el-button type="primary" @click="editFlag = true"
-        >修改单词本
-        </el-button
-        >
-        <el-button type="danger" @click="deleteBook">删除该单词本</el-button>
+          >开始练习
+          </router-link
+          >
+        </el-button>
+        <el-button icon="el-icon-edit" type="primary" @click="changeBookName">重命名</el-button>
+        <el-button icon="el-icon-delete-solid" type="danger" @click="deleteBook">删除单词本</el-button>
         <el-button
             :icon="`el-icon-${exportLoading?'loading':'download'}`"
-            type="success"
+            type="warning"
             @click="wordListPdf">
           导出
         </el-button>
       </div>
     </div>
 
+    <!-- 表体   -->
     <div class="shadow isbody padding_30">
-      <el-table
-        :data="list"
-        style="width: 100%"
-        :header-cell-style="{ 'text-align': 'center' }"
-        :cell-style="{ 'text-align': 'center' }"
-      >
-        <el-table-column
-          type="index"
-          label="序号"
-          min-width="10%"
-        ></el-table-column>
-        <el-table-column prop="word" label="单词"> </el-table-column>
-        <el-table-column prop="pos" label="词性" width="50px">
-        </el-table-column>
-        <el-table-column prop="trans" label="释义"> </el-table-column>
-        <el-table-column prop="wordInsertTime" label="加入时间">
-        </el-table-column>
-        <el-table-column label="操作" width="80px">
-          <template slot-scope="scope">
-            <el-button
-              type="danger"
-              icon="el-icon-delete"
-              @click="remove(scope.row.wordId)"
-              size="mini"
-            ></el-button>
+      <div class="noTableScrollBar">
+        <el-table
+            :data="list"
+            style="width: 100%"
+            :height="tableHeight === 0 ? 'calc(100vh - 327px)' : tableHeight"
+            :header-cell-style="{ 'text-align': 'center' }"
+            :cell-style="{ 'text-align': 'center' }"
+            highlight-current-row
+            stripe
+        >
+          <template slot="empty">
+            <el-empty description="快去收藏单词吧！"></el-empty>
           </template>
-        </el-table-column>
-      </el-table>
+          <el-table-column
+              type="index"
+              label="序号"
+              min-width="10%"
+          ></el-table-column>
+          <el-table-column label="单词" prop="word">
+            <template slot-scope="scope">
+              <el-popover placement="top" trigger="hover">
+                <p>例句: {{ scope.row.sentenceEn }}</p>
+                <p>翻译: {{ scope.row.sentenceZh }}</p>
+                <div slot="reference" class="name-wrapper">
+                  <el-tag size="medium">{{ scope.row.word }}</el-tag>
+                </div>
+              </el-popover>
+            </template>
+          </el-table-column>
+          <el-table-column prop="pos" label="词性" width="50px">
+          </el-table-column>
+          <el-table-column label="释义" prop="trans">
+            <template slot-scope="scope">
+              <el-tag
+                  :type="'success'"
+                  disable-transitions>{{ scope.row.trans }}
+              </el-tag>
+            </template>
+          </el-table-column>
+          <el-table-column label="添加时间" prop="wordInsertTime">
+            <template slot-scope="scope">
+              <i class="el-icon-time"></i>
+              <span style="margin-left: 10px">{{ scope.row.wordInsertTime }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="操作" width="80px">
+            <template slot-scope="scope">
+              <el-button
+                  type="danger"
+                  icon="el-icon-delete"
+                  @click="remove(scope.row.wordId)"
+                  size="mini"
+              ></el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
 
       <div class="flex_center_center">
         <lh-pagination
@@ -85,6 +116,8 @@ import fileDownload from "js-file-download";
 export default {
   data() {
     return {
+      tableHeight: 0,
+      clientWidth: document.body.clientWidth, // 文档宽度
       exportLoading: false,
       editFlag: false,
       bookId: '',
@@ -100,7 +133,7 @@ export default {
 
     // 导出
     wordListPdf() {
-      let dateTime = dayjs().format('YYYY-MM-DD hh:mm:ss');
+      let dateTime = dayjs().format("YYYY-MM-DD HH:mm:ss");
       this.exportLoading = true;
       wordListPdf(this.bookId)
           .then(response => {
@@ -143,10 +176,18 @@ export default {
             this.$message.success('删除成功！')
           }
         })
-        .catch((err) => {
-          console.log('err', err)
-        })
+          .catch((err) => {
+            console.log('err', err)
+          })
     },
+
+    changeBookName() {
+      this.editFlag = true
+      // this.$refs.changeBookNameInput.focus();
+
+    },
+
+
     edit(e) {
       this.editFlag = false
       const data = {
@@ -154,17 +195,15 @@ export default {
         bookName: e.target.value
       }
       editBook(data)
-        .then((res) => {
-          // console.log('res', res)
-          if (res.code == 200) {
-            this.getBookInfo()
-            this.$message.success('修改成功！')
-          }
+          .then((res) => {
+            if (res.code === 200) {
+              this.getBookInfo()
+              this.$message.success('修改成功！')
+            }
         })
         .catch((err) => {
           console.log('err', err)
         })
-
     },
     deleteBook() {
       deleteBook(this.bookId)
@@ -205,12 +244,20 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
+
+.noTableScrollBar /deep/ .el-table__body-wrapper::-webkit-scrollbar {
+  width: 0;
+  /*滚动条宽度*/
+}
+
+
 .title {
   padding: 1rem;
   border-radius: 10px;
   margin-bottom: 1rem;
 }
+
 .is-body {
   border-radius: 10px;
   overflow: hidden;
@@ -219,7 +266,7 @@ export default {
 }
 
 .container {
-  width: 960px;
+  width: 1200px;
   margin: 0 auto;
 }
 

@@ -33,7 +33,8 @@
 </template>
 
 <script>
-import { editUser } from '@/api/user.js'
+import {editUser} from '@/api/user.js'
+
 export default {
   props: {
     user: {
@@ -103,7 +104,7 @@ export default {
         if (valid) {
           editUser(this.userInfo).then(res => {
             //  console.log('res', res)
-            if (res.code == 200) {
+            if (res.code === 200) {
               window.sessionStorage.setItem('userInfo', JSON.stringify(this.userInfo))
               this.$emit('refresh')
               this.$message.success("修改成功")

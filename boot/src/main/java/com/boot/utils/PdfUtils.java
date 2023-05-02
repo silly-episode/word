@@ -205,7 +205,7 @@ public class PdfUtils {
         PdfPTable table = createTable(new float[]{0.07f, 0.23f, 0.16f, 0.04f, 0.07f, 0.23f, 0.16f, 0.04f});
 //        表格上方信息
         table.addCell(createCell("Title: " + this.title, headfont, Element.ALIGN_LEFT, 6, false));
-        table.addCell(createCell("Date:    /    /  ", headfont, Element.ALIGN_LEFT, 4, false));
+        table.addCell(createCell("Date:            ", headfont, Element.ALIGN_LEFT, 4, false));
 
 //        表头
         table.addCell(createCell("No.", titlefont, CellType.NoTitle, Finalytype));

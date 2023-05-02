@@ -169,6 +169,7 @@
                         :on-success="importSuccess"
                         :show-file-list="false"
                         :data="wordModule"
+                        :headers="headers"
                         accept=".json"
                         action="api/word/changeEsWordModule">
                       <el-button
@@ -240,7 +241,7 @@ export default {
   data() {
     return {
       headers: {
-        Authorization: "Bearer " + "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2NzU5MTk2MzcsImlhdCI6MTY3NTgzMzIzNywiYWNjb3VudCI6Ijg5NzkxNzcyOCJ9.kjGMhBFkBFxf_D6G-srMkPogilpL91vE_EEE3n71ozA"
+        Authorization: window.sessionStorage.getItem('adminToken')
       },
       tableHeight: 0,
       clientWidth: document.body.clientWidth, // 文档宽度

@@ -18,7 +18,6 @@ import com.boot.service.UserService;
 import com.boot.utils.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresGuest;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -113,6 +112,7 @@ public class UserController {
      * @Date: 2023/4/22 10:47
      */
     @GetMapping("smsLogined/{phone}")
+    @RequiresAuthentication
     public Result getCodeLogined(@PathVariable("phone") String phone) {
         String code = RandomUtils.getSixBitRandom();
         if (smsUtils.sendMessage(phone, code)) {
@@ -224,7 +224,7 @@ public class UserController {
      * @Date: 2023/2/9 10:53
      */
     @PostMapping("userImage")
-//    @RequiresAuthentication
+    @RequiresAuthentication
     public Result userImage(@RequestParam MultipartFile file, UserOfId userOfId) {
 
         Long userId = Long.valueOf(userOfId.getUserId());
@@ -261,7 +261,6 @@ public class UserController {
      * @Date: 2023/2/9 11:44
      */
     @GetMapping("userImage/{userId}")
-//    @RequiresAuthentication
     public void userImage(@PathVariable("userId") Long userId, HttpServletResponse response) throws IOException {
         ServletOutputStream outputStream = null;
         InputStream inputStream = null;
@@ -308,7 +307,7 @@ public class UserController {
      * @Date: 2023/2/9 11:44
      */
     @PutMapping("user")
-//    @RequiresAuthentication
+    @RequiresAuthentication
     public Result user(@RequestBody UserMsgDto userMsgDto) {
         if (userService.updateById(BeanDtoVoUtils.convert(userMsgDto, User.class))) {
             return Result.success();
@@ -380,7 +379,6 @@ public class UserController {
      * @Date: 2023/2/10 13:08
      */
     @PostMapping("user")
-    @RequiresGuest
     public Result user(@RequestBody RegisterMessage registerMessage) {
         Long userId = IdUtils.getSnowFlakeInstance().nextId();
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
@@ -412,7 +410,7 @@ public class UserController {
      * @Date: 2023/2/14 20:09
      */
     @PutMapping("password")
-//    @RequiresAuthentication
+    @RequiresAuthentication
     public Result password(@RequestBody PasswordDto passwordDto, HttpServletRequest request) {
         Long userId = jwtUtils.getUserIdFromRequest(request);
         if (userId == null) {
@@ -444,7 +442,7 @@ public class UserController {
      * @Date: 2023/2/14 20:36
      */
     @PostMapping("tel")
-//    @RequiresAuthentication
+    @RequiresAuthentication
     public Result tel(@RequestBody SmsCodeDto smsCodeDto, HttpServletRequest request) {
         Long userId = jwtUtils.getUserIdFromRequest(request);
         if (userId == null) {
@@ -478,7 +476,6 @@ public class UserController {
      * @Date: 2023/2/14 20:48
      */
     @GetMapping("tel/{tel}/{code}")
-    @RequiresGuest
     public Result tel(@PathVariable String tel, @PathVariable String code) {
 
         if (code.equals(redisUtils.get(codePre + tel))) {
@@ -497,7 +494,7 @@ public class UserController {
      * @Date: 2023/2/14 20:58
      */
     @PutMapping("resetPassword")
-//    @RequiresAuthentication
+    @RequiresAuthentication
     public Result password(@RequestBody ResetPasswordDto resetPasswordDto) {
         if (resetPasswordDto.getCode().equals(redisUtils.get(codePre + resetPasswordDto.getTel()))) {
             UpdateWrapper<User> updateWrapper = new UpdateWrapper<>();
@@ -536,6 +533,7 @@ public class UserController {
      * @Date: 2023/4/13 16:13
      */
     @PostMapping("swear")
+    @RequiresAuthentication
     public Result swear(HttpServletRequest request) {
 
         LocalDateTime today_start = LocalDateTime.of(LocalDate.now(), LocalTime.MIN);

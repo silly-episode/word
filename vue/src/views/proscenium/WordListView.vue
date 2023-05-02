@@ -54,12 +54,12 @@
         </ol>
         <div class="margin_b_15">
           <el-statistic
-            ref="statistic"
-            @finish="hilarity"
-            format="HH:mm:ss"
-            :value="deadline"
-            title="距离明日："
-            time-indices
+              ref="statistic"
+              @finish="hilarity"
+              format="HH 时 mm 分 ss 秒"
+              :value="deadline"
+              title="距离明日"
+              time-indices
           >
           </el-statistic>
         </div>
@@ -105,8 +105,9 @@
 </template>
 
 <script>
-import { newWordModule, wordModuleBySuperior, hotWordModule } from '@/api/wordList'
-import { imageUrl } from '@/utils/img.js'
+import {hotWordModule, newWordModule, wordModuleBySuperior} from '@/api/wordList'
+import {imageUrl} from '@/utils/img.js'
+
 export default {
   data() {
     return {

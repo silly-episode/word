@@ -8,6 +8,7 @@ import com.boot.service.CommunityService;
 import com.boot.utils.TranslateUtils;
 import com.tencentcloudapi.common.exception.TencentCloudSDKException;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -53,6 +54,7 @@ public class CommonController {
      * @Date: 2023/4/22 15:35
      */
     @GetMapping("systemInfo")
+    @RequiresAuthentication
     public Result systemInfo() {
 
 

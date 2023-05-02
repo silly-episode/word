@@ -347,7 +347,7 @@ export default {
 
     // 导出
     userListExcel() {
-      let dateTime = dayjs().format('YYYY-MM-DD');
+      let dateTime = dayjs().format("YYYY-MM-DD HH:mm:ss");
       this.exportLoading = true;
       userListExcel(this.queryInfo)
           .then(response => {

@@ -14,6 +14,7 @@ import com.boot.entity.Article;
 import com.boot.utils.ActionLogUtils;
 import com.boot.utils.SnowFlakeUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -51,6 +52,7 @@ public class ArticleController {
      * @Date: 2023/3/17 16:27
      */
     @PostMapping("article")
+    @RequiresAuthentication
     public Result article(@RequestBody Article article, HttpServletRequest request) throws IOException {
 
         article.setArticleId(String.valueOf(SnowFlakeUtil.getNextId()))
@@ -81,6 +83,7 @@ public class ArticleController {
      * @Date: 2023/3/17 17:09
      */
     @DeleteMapping("article/{articleId}")
+    @RequiresAuthentication
     public Result article(@PathVariable String articleId, HttpServletRequest request) throws IOException {
         /*判断是否存在*/
         SearchRequest searchRequest = new SearchRequest.Builder()
@@ -124,6 +127,7 @@ public class ArticleController {
      * @Date: 2023/3/20 11:44
      */
     @PutMapping("article")
+    @RequiresAuthentication
     public Result articleChange(@RequestBody Article article, HttpServletRequest request) throws IOException {
 
         // 构建修改文档的请求

@@ -322,7 +322,7 @@ export function moduleSearch(data) {
 export function updateModule(data) {
     return request({
         url: 'word/wordModule',
-        method: 'post',
+        method: 'put',
         data
     })
 }

@@ -8,6 +8,7 @@
 -->
 <template>
   <el-dialog
+      :destroy-on-close="true"
       :close-on-click-modal="false"
       :lock-scroll="true"
       :title=title
@@ -95,10 +96,68 @@
           </el-form-item>
         </el-row>
 
+        <el-row v-if="flag" :gutter="20" class="flex_center_center">
+          <el-col :span="3">
+            <el-form-item label="头像">
+              <div class="demo-image__preview">
+                <el-image
+                    ref="oldPicture"
+                    :preview-src-list="srcList"
+                    :src="url"
+                    style="width: 100px; height: 100px">
+                </el-image>
+              </div>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item>
+              <el-upload
+                  ref="changePicture"
+                  :auto-upload="true"
+                  :headers="headers"
+                  :limit="1"
+                  :on-success="importPictureSuccess"
+                  accept=".jpg"
+                  action="api/word/uploadImage"
+                  list-type="picture-card">
+                <i slot="default" class="el-icon-plus"></i>
+                <div slot="file" slot-scope="{file}">
+                  <img
+                      :src="file.url"
+                      alt="" class="el-upload-list__item-thumbnail">
+                  <span class="el-upload-list__item-actions">
+                    <span
+                        class="el-upload-list__item-preview"
+                        @click="handlePictureCardPreview(file)">
+                      <i class="el-icon-zoom-in"></i>
+                    </span>
+                    <span
+                        v-if="!disabled"
+                        class="el-upload-list__item-delete"
+                        @click="handleRemove(file)">
+                      <i class="el-icon-delete"></i>
+                    </span>
+                  </span>
+                </div>
+              </el-upload>
+              <el-dialog :append-to-body="true" :visible.sync="dialogVisible">
+                <img :src="dialogImageUrl" alt="" width="100%">
+              </el-dialog>
+            </el-form-item>
+          </el-col>
+          <el-col :span="10">
+            <el-form-item label="操作按钮">
+              <el-button :disabled="this.importLoading" type="danger" @click="onSubmit"
+                         v-text="buttonContent"></el-button>
+              <el-button :disabled="this.importLoading" type="warning" @click="resetModuleMessage">复原</el-button>
+              <el-button :disabled="this.importLoading" type="info" @click="closed">关闭</el-button>
+            </el-form-item>
+          </el-col>
+        </el-row>
 
         <el-row v-if="!flag" :gutter="50" class="flex_center_center">
           <el-col :span="12">
-            <el-form-item label="上传文件" prop="remark">
+            <el-form-item label="上传文件">
               <el-tooltip
                   :enterable="false"
                   :file-list="fileList"
@@ -106,8 +165,6 @@
                   content="只能上传一份Json词源文件和一份Jpg单词模块封面图片"
                   effect="dark"
                   placement="top">
-                <!--                    -->
-                <!--                    :headers="headers"-->
                 <el-upload
                     ref="upload"
                     :auto-upload="false"
@@ -118,6 +175,7 @@
                     :on-error="importError"
                     :on-success="importSuccess"
                     :show-file-list="true"
+                    :headers="headers"
                     accept=".json,.jpg"
                     action="api/word/wordModule"
                     drag>
@@ -128,7 +186,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="操作按钮" prop="remark">
+            <el-form-item label="操作按钮">
               <el-button :disabled="this.importLoading" type="danger" @click="onSubmit"
                          v-text="buttonContent"></el-button>
               <el-button :disabled="this.importLoading" type="warning" @click="clearFileList">清空文件列表</el-button>
@@ -137,10 +195,7 @@
           </el-col>
         </el-row>
 
-        <el-form-item v-if="flag" class="flex_center_center">
-          <el-button type="danger" @click="onSubmit" v-text="buttonContent"></el-button>
-          <el-button type="info" @click="closed">关闭</el-button>
-        </el-form-item>
+
       </el-form>
     </div>
 
@@ -149,22 +204,35 @@
 
 
 <script>
-import {updateWord} from "@/api/admin.js"
+import {updateModule} from "@/api/admin.js"
 import dayjs from "dayjs";
 
 export default {
   name: 'WordInfo',
   data() {
     return {
+      /*原始头像信息*/
+      url: '',
+      srcList: [],
+      /*未知*/
+      disabled: false,
+      dialogImageUrl: '',
+      dialogVisible: false,
+
+
+      /*新头像名*/
+      newPictureName: "",
+
       importLoading: false,
       headers: {
-        Authorization: "Bearer " + "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2NzU5MTk2MzcsImlhdCI6MTY3NTgzMzIzNywiYWNjb3VudCI6Ijg5NzkxNzcyOCJ9.kjGMhBFkBFxf_D6G-srMkPogilpL91vE_EEE3n71ozA"
+        Authorization: window.sessionStorage.getItem('adminToken')
       },
       fileList: [],
       buttonContent: "",
       title: "",
       flag: false,
       visible: false,
+      moduleMessageOrigin: {},
       moduleMessage: {
         remark: "",
         moduleName: "",
@@ -187,6 +255,17 @@ export default {
     }
   },
   methods: {
+
+    handleRemove(file) {
+      console.log(file);
+      this.$refs.changePicture.clearFiles();
+    },
+
+    handlePictureCardPreview(file) {
+      this.dialogImageUrl = file.url;
+      this.dialogVisible = true;
+    },
+
 
     //文件改变时调用
     fileChange(file, fileList) {
@@ -227,6 +306,17 @@ export default {
       this.$refs.upload.clearFiles();
     },
 
+    /*复原信息*/
+    resetModuleMessage() {
+      this.moduleMessage = JSON.parse(JSON.stringify(this.moduleMessageOrigin));
+    },
+
+    importPictureSuccess(response) {
+      if (response.code === 200) {
+        console.log(response)
+        this.newPictureName = response.data;
+      }
+    },
 
     importSuccess(response) {
       if (response.code === 201) {
@@ -245,10 +335,11 @@ export default {
       this.$message.error(err.msg);
     },
 
-    //提交用户信息
+
     onSubmit() {
       if (this.flag) {
-        updateWord(this.moduleMessage)
+        this.moduleMessage.moduleImagePath = this.newPictureName;
+        updateModule(this.moduleMessage)
             .then((res) => {
               this.$message.success(res.msg)
               this.closed();
@@ -285,13 +376,16 @@ export default {
         this.title = data.moduleName + "的详细信息"
         this.buttonContent = "保存"
         this.moduleMessage = JSON.parse(JSON.stringify(data));
+        this.moduleMessageOrigin = JSON.parse(JSON.stringify(data));
+        this.url = "api/word/wordModuleImage/" + this.moduleMessageOrigin.moduleId;
+        this.srcList[0] = this.url
       }
       this.visible = true
     },
 
     // 对话框的关闭
     closed() {
-      if (!this.importLoading) {
+      if (!this.flag && !this.importLoading) {
         this.flagText = "将文件拖到此处，或<em>点击上传"
         this.fileCount = 0
         this.moduleMessage = {};
@@ -299,7 +393,11 @@ export default {
         this.jsonFlag = false;
         this.jpgFlag = false
         this.twoFlag = false
+      } else if (this.flag) {
+        this.url = '';
+        this.$refs.changePicture.clearFiles();
       }
+
       this.$emit('searchAgain')
       this.visible = false
     },
@@ -307,6 +405,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
+
 </style>
 

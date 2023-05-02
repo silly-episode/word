@@ -96,11 +96,11 @@
       </div>
     </div>
     <el-dialog
-      :visible="visible"
-      width="70%"
-      title="键盘手势图"
-      center="true"
-      @close="visible = false"
+        :visible="visible"
+        width="70%"
+        title="键盘手势图"
+        :center="true"
+        @close="visible = false"
     >
       <img style="width: 100%" src="@/assets/tip.png" alt="" />
     </el-dialog>
@@ -108,7 +108,8 @@
 </template>
 
 <script>
-import { examResult } from '@/api/word.js'
+import {examResult} from '@/api/word.js'
+
 export default {
   data() {
     return {

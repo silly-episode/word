@@ -21,6 +21,7 @@ import com.boot.utils.ActionLogUtils;
 import com.boot.utils.BeanDtoVoUtils;
 import com.boot.utils.JwtUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -88,6 +89,7 @@ public class AdminController {
      * @Date: 2023/4/7 19:48
      */
     @PostMapping("commonAdmin")
+    @RequiresAuthentication
     public Result commonAdmin(@RequestBody Admin admin, HttpServletRequest request) {
         if ("".equals(admin.getAccount())) {
             return Result.error("参数缺失,请填写账户号");
@@ -118,6 +120,7 @@ public class AdminController {
      * @Date: 2023/4/7 20:06
      */
     @PostMapping("adminSearch")
+    @RequiresAuthentication
     public Result adminSearch(@RequestBody AdminSearchDto adminSearchDto) {
         /*分页*/
         Page<Admin> pageInfo = new Page<>(adminSearchDto.getPageNum(), adminSearchDto.getPageSize());
@@ -141,6 +144,7 @@ public class AdminController {
      * @Date: 2023/4/8 10:11
      */
     @PostMapping("adminListExcel")
+    @RequiresAuthentication
     public void adminListExcel(@RequestBody AdminSearchDto adminSearchDto, HttpServletRequest request, HttpServletResponse response) throws IOException {
         /*记录日志*/
         actionLogUtils.saveActionLog(request, actionLogUtils.EXPORT, "导出管理员信息表");
@@ -164,6 +168,7 @@ public class AdminController {
      * @Date: 2023/3/28 9:28
      */
     @PutMapping("password")
+    @RequiresAuthentication
     public Result<String> password(@RequestBody Map<String, Long> map, HttpServletRequest request) {
         Long userId = map.get("userId");
         // todo 这里的密码要从数据库中查询出来
@@ -190,6 +195,7 @@ public class AdminController {
      * @Date: 2023/3/28 9:28
      */
     @PutMapping("adminPassword")
+    @RequiresAuthentication
     public Result<String> adminPassword(@RequestBody Map<String, Long> map, HttpServletRequest request) {
         long adminId = map.get("adminId");
         // todo 这里的密码要从数据库中查询出来
@@ -214,6 +220,7 @@ public class AdminController {
      * @Date: 2023/4/6 20:22
      */
     @DeleteMapping("user/{userId}")
+    @RequiresAuthentication
     public Result<String> user(@PathVariable Long userId, HttpServletRequest request) {
         User user = userService.getById(userId);
         if (user == null) {
@@ -235,6 +242,7 @@ public class AdminController {
      * @Date: 2023/4/6 20:22
      */
     @DeleteMapping("admin/{adminId}")
+    @RequiresAuthentication
     public Result<String> admin(@PathVariable Long adminId, HttpServletRequest request) {
         Admin admin = adminService.getById(adminId);
         if (admin == null) {
@@ -258,6 +266,7 @@ public class AdminController {
      * @Date: 2023/3/28 9:29
      */
     @PutMapping("remark")
+    @RequiresAuthentication
     public Result<String> remark(@RequestBody Map<String, String> map, HttpServletRequest request) {
         Long userId = Long.valueOf(map.get("userId"));
         assert userId != null;
@@ -283,6 +292,7 @@ public class AdminController {
      * @Date: 2023/3/28 9:29
      */
     @PutMapping("adminRemark")
+    @RequiresAuthentication
     public Result<String> adminRemark(@RequestBody Map<String, String> map, HttpServletRequest request) {
         Long userId = Long.valueOf(map.get("adminId"));
         UpdateWrapper<Admin> updateWrapper = new UpdateWrapper<>();
@@ -305,6 +315,7 @@ public class AdminController {
      * @Date: 2023/4/7 11:17
      */
     @PutMapping("user")
+    @RequiresAuthentication
     public Result<String> user(@RequestBody User user, HttpServletRequest request) {
         String delete = "待删除";
         String lock = "锁定";
@@ -337,6 +348,7 @@ public class AdminController {
      * @Date: 2023/4/7 11:17
      */
     @PutMapping("admin")
+    @RequiresAuthentication
     public Result<String> admin(@RequestBody Admin admin, HttpServletRequest request) {
         String lock = "锁定";
         String superRole = "0";
@@ -369,6 +381,7 @@ public class AdminController {
      * @Date: 2023/3/28 9:43
      */
     @PutMapping("lockOrUnLockUser")
+    @RequiresAuthentication
     public Result<String> lockOrUnLockUser(@RequestBody Map<String, String> map, HttpServletRequest request) {
         System.out.println(map.toString());
         String lockStatus = "lock";
@@ -414,6 +427,7 @@ public class AdminController {
      * @Date: 2023/3/28 9:43
      */
     @PutMapping("lockOrUnLockAdmin")
+    @RequiresAuthentication
     public Result<String> lockOrUnLockAdmin(@RequestBody Map<String, String> map, HttpServletRequest request) {
         String lockStatus = "lock";
         String lockType = null;
@@ -458,7 +472,7 @@ public class AdminController {
      * @Date: 2023/3/28 9:02
      */
     @PostMapping("userSearch")
-//    @RequiresAuthentication
+    @RequiresAuthentication
     public Result<Page<UserMsgDto2>> userSearch(@RequestBody UserSearchDto userSearchDto) {
         /*分页*/
         Page<User> pageInfo = new Page<>(userSearchDto.getPageNum(), userSearchDto.getPageSize());
@@ -481,6 +495,7 @@ public class AdminController {
      * @Date: 2023/3/17 14:13
      */
     @PostMapping("userListExcel")
+    @RequiresAuthentication
     public void userListExcel(@RequestBody UserSearchDto userSearchDto, HttpServletRequest request, HttpServletResponse response) throws IOException {
         /*记录日志*/
         actionLogUtils.saveActionLog(request, actionLogUtils.EXPORT, "导出了用户信息表");
@@ -502,6 +517,7 @@ public class AdminController {
      * @Date: 2023/3/27 10:03
      */
     @PostMapping("commonUserLog")
+    @RequiresAuthentication
     public Result<Page<LoginLog>> commonUserLog(@RequestBody LoginLogSearchDto logSearch) {
         /*分页*/
         Page<LoginLog> pageInfo = new Page<>(logSearch.getPageNum(), logSearch.getPageSize());
@@ -523,6 +539,7 @@ public class AdminController {
      * @Date: 2023/3/27 10:03
      */
     @PostMapping("logExcelImport")
+    @RequiresAuthentication
     public void logExcelImport(@RequestBody LoginLogSearchDto logSearch, HttpServletRequest request, HttpServletResponse response) throws IOException {
         /*记录操作日志*/
         actionLogUtils.saveActionLog(request, actionLogUtils.EXPORT, "导出用户登录日志");
@@ -544,6 +561,7 @@ public class AdminController {
      * @Date: 2023/4/13 11:54
      */
     @PostMapping("actionLogSearch")
+    @RequiresAuthentication
     public Result selectAll(@RequestBody ActionLogSearchDto searchDto) {
 //        分页
         Page<ActionLog> pageInfo = new Page<>(searchDto.getPageNum(), searchDto.getPageSize());
@@ -561,6 +579,7 @@ public class AdminController {
      * @Date: 2023/3/27 10:03
      */
     @PostMapping("actionLogExcelImport")
+    @RequiresAuthentication
     public void actionLogExcelImport(@RequestBody ActionLogSearchDto searchDto, HttpServletRequest request, HttpServletResponse response) throws IOException {
         /*记录操作日志*/
         actionLogUtils.saveActionLog(request, actionLogUtils.EXPORT, "导出管理员操作日志");

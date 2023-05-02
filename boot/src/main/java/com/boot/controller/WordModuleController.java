@@ -29,6 +29,7 @@ import com.boot.utils.MinIOUtils;
 import com.boot.utils.SnowFlakeUtil;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -58,7 +59,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Slf4j
 @RequestMapping("word")
 @SuppressWarnings("all")
-//@RequiresAuthentication
 public class WordModuleController {
 
     @Resource
@@ -98,6 +98,7 @@ public class WordModuleController {
      */
     @PostMapping("wordModule")
     @Transactional
+    @RequiresAuthentication
     public Result wordModule(@RequestParam MultipartFile file, WordModule wordModule, HttpServletRequest request) throws IOException {
         String bucketName = "word";
         Long moduleId = SnowFlakeUtil.getNextId();
@@ -180,6 +181,7 @@ public class WordModuleController {
      * @Date: 2023/4/11 23:50
      */
     @PostMapping("changeEsWordModule")
+    @RequiresAuthentication
     public Result changeEsWordModule(@RequestParam MultipartFile file, WordModule module, HttpServletRequest request) throws IOException {
 
         System.out.println(module);
@@ -254,6 +256,7 @@ public class WordModuleController {
      * @Date: 2023/3/31 17:29
      */
     @PutMapping("wordModule")
+    @RequiresAuthentication
     public Result<String> wordModule(@RequestBody WordModule wordModule, HttpServletRequest request) {
         if (wordModuleService.updateById(wordModule)) {
             actionLogUtils.saveActionLog(request, actionLogUtils.UPDATE, "更新了 《" + wordModule.getModuleName() + "》 单词模块的基础信息");
@@ -271,6 +274,7 @@ public class WordModuleController {
      * @Date: 2023/3/31 18:00
      */
     @PostMapping("wordModuleSearch")
+    @RequiresAuthentication
     public Result wordModuleSearch(@RequestBody WordModuleSearchDto wordModuleSearchDto) {
         Page<WordModule> pageInfo = new Page<>(wordModuleSearchDto.getPageNum(), wordModuleSearchDto.getPageSize());
         LambdaQueryWrapper<WordModule> wrapper = new LambdaQueryWrapper<>();
@@ -299,7 +303,8 @@ public class WordModuleController {
         Map<String, Object> map = new HashMap<>(1);
         Boolean planExist = false;
         Long userId = jwtUtils.getUserIdFromRequest(request);
-
+//        System.out.println(userId);
+//        System.out.println(moduleId);
         if (userId != null) {
             LambdaQueryWrapper<Plan> queryWrapper = new LambdaQueryWrapper<Plan>();
             queryWrapper.eq(Plan::getModuleId, moduleId).eq(Plan::getUserId, userId);
@@ -372,6 +377,7 @@ public class WordModuleController {
      * @Date: 2023/4/1 9:21
      */
     @PostMapping("uploadImage")
+    @RequiresAuthentication
     public Result uploadImage(MultipartFile file) {
 
         String fileName = "module_image_" + IdUtils.getSnowFlakeInstance().nextIdStr() + "_"
@@ -389,7 +395,7 @@ public class WordModuleController {
             minIOUtils.removeObject("word", fileName);
             return Result.error("上传头像失败");
         }
-        return Result.success(fileName);
+        return Result.success("上传成功", fileName);
     }
 
     /**
@@ -400,6 +406,7 @@ public class WordModuleController {
      * @Date: 2023/4/1 9:25
      */
     @DeleteMapping("wordModule/{moduleId}")
+    @RequiresAuthentication
     public Result wordModule(@PathVariable Long moduleId, HttpServletRequest request) {
 
         WordModule wordModule = wordModuleService.getById(moduleId);
@@ -421,6 +428,7 @@ public class WordModuleController {
      * @Date: 2023/3/28 9:43
      */
     @PutMapping("lockOrUnLockModule")
+    @RequiresAuthentication
     public Result<String> lockOrUnLockModule(@RequestBody Map<String, String> map, HttpServletRequest request) {
         System.out.println(map.toString());
         String lockStatus = "lock";
@@ -465,6 +473,7 @@ public class WordModuleController {
      * @Date: 2023/2/12 12:37
      */
     @GetMapping("word/{userId}")
+    @RequiresAuthentication
     public Result<Map> wordFromPlan(@PathVariable Long userId) throws IOException {
         Map map = new HashMap();
         List word = new ArrayList<ObjectNode>();
@@ -535,34 +544,6 @@ public class WordModuleController {
     }
 
 
-//    /**
-//     * @param userId: 用户id
-//     * @Return: Result
-//     * @Author: DengYinzhe
-//     * @Description: 查询完成一个模块所需要的单词信息 已测试
-//     * @Date: 2023/2/12 12:37
-//     */
-//    @GetMapping("word/bookId{bookId}")
-//    public Result<List> wordFromBook(@PathVariable Long bookId) throws IOException {
-////        List word = new ArrayList<ObjectNode>();
-////        /*todo size要可配置*/
-////        int size = 20;
-////        int from = (num-1) * 20;
-//////        单词计划和单词模块信息
-////        WordModule wordModule = wordModuleService.getById(moduleId);
-//////        词源
-////        SearchRequest request = new SearchRequest.Builder()
-////                .index(wordModule.get())
-////                .query(QueryBuilders.matchAll().build()._toQuery())
-////                .from(from)
-////                .size(size)
-////                .build();
-////        List<Hit<ObjectNode>> hits = elasticsearchClient.search(request, ObjectNode.class).hits().hits();
-////        for (Hit<ObjectNode> Hit : hits) {
-////            word.add(Hit.source());
-////        }
-//        return Result.success();
-//    }
 
 
     /**
@@ -622,6 +603,7 @@ public class WordModuleController {
      */
     @PutMapping("dayWord/{planId}")
     @Transactional
+    @RequiresAuthentication
     public Result dayWord(@PathVariable Long planId, HttpServletRequest request) {
 
         Long userId = jwtUtils.getUserIdFromRequest(request);

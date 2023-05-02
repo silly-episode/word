@@ -93,6 +93,7 @@
                 :show-file-list="false"
                 accept=".xlsx,.xls"
                 action="api/emotionWords/emotionWordsExcel"
+                :headers="headers"
             >
               <el-button :icon="`el-icon-${this.importLoading?'loading':'upload2'}`" type="success">
                 导入
@@ -176,7 +177,7 @@ export default {
   data() {
     return {
       headers: {
-        Authorization: "Bearer " + "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2NzU5MTk2MzcsImlhdCI6MTY3NTgzMzIzNywiYWNjb3VudCI6Ijg5NzkxNzcyOCJ9.kjGMhBFkBFxf_D6G-srMkPogilpL91vE_EEE3n71ozA"
+        Authorization: window.sessionStorage.getItem('adminToken')
       },
       tableHeight: 0,
       clientWidth: document.body.clientWidth, // 文档宽度

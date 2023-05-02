@@ -13,6 +13,7 @@ import com.boot.entity.ExamResult;
 import com.boot.service.ExamResultService;
 import com.boot.utils.JwtUtils;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -31,7 +32,7 @@ import java.util.*;
  */
 @RestController
 @RequestMapping("examResult")
-//@RequiresAuthentication
+@RequiresAuthentication
 public class ExamResultController {
     /**
      * 服务对象

@@ -198,7 +198,7 @@ export default {
       this.queryInfo.endTime = this.pickDate.endDate
       let params = this.queryInfo;
       console.log(params)
-      let dateTime = dayjs().format('YYYY-MM-DD');
+      let dateTime = dayjs().format("YYYY-MM-DD HH:mm:ss");
       this.exportLoading = true
       actionLogExcelImport(params)
           .then(response => {

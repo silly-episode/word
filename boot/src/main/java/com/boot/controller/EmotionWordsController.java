@@ -11,6 +11,7 @@ import com.boot.entity.EmotionWords;
 import com.boot.service.EmotionWordsService;
 import com.boot.utils.ActionLogUtils;
 import com.boot.utils.ThreadLocalUtils;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -47,6 +48,7 @@ public class EmotionWordsController {
      * @Date: 2023/3/29 17:10
      */
     @PostMapping("emotionWords")
+    @RequiresAuthentication
     public Result<String> emotionWords(@RequestBody EmotionWords emotionWords, HttpServletRequest request) {
         emotionWords.setEmoCreateTime(LocalDateTime.now());
         if (emotionWordsService.save(emotionWords)) {
@@ -65,6 +67,7 @@ public class EmotionWordsController {
      * @Date: 2023/3/31 14:07
      */
     @PostMapping("emotionWordsExcel")
+    @RequiresAuthentication
     public Result emotionWordsExcel(MultipartFile file, HttpServletRequest request) throws IOException {
         System.out.println("开始导入");
         try {
@@ -96,6 +99,7 @@ public class EmotionWordsController {
      * @Date: 2023/3/29 17:17
      */
     @PutMapping("emotionWords")
+    @RequiresAuthentication
     public Result<String> emotionWord(@RequestBody EmotionWords emotionWords, HttpServletRequest request) {
         emotionWords.setEmoCreateTime(LocalDateTime.now());
         if (emotionWordsService.updateById(emotionWords)) {
@@ -114,6 +118,7 @@ public class EmotionWordsController {
      * @Date: 2023/3/29 17:20
      */
     @DeleteMapping("emotionWords")
+    @RequiresAuthentication
     public Result<String> emotionWord(@RequestBody List<EmotionWords> emotionWordsList, HttpServletRequest request) {
         if (emotionWordsService.removeBatchByIds(emotionWordsList)) {
             actionLogUtils.saveActionLog(request, actionLogUtils.DELETE_BATCH, "批量删除了 " + emotionWordsList.size() + " 条励志语");
@@ -131,6 +136,7 @@ public class EmotionWordsController {
      * @Date: 2023/3/29 19:06
      */
     @PostMapping("emotionWordsSearch")
+    @RequiresAuthentication
     public Result<Page<EmotionWords>> emotionWordsSearch(@RequestBody EmotionWordsSearchDto emotionWordsSearchDto) {
         Page<EmotionWords> pageInfo = new Page<>(emotionWordsSearchDto.getPageNum(), emotionWordsSearchDto.getPageSize());
         LambdaQueryWrapper<EmotionWords> wrapper = new LambdaQueryWrapper<>();

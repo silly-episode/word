@@ -9,6 +9,7 @@ import com.boot.entity.WordBooks;
 import com.boot.service.BookOfWordsService;
 import com.boot.service.WordBooksService;
 import com.boot.utils.JwtUtils;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,7 +28,7 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("wordBooks")
-//@RequiresAuthentication
+@RequiresAuthentication
 public class WordBooksController {
     /**
      * 服务对象
@@ -71,7 +72,9 @@ public class WordBooksController {
     public Result allBook(HttpServletRequest request) {
         Long userId = jwtUtils.getUserIdFromRequest(request);
         LambdaQueryWrapper<WordBooks> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(WordBooks::getUserId, userId);
+        queryWrapper
+                .eq(WordBooks::getUserId, userId)
+                .orderByAsc(WordBooks::getBookCreateTime);
         List<WordBooks> wordBooks = wordBooksService.list(queryWrapper);
         return Result.success(wordBooks);
     }

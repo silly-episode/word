@@ -12,6 +12,7 @@ import com.boot.entity.WordBooks;
 import com.boot.service.BookOfWordsService;
 import com.boot.service.WordBooksService;
 import com.boot.utils.PdfUtils;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -47,6 +48,7 @@ public class BookOfWordsController {
      * @Date: 2023/2/25 15:13
      */
     @DeleteMapping("word/{wordId}")
+    @RequiresAuthentication
     public Result words(@PathVariable Long wordId) {
 
         BookOfWords word = bookOfWordsService.getById(wordId);
@@ -73,10 +75,13 @@ public class BookOfWordsController {
      * @Date: 2023/2/25 15:20
      */
     @PostMapping("wordSearch")
+    @RequiresAuthentication
     public Result wordss(@RequestBody BookOfWordSearchDto dto) {
         Page<BookOfWords> pageInfo = new Page<>(dto.getPageNum(), dto.getPageSize());
         LambdaQueryWrapper<BookOfWords> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(BookOfWords::getBookId, dto.getBookId());
+        queryWrapper
+                .eq(BookOfWords::getBookId, dto.getBookId())
+                .orderByDesc(BookOfWords::getWordInsertTime);
         bookOfWordsService.page(pageInfo, queryWrapper);
 
         WordBooks wordBooks = wordBooksService.getById(dto.getBookId());
@@ -94,6 +99,7 @@ public class BookOfWordsController {
      * @Date: 2023/2/27 19:28
      */
     @PostMapping("word")
+    @RequiresAuthentication
     public Result word(@RequestBody CollectWordsDto collectWordsDto) {
 
         if (collectWordsDto.getBookId().size() == 0) {
@@ -147,6 +153,7 @@ public class BookOfWordsController {
      * @Date: 2023/2/25 15:30
      */
     @GetMapping("book/{bookId}")
+    @RequiresAuthentication
     public void book(@PathVariable Long bookId, HttpServletResponse response) throws Exception {
         Map<String, Object> map = new HashMap<>(10);
         map.put("book_id", bookId);

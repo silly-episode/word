@@ -96,7 +96,8 @@
             :height="tableHeight === 0 ? 'calc(100vh - 301px)' : tableHeight"
             border
             highlight-current-row
-            stripe style="margin: auto; width: 100%; text-align: center">
+            stripe
+            style="margin: auto; width: 100%; text-align: center">
           <template slot="empty">
             <el-empty description="暂无数据"></el-empty>
           </template>
