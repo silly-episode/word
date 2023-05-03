@@ -1,6 +1,6 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
-
+import {monitorZoom} from "@/utils/monitorZoom.js";
 // 前台
 import HomeView from "@/views/proscenium/HomeView.vue";
 import WordListView from "@/views/proscenium/WordListView.vue";
@@ -148,15 +148,26 @@ const router = new VueRouter({
   routes,
 });
 
+const m = monitorZoom();
 // 挂载路由导航守卫，控制页面访问权限
 router.beforeEach((to, from, next) => {
+  window.sessionStorage.setItem("ratio", (m / 100.0).toString());
   if (to.path.substring(0, 6) === "/admin") {
-    if (to.path === '/adminLogin') return next()
+    document.body.style.zoom = 90 / Number(m);
+    if (to.path === '/adminLogin') {
+      return next()
+    }
     // 访问其他页面则要检查是否有token
     const tokenStr = window.sessionStorage.getItem('adminToken')
-    if (!tokenStr) return next('/adminLogin')
+    if (!tokenStr) {
+      return next('/adminLogin')
+    }
     next()
-  } else next()
+  } else {
+    document.body.style.zoom = 100 / m;
+    /*todo ？？？循环*/
+    next()
+  }
 
 })
 

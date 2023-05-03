@@ -16,4 +16,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class BookOfWordSearchDto extends PageDto {
     private Long bookId;
+
+    private String search;
 }

@@ -13,10 +13,10 @@
           >
             <p class="font_16 font_bold">{{ item.bookName }}</p>
             <p class="font_12 grey margin_t_10 margin_b_5">
-              单词总数：{{ item.wordCount }}
+              Total : {{ item.wordCount }}
             </p>
             <p class="font_12 grey">
-              创建时间：{{ item.bookCreateTime.substring(0, 10) }}
+              Date : {{ item.bookCreateTime.substring(0, 10) }}
             </p>
           </div>
           <div class="li flex_center_center" @click="showAddBook">
@@ -26,85 +26,111 @@
       </div>
       <div class="margin_t_30">
         <h2>
-          <i></i>正在背诵的词表:
+          <i></i>我的单词计划
 
-          <span v-if="JSON.stringify(mainPlan) == '{}'">暂未选择词表</span>
-          <span v-else>{{ mainPlan.moduleName }}</span>
+          <!--          <span v-if="JSON.stringify(mainPlan) === '{}'"></span>-->
+          <!--          <span v-else>{{ "("+ mainPlan.moduleName+")" }}</span>-->
         </h2>
-        <p class="font_16 font_bold margin_l_20 margin_t_20">主计划</p>
-        <div
-          class="font_16 border_ccc flex_between_center padding_20 margin_t_20"
-        >
-          <template v-if="JSON.stringify(mainPlan) == '{}'">
-            暂无主计划</template
+        <el-divider class="font_16 font_bold">主要计划</el-divider>
+        <!--        <p class="font_16 font_bold flex_center_center margin_t_20">主要计划</p>-->
+        <div class="font_16 border_ccc flex_between_center padding_20 margin_t_20">
+          <template v-if="JSON.stringify(mainPlan) === '{}'">
+            暂无主计划，去添加计划吧！
+          </template
           >
           <template v-else>
             <div class="wid_per70">
-              <p>计划名：{{ mainPlan.planName }}</p>
+              <p>单词数量：{{ mainPlan.dayWord }}</p>
+              <p class="margin_t_20">计划名称：{{ mainPlan.planName }}</p>
               <p class="margin_t_20">
-                开始背诵时间：{{ mainPlan.planCreateTime }}
+                开始时间：{{ mainPlan.planCreateTime }}
               </p>
-
-              <p class="margin_t_20">每日完成量：{{ mainPlan.dayWord }}</p>
               <div class="flex_center margin_t_20">
+                <p>
+                  背诵进度：
+                </p>
                 <div class="wid_per50">
                   <el-progress :percentage="percentage"></el-progress>
                 </div>
                 <p>
-                  单词量：
-                  <span class="blue font_bold">{{ mainPlan.finishedWord }}</span
-                  >/{{ mainPlan.allWord }}
+                  (
+                  <span class="blue font_bold">
+                    {{ mainPlan.finishedWord }}
+                  </span>/ {{ mainPlan.allWord + " )" }}
                 </p>
               </div>
             </div>
-            <div>
+            <div class="flex_center">
               <el-button
-                type="success"
-                icon="el-icon-edit"
-                @click="editMain"
-              ></el-button>
-              <el-button type="primary" @click="startRecite">
-                开始背诵
-              </el-button>
-            </div></template
-          >
-        </div>
-        <div>
-          <p class="font_16 font_bold margin_l_20 margin_t_20">次计划</p>
-          <el-table
-            :data="planList"
-            style="width: 100%"
-            :header-cell-style="{ 'text-align': 'center' }"
-            :cell-style="{ 'text-align': 'center' }"
-          >
-            <el-table-column prop="planName" label="计划名"> </el-table-column>
-            <el-table-column prop="moduleName" label="单词模块">
-            </el-table-column>
-            <el-table-column prop="allWord" label="单词总量"> </el-table-column>
-            <el-table-column prop="dayWord" label="每日完成量">
-            </el-table-column>
-            <el-table-column label="操作" width="220px">
-              <template slot-scope="scope">
-                <el-button
                   type="success"
                   icon="el-icon-edit"
-                  @click="$refs.plan.show(scope.row)"
-                  size="mini"
+                  @click="editMain">
+                修改计划
+              </el-button>
+              <el-button icon="el-icon-s-promotion" type="primary" @click="startRecite">
+                完成计划
+              </el-button>
+            </div>
+          </template>
+        </div>
+        <el-divider class="font_16 font_bold">次要计划</el-divider>
+        <div>
+          <!--          <p class="font_16 font_bold flex_center_center margin_t_20">次要计划</p>-->
+          <el-table
+              :data="planList"
+              style="width: 100%"
+              :cell-style="{ 'text-align': 'center' }"
+              highlight-current-row
+              :header-cell-style="{ 'text-align': 'center' }"
+              stripe>
+            <template slot="empty">
+              <el-empty description="去添加计划吧！"></el-empty>
+            </template>
+            <el-table-column label="计划名称" prop="planName">
+              <template slot-scope="scope">
+                <el-popover placement="top" trigger="hover">
+                  <p>背诵进度:
+                    <span class="blue font_bold">
+                      {{ scope.row.finishedWord }}
+                    </span>
+                    / {{ scope.row.allWord }}
+                  </p>
+
+                  <p>开始时间: {{ scope.row.planCreateTime }}</p>
+                  <div slot="reference" class="name-wrapper">
+                    {{ scope.row.planName }}
+                  </div>
+                </el-popover>
+              </template>
+            </el-table-column>
+            <el-table-column prop="moduleName" label="单词模块">
+            </el-table-column>
+            <el-table-column prop="allWord" label="单词总量"></el-table-column>
+            <el-table-column label="单词数量" prop="dayWord">
+            </el-table-column>
+            <el-table-column label="相关操作" width="300px">
+              <template slot-scope="scope">
+                <el-button
+                    type="success"
+                    icon="el-icon-edit"
+                    @click="$refs.plan.show(scope.row)"
+                    size="mini"
                 ></el-button>
                 <el-button
-                  type="danger"
-                  icon="el-icon-delete"
+                    type="danger"
+                    icon="el-icon-delete"
                   @click="removePlan(scope.row.planId)"
                   size="mini"
                 ></el-button
                 ><el-button
+                  :icon="`el-icon-${scope.row.planStatus == 0 ?'top':'check'}`"
                   type="primary"
                   size="mini"
                   :disabled="scope.row.planStatus == '1'"
                   @click="setMain(scope.row.planId)"
                   >{{
-                    scope.row.planStatus == "0" ? "设为主计划" : "已完成"
-                  }}</el-button
+                  scope.row.planStatus == "0" ? "设置主计划" : "已完成"
+                }}</el-button
                 >
               </template>
             </el-table-column>
@@ -155,17 +181,17 @@
         class="box-size border_ccc wid_215 font_14 margin_t_20 padding_10 margin_l_20 flex_column_center_center"
       >
         <el-tabs :stretch="true" v-model="activeName">
-          <el-tab-pane label="总积分排行" name="1">
+          <el-tab-pane label="积分排行" name="1">
             <div class="flex_between_center margin_b_20">
               <span>排名</span><span>用户名</span><span>分数</span>
             </div>
             <div
-              v-for="(item, index) in IntegralList"
-              :key="item.userId"
-              class="flex_between_center margin_b_10"
+                v-for="(item, index) in IntegralList"
+                :key="item.userId"
+                class="flex_between_center margin_b_10"
             >
               <span
-                :class="`${
+                  :class="`${
                   index == 0 || index == 1 || index == 2
                     ? 'bg_orange'
                     : 'bg_c1_grey'
@@ -179,11 +205,11 @@
             <el-pagination small layout="prev, pager, next" :total="total1">
             </el-pagination>
           </el-tab-pane>
-          <el-tab-pane label="动态" name="2">
+          <el-tab-pane label="昨日动态" name="2">
             <div
-              v-for="item in SwearList"
-              :key="item.userId"
-              class="flex_center"
+                v-for="item in SwearList"
+                :key="item.userId"
+                class="flex_center"
             >
               <el-avatar :size="40" :src="item.headImage"></el-avatar>
               <div class="margin_l_20">
@@ -220,9 +246,9 @@
 </template>
 
 <script>
-import { allBook, allPlan, deletePlan, setMain, addBook, hotIntegration, swearSearch, swear } from '@/api/wordList'
+import {addBook, allBook, allPlan, deletePlan, hotIntegration, setMain, swear, swearSearch} from '@/api/wordList'
 // import { userInfo } from '@/api/user'
-import { avatarUrl } from '@/utils/img.js'
+import {avatarUrl} from '@/utils/img.js'
 import PlanView from './PlanView.vue'
 import Login from './Login.vue'
 
@@ -242,13 +268,13 @@ export default {
       planList: [],
       userInfo: {},
       IntegralList: [],//积分排行
-      queryInfo1: { // 获取积分列表的参数对象   
+      queryInfo1: { // 获取积分列表的参数对象
         pageNum: 1,
         pageSize: 5,
       },
       total1: 0,
       SwearList: [],//发誓列表
-      queryInfo2: { // 获取发誓列表的参数对象   
+      queryInfo2: { // 获取发誓列表的参数对象
         pageNum: 1,
         pageSize: 5,
       },

@@ -30,13 +30,13 @@
     <div class="flex_center_center">
       <div class="box">
         <textarea
-          v-model="content"
-          class="textarea"
-          maxlength="301"
-          placeholder="输入、粘贴文本"
+            v-model="content"
+            class="textarea"
+            maxlength="1001"
+            placeholder="输入、粘贴文本"
         ></textarea>
         <div class="wordNum">
-          <span v-if="content.length < 301">{{ content.length }}/300</span>
+          <span v-if="content.length < 1001">{{ content.length }}/1000</span>
           <span v-else>您输入的翻译字数已超过限制，系统已自动截断</span>
         </div>
         <i
@@ -65,12 +65,10 @@
           {{ transWord }}
         </div>
         <div class="bottomBtn">
-          <el-button type="primary" @click="changeName(0)"
-            >小驼峰命名</el-button
-          >
-          <el-button type="primary" @click="changeName(1)"
-            >大驼峰命名</el-button
-          >
+          <el-button type="primary" @click="changeName(0)">小驼峰命名</el-button>
+          <el-button type="success" @click="changeName(1)">大驼峰命名</el-button>
+          <el-button type="info" @click="recoverResult">还原</el-button>
+          <el-button type="danger" @click="clearResult">清空</el-button>
         </div>
         <div class="copy" @click="copyText(transWord)">
           <i class="iconfont icon-fuzhi margin_r_5" style="font-size: 20px"></i>
@@ -83,7 +81,7 @@
 </template>
 
 <script>
-import { translate } from '@/api/translate'
+import {translate} from '@/api/translate'
 
 export default {
   name: "TranslateView",
@@ -91,6 +89,7 @@ export default {
     return {
       content: '',  //输入字符
       transWord: '',//翻译后
+      transWordOrigin: '',
       copy: false,
       translateFlag: false,
       orgLangOptions: [{
@@ -146,37 +145,44 @@ export default {
       }
       translate(data) //调用翻译接口
         .then((res) => {
-          if (res.msg) this.transWord = res.msg
+          this.transWord = res.data
+          this.transWordOrigin = res.data
           this.translateFlag = !this.translateFlag
         })
         .catch((err) => {
-          console.log(err.message)
+          console.log(err)
         })
     },
     changeName(e) {
-      if (e == 0) {
+      if (e === 0) {
         // 将字符串转换为小驼峰命名
-        const camelCaseString = this.transWord.replace(/(?:^\w|[A-Z]|\b\w)/g, (word, index) => {
+        this.transWord = this.transWord.replace(/(?:^\w|[A-Z]|\b\w)/g, (word, index) => {
           return index === 0 ? word.toLowerCase() : word.toUpperCase();
-        }).replace(/\s+/g, '');
-        this.transWord = camelCaseString
-      } else if (e == 1) {
+        }).replace(/\s+/g, '')
+      } else if (e === 1) {
         // 将字符串转换为大驼峰命名
-        const pascalCaseString = this.transWord.replace(/(?:^\w|[A-Z]|\b\w)/g, (word) => {
+        this.transWord = this.transWord.replace(/(?:^\w|[A-Z]|\b\w)/g, (word) => {
           return word.toUpperCase();
-        }).replace(/\s+/g, '');
-        this.transWord = pascalCaseString
+        }).replace(/\s+/g, '')
       }
       // console.log(' this.transWord', this.transWord)
+    },
+    /*结果还原*/
+    recoverResult() {
+      this.transWord = this.transWordOrigin;
+    },
+
+    clearResult() {
+      this.transWord = ""
+      this.content = ""
     },
 
     copyText(copytext) {
       navigator.clipboard.writeText(copytext).then(() => {
         this.copy = true;
-        setInterval(() => {
+        setTimeout(() => {
           this.copy = false;
         }, 1000);
-        // 优化定时器代码 待写
       });
     }
   }
@@ -237,7 +243,7 @@ export default {
 .textarea {
   width: 100%;
   resize: none;
-  height: 300px;
+  height: 434px;
   background: #fff;
   overflow: hidden;
   border-radius: 4px;
@@ -293,7 +299,7 @@ export default {
 
 .copy {
   position: absolute;
-  bottom: 16px;
+  bottom: 450px;
   right: 15px;
   display: flex;
   align-items: center;

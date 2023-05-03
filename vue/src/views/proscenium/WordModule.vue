@@ -1,6 +1,7 @@
 <template>
   <div>
     <el-main class="margin_0_120">
+      <el-divider>{{ moduleInfo.moduleName }}</el-divider>
       <div class="flex_between_center padding_0_50">
         <el-image :src="path" class="radius_10 wid_300 hei_200"></el-image>
         <div
@@ -8,9 +9,9 @@
         >
           <div class="flex_center">
             <div class="flex_wrap_center">
-              <span class="margin_r_30 line_hei_40"
-                >模块名称：{{ moduleInfo.moduleName }}</span
-              >
+              <!--              <span class="margin_r_30 line_hei_40"-->
+              <!--                >模块名称：{{ moduleInfo.moduleName }}</span-->
+              <!--              >-->
               <span class="margin_r_30 line_hei_40"
                 >学习人数：{{ moduleInfo.studyNumber }}</span
               >
@@ -26,8 +27,8 @@
             >
           </div>
           <div class="flex_center">
-            <span class="margin_15_0 line_hei_40"
-              >说明：{{ moduleInfo.remark }}</span
+            <span class="margin_r_30 line_hei_40"
+            >说明：{{ moduleInfo.remark }}</span
             >
           </div>
         </div>
@@ -55,6 +56,7 @@
           <p class="font_16 margin_t_10 purple">{{ remainder }}词</p>
         </div>
       </div>
+      <el-divider>You are best</el-divider>
     </el-main>
     <PlanView ref="plan"></PlanView>
     <Login ref="login"></Login>
@@ -62,10 +64,11 @@
 </template>
 
 <script>
-import { wordModuleById } from '@/api/wordList'
-import { imageUrl } from '@/utils/img.js'
+import {wordModuleById} from '@/api/wordList'
+import {imageUrl} from '@/utils/img.js'
 import PlanView from './PlanView.vue'
 import Login from './Login.vue'
+
 export default {
   name: 'WordModule',
   data() {

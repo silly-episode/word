@@ -28,7 +28,6 @@ import java.util.*;
  */
 @RestController
 @RequestMapping("bookOfWords")
-//@RequiresAuthentication
 public class BookOfWordsController {
     /**
      * 服务对象
@@ -79,8 +78,13 @@ public class BookOfWordsController {
     public Result wordss(@RequestBody BookOfWordSearchDto dto) {
         Page<BookOfWords> pageInfo = new Page<>(dto.getPageNum(), dto.getPageSize());
         LambdaQueryWrapper<BookOfWords> queryWrapper = new LambdaQueryWrapper<>();
+        String oftenParam = dto.getSearch();
         queryWrapper
                 .eq(BookOfWords::getBookId, dto.getBookId())
+                .and(!oftenParam.isEmpty(),
+                        e -> e.like(BookOfWords::getTrans, oftenParam)
+                                .or().like(BookOfWords::getWord, oftenParam)
+                )
                 .orderByDesc(BookOfWords::getWordInsertTime);
         bookOfWordsService.page(pageInfo, queryWrapper);
 
@@ -90,6 +94,22 @@ public class BookOfWordsController {
         map.put("word", pageInfo);
         map.put("book", wordBooks);
         return Result.success(map);
+    }
+
+    /**
+     * @Return:
+     * @Author: DengYinzhe
+     * @Description: TODO 修改单词
+     * @Date: 2023/5/3 16:32
+     */
+    @PutMapping("word")
+    @RequiresAuthentication
+    public Result word(@RequestBody BookOfWords bookOfWords) {
+        if (bookOfWordsService.updateById(bookOfWords)) {
+            return Result.success("提交成功");
+        } else {
+            return Result.error("未修改该单词");
+        }
     }
 
     /**

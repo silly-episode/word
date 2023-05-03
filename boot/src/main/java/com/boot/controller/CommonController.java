@@ -92,7 +92,7 @@ public class CommonController {
     ar（阿拉伯语）：en（英语）
     hi（印地语）：en（英语）*/
     @PostMapping("translate")
-    public Result translate(@RequestBody Map<String, String> map) {
+    public Result<String> translate(@RequestBody Map<String, String> map) {
         String targetText = null;
         String sourceText = map.get("sourceText");
         String source = map.get("source");
@@ -108,7 +108,7 @@ public class CommonController {
         } catch (TencentCloudSDKException e) {
             throw new CustomException("翻译服务异常");
         }
-        return Result.success(targetText);
+        return Result.success("返回结果", targetText);
     }
 
 }

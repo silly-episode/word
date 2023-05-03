@@ -93,7 +93,7 @@
             v-loading="searchLoading"
             :data="articleList"
             :header-cell-style="{'text-align':'center'}"
-            :height="tableHeight === 0 ? 'calc(100vh - 301px)' : tableHeight"
+            :height="tableHeight === 0 ? `calc(10/9.0*${radio}*100vh - 301px)` : tableHeight"
             border
             highlight-current-row
             stripe
@@ -185,6 +185,7 @@ export default {
     return {
       dayjs: dayjs,
       tableHeight: 0,
+      radio: window.sessionStorage.getItem("ratio"),
       clientWidth: document.body.clientWidth, // 文档宽度
       //起始时间和截止时间的时间列表
       pickDate: {beginDate: "", endDate: ""},

@@ -28,7 +28,6 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("wordBooks")
-@RequiresAuthentication
 public class WordBooksController {
     /**
      * 服务对象
@@ -48,6 +47,7 @@ public class WordBooksController {
      * @Date: 2023/2/25 10:56
      */
     @PostMapping("book")
+    @RequiresAuthentication
     public Result wordBooks(@RequestBody Map<String, String> map, HttpServletRequest request) {
         String bookName = map.get("bookName");
         Long userId = jwtUtils.getUserIdFromRequest(request);
@@ -86,6 +86,7 @@ public class WordBooksController {
      * @Date: 2023/2/25 11:04
      */
     @PutMapping("book")
+    @RequiresAuthentication
     public Result wordBooks(@RequestBody BookNameChangeDto dto) {
         UpdateWrapper<WordBooks> updateWrapper = new UpdateWrapper<>();
         updateWrapper.eq("book_id", dto.getBookId())
@@ -107,6 +108,7 @@ public class WordBooksController {
      */
     @DeleteMapping("book/{bookId}")
     @Transactional
+    @RequiresAuthentication
     public Result wordBooks(@PathVariable Long bookId) {
         Map<String, Object> map = new HashMap<>(1);
         map.put("book_id", bookId);

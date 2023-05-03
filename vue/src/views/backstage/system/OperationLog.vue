@@ -85,7 +85,7 @@
             v-loading="searchLoading"
             :data="logList"
             :header-cell-style="{'text-align':'center'}"
-            :height="tableHeight === 0 ? 'calc(100vh - 301px)' : tableHeight"
+            :height="tableHeight === 0 ? `calc(10/9.0*${radio}*100vh - 301px)` : tableHeight"
             border
             highlight-current-row
             stripe style="margin: auto; width: 100%; text-align: center">
@@ -140,6 +140,7 @@ export default {
     return {
       tableHeight: 0,
       clientWidth: document.body.clientWidth, // 文档宽度
+      radio: window.sessionStorage.getItem("ratio"),
       //起始时间和截止时间的时间列表
       pickDate: {beginDate: "", endDate: ""},
       // 获取用户列表的参数对象

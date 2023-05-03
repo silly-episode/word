@@ -102,7 +102,7 @@
             v-loading="searchLoading"
             :data="sentenceList"
             :header-cell-style="{'text-align':'center'}"
-            :height="tableHeight === 0 ? 'calc(100vh - 301px)' : tableHeight"
+            :height="tableHeight === 0 ? `calc(10/9.0*${radio}*100vh - 301px)` : tableHeight"
             border
             highlight-current-row
             stripe style="margin: auto; width: 100%; text-align: center"
@@ -240,6 +240,7 @@ import WordInfo from "@/views/backstage/learningresource/WordInfo";
 export default {
   data() {
     return {
+      radio: window.sessionStorage.getItem("ratio"),
       headers: {
         Authorization: window.sessionStorage.getItem('adminToken')
       },

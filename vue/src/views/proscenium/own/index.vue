@@ -108,6 +108,11 @@ export default {
           icon: 'user'
         },
         {
+          label: '积分',
+          props: 'integration',
+          icon: 'trophy'
+        },
+        {
           label: '电话',
           props: 'tel',
           icon: 'phone-outline'
@@ -115,23 +120,18 @@ export default {
         {
           label: 'QQ',
           props: 'qq',
-          icon: 'user-magic-stick'
+          icon: 'chat-round'
         },
 
         {
           label: '微信号',
           props: 'wechat',
-          icon: 'mobile'
+          icon: 'chat-dot-round'
         },
         {
           label: '邮箱',
           props: 'email',
-          icon: 'tickets'
-        },
-        {
-          label: '积分',
-          props: 'integration',
-          icon: 's-goods'
+          icon: 'message'
         },
         {
           label: '注册时间',
@@ -141,7 +141,7 @@ export default {
         {
           label: '签名',
           props: 'signature',
-          icon: 'user-paperclip'
+          icon: 'position'
         },
 
       ],

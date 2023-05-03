@@ -128,6 +128,14 @@ export function editBook(data) {
     })
 }
 
+export function updateBookOfWord(data) {
+    return request({
+        url: `bookOfWords/word`,
+        method: 'put',
+        data
+    })
+}
+
 
 /**
  * 单词本单词导出

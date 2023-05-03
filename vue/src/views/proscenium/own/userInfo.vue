@@ -17,16 +17,19 @@
 
     <el-form-item label="签名" prop="signature">
       <el-input
-        type="textarea"
-        :rows="5"
-        placeholder="请输入签名"
-        v-model="userInfo.signature"
+          type="textarea"
+          :rows="3"
+          maxlength="15"
+          show-word-limit
+          placeholder="请输入签名"
+          v-model="userInfo.signature"
       >
       </el-input>
     </el-form-item>
     <el-form-item class="flex_center_center">
-      <el-button :disabled="!isLogin" type="primary" size="mini" @click="submit"
-        >保存</el-button
+      <el-button :disabled="!isLogin" size="medium" type="primary" @click="submit"
+      >保存
+      </el-button
       >
     </el-form-item>
   </el-form>

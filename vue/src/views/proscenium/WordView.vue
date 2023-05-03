@@ -7,10 +7,13 @@
           ><span>{{ title }}</span></el-col
         >
         <el-col :span="5">
-          <el-select v-model="value" style="width: 90px">
-            <el-option label="美音" value="0"></el-option>
-            <el-option label="英音" value="1"></el-option>
-          </el-select>
+          <div :class="`${isDeep ? 'dark-select' : ''}`">
+            <el-select v-model="value" :popper-append-to-body="false" style="width: 90px">
+              <el-option label="美音" value="0"></el-option>
+              <el-option label="英音" value="1"></el-option>
+            </el-select>
+          </div>
+
         </el-col>
         <!-- 循环播放单词发音 -->
         <el-col :span="2">
@@ -118,28 +121,34 @@
             ></div>
           </div>
           <el-popover placement="right" width="240" v-model="visible">
-            <p class="font_bold font_16 margin_b_10 text_center">
+            <p v-if="bookList.length > 0" class="font_bold font_16 margin_b_10 text_center">
               请选择单词本
             </p>
             <template v-if="bookList.length > 0">
               <el-checkbox-group v-model="checkList" class="padding_10">
                 <el-checkbox
-                  v-for="item in bookList"
-                  :key="item.bookId"
-                  :label="item.bookId"
-                  class="margin_b_10 block"
-                  >{{ item.bookName }}</el-checkbox
+                    v-for="item in bookList"
+                    :key="item.bookId"
+                    :label="item.bookId"
+                    class="margin_b_10 block"
+                >{{ item.bookName }}
+                </el-checkbox
                 >
               </el-checkbox-group>
             </template>
-            <div class="text_center margin_t_b_10" v-else>暂无单词本</div>
+            <div v-else class="text_center margin_t_b_10">
+              <el-result icon="warning" style="padding: 0;" title="暂无单词本">
+              </el-result>
+            </div>
 
-            <div style="text-align: right; margin: 0">
+            <div v-if="bookList.length > 0" style="text-align: center; margin: 0">
               <el-button size="mini" type="text" @click="visible = false"
-                >取消</el-button
+              >取消
+              </el-button
               >
               <el-button type="primary" size="mini" @click="collectWord"
-                >确定</el-button
+              >确定
+              </el-button
               >
             </div>
             <i
@@ -189,12 +198,12 @@
 </template>
 <script>
 import Timer from '@/components/Timer.vue'
-import { collectWord, getWordByNum, getWordByUserId } from '@/api/word.js'
-import { allBook, bookInfo } from '@/api/wordList'
+import {collectWord, getWordByNum, getWordByUserId} from '@/api/word.js'
+import {allBook, bookInfo} from '@/api/wordList'
 
 export default {
   name: "WordView",
-  components: { Timer },
+  components: {Timer},
   data() {
     return {
       wordPlan: {},
@@ -295,6 +304,7 @@ export default {
         this.enterFlag = -1
         bookInfo({
           bookId: params.bookId,
+          search: params.search,
           pageNum: params.pageNum,
           pageSize: params.pageSize
         })
@@ -342,7 +352,8 @@ export default {
       allBook()
         .then((res) => {
           // console.log(res)
-          if (res.code == 200) this.bookList = res.data
+          if (res.code === 200) this.bookList = res.data
+          console.log(this.bookList)
         })
         .catch((err) => {
           console.log('err', err)
@@ -580,7 +591,6 @@ export default {
       this.params = params
       this.getList(params)
     }
-
     // this.getList()
     // 显示绿色字、  黑色字、   红色字、   底部线黑色、  底部线红色
     //     答对后、  显 未答、  显 答错 、  不显未答、  不显答错
@@ -599,12 +609,102 @@ export default {
 };
 </script>
 
-<style scoped>
+<style lang="less" scoped>
+
+
+.dark-select {
+  // 修改input默认值颜色 兼容其它主流浏览器
+  /deep/ input::-webkit-input-placeholder {
+    color: rgba(255, 255, 255, 0.50);
+  }
+
+  ///deep/ input::-moz-input-placeholder {
+  //  color: rgba(255, 255, 255, 0.50);
+  //}
+  /deep/ input::-ms-input-placeholder {
+    color: rgba(255, 255, 255, 0.50);
+  }
+
+  // input框
+  /deep/ .el-select,
+  /deep/ .el-input,
+  /deep/ .el-input__inner {
+    background-color: rgba(255, 255, 255, 0.04);
+    color: rgba(255, 255, 255, 0.50);
+    border: none; // 去掉边框
+    // border-color: #XXXXXX // 默认边框的颜色
+    text-align: left;
+    border-radius: 4px;
+  }
+
+  // 选中时边框颜色
+  // /deep/ .el-input__inner:focus{
+  //        border-color: #16a34a;
+  //    }
+
+  // 鼠标悬浮时 input框颜色
+  /deep/ .el-input__inner:hover {
+    background-color: rgba(255, 255, 255, 0.12);
+  }
+
+  // input框 右侧的箭头
+  /deep/ .el-select .el-input .el-select__caret {
+    color: rgba(255, 255, 255, 0.50);
+  }
+
+  // option选项 上面的箭头
+  /deep/ .el-popper[x-placement^="bottom"] .popper__arrow::after {
+    border-bottom-color: rgba(43, 45, 55, 0.80);
+    z-index: 9999;
+  }
+
+  /deep/ .popper__arrow {
+    border: none;
+  }
+
+  // option选项 最外层
+  /deep/ .el-select-dropdown {
+    border: none !important;
+    background: rgba(43, 45, 55, 0.80) !important;
+    z-index: 9999;
+  }
+
+  // option选项 文字样式
+  /deep/ .el-select-dropdown__item {
+    color: rgba(255, 255, 255, 0.50) !important;
+    z-index: 9999;
+  }
+
+  /deep/ .el-select-dropdown__item.selected span {
+    color: rgba(255, 255, 255, 0.80) !important;
+    z-index: 9999;
+  }
+
+  // 移入option选项 样式调整
+  /deep/ .el-select-dropdown__item.hover {
+    background-color: rgba(255, 255, 255, 0.06);
+    color: rgba(255, 255, 255, 0.80) !important;
+    z-index: 9999;
+  }
+
+  // 下拉框垂直滚动条宽度
+  /deep/ .el-scrollbar__bar.is-vertical {
+    width: 10px;
+    top: 2px;
+  }
+
+  // 下拉框最大高度
+  /deep/ .el-select-dropdown__wrap {
+    max-height: 200px;
+  }
+}
+
+
 .card {
   border-radius: 10px;
   box-shadow: 0 100px 80px #00000012, 0 41.7776px 33.4221px #0000000d,
-    0 22.3363px 17.869px #0000000b, 0 12.5216px 10.0172px #00000009,
-    0 6.6501px 5.32008px #00000007, 0 2.76726px 2.21381px #00000005;
+  0 22.3363px 17.869px #0000000b, 0 12.5216px 10.0172px #00000009,
+  0 6.6501px 5.32008px #00000007, 0 2.76726px 2.21381px #00000005;
 }
 
 .wordLog {
