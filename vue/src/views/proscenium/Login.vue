@@ -125,7 +125,7 @@
 </template>
 
 <script>
-import { login, register, sms } from '@/api/user'
+import {login, register, sms} from '@/api/user'
 
 export default {
   name: 'Login',
@@ -254,12 +254,10 @@ export default {
               if (this.$route.path == '/module') this.$bus.$emit('module')
               this.$bus.$emit('beLogin')
               this.closed()
-              this.$message.success("登录成功！");
             }
           })
           .catch((err) => {
             console.log('err', err)
-            this.$message.error("登录失败！");
           })
       }
 

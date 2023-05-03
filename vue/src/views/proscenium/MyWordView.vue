@@ -42,6 +42,7 @@
             <div class="wid_per70">
               <p>单词数量：{{ mainPlan.dayWord }}</p>
               <p class="margin_t_20">计划名称：{{ mainPlan.planName }}</p>
+              <p class="margin_t_20">单词模块：{{ mainPlan.moduleName }}</p>
               <p class="margin_t_20">
                 开始时间：{{ mainPlan.planCreateTime }}
               </p>
