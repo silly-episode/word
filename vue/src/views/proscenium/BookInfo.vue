@@ -25,17 +25,17 @@
         <el-button icon="el-icon-search" type="info" @click="getBookInfo">
           查询
         </el-button>
-        <el-button icon="el-icon-s-promotion" type="success">
+        <el-button v-if="list.length>0" icon="el-icon-s-promotion" type="success">
           <router-link
               :to="{
             name: 'word',
             params: { bookId,search, pageNum, pageSize },
           }"
           >温故知新
-          </router-link
-          >
+          </router-link>
         </el-button>
         <el-button
+            v-if="list.length>0"
             :icon="`el-icon-${exportLoading?'loading':'download'}`"
             type="warning"
             @click="wordListPdf">
@@ -323,9 +323,12 @@ export default {
       deleteWord(wordId)
           .then((res) => {
             console.log('res', res)
-            if (res.code == 200) {
+            if (res.code === 200) {
               this.getBookInfo()
-              this.$message.success('删除成功！')
+              this.$notify.success({
+                title: '成功',
+                message: res.msg,
+              });
             }
           })
           .catch((err) => {
@@ -346,16 +349,26 @@ export default {
         bookId: this.bookId,
         bookName: e.target.value
       }
+      if (data.bookName.length > 8) {
+        this.$notify.warning({
+          title: "警告",
+          message: "单词本名称最多八个字符"
+        })
+        return
+      }
       editBook(data)
           .then((res) => {
             if (res.code === 200) {
               this.getBookInfo()
-              this.$message.success('修改成功！')
+              this.$notify.success({
+                title: "成功",
+                message: "修改成功！"
+              })
             }
-        })
-        .catch((err) => {
-          console.log('err', err)
-        })
+          })
+          .catch((err) => {
+            console.log('err', err)
+          });
     },
     deleteBook() {
       deleteBook(this.bookId)

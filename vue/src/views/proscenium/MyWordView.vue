@@ -36,13 +36,12 @@
         <div class="font_16 border_ccc flex_between_center padding_20 margin_t_20">
           <template v-if="JSON.stringify(mainPlan) === '{}'">
             暂无主计划，去添加计划吧！
-          </template
-          >
+          </template>
           <template v-else>
             <div class="wid_per70">
-              <p>单词数量：{{ mainPlan.dayWord }}</p>
-              <p class="margin_t_20">计划名称：{{ mainPlan.planName }}</p>
+              <p>计划名称：{{ mainPlan.planName }}</p>
               <p class="margin_t_20">单词模块：{{ mainPlan.moduleName }}</p>
+              <p class="margin_t_20">单词数量：{{ mainPlan.dayWord + "  ( 仍需 " + willDay + " 天完成 ) " }}</p>
               <p class="margin_t_20">
                 开始时间：{{ mainPlan.planCreateTime }}
               </p>
@@ -215,8 +214,8 @@
               <el-avatar :size="40" :src="item.headImage"></el-avatar>
               <div class="margin_l_20">
                 <p class="margin_b_10">{{ item.nickName }}</p>
-                <p v-if="item.swearStatus == '1'">已完成，奖励10积分</p>
-                <p v-if="item.swearStatus == '0'">未背完，变猪头</p>
+                <p v-if="item.swearStatus == '1'">已完成，太棒啦！</p>
+                <p v-if="item.swearStatus == '0'">未完成，变猪头</p>
               </div>
             </div>
             <el-pagination small layout="prev, pager, next" :total="total2">
@@ -226,15 +225,20 @@
       </div>
     </el-aside>
     <el-dialog
-      title="新增单词本"
-      :visible="visibleAdd"
-      :close-on-click-modal="false"
-      width="40%"
-      @close="closedAdd"
-    >
+        :center="true"
+        :visible="visibleAdd"
+        :close-on-click-modal="false"
+        title="添加单词本"
+        width="30%"
+        @close="closedAdd">
       <el-input
-        v-model="bookName"
-        placeholder="请输入新增单词本名字"
+          v-model.trim="bookName"
+          auto-complete="false"
+          clearable
+          maxlength="8"
+          placeholder="请输入新增单词本名称"
+          show-li
+          show-word-limit
       ></el-input>
       <span slot="footer" class="dialog-footer">
         <el-button @click="closedAdd">取 消</el-button>
@@ -261,13 +265,14 @@ export default {
       token: '',
       visible: false,
       percentage: 0,
-      userName: '测试号1',
+      userName: '',
       bookList: [],
       bookName: '',
       visibleAdd: false,
       mainPlan: {},
       planList: [],
       userInfo: {},
+      willDay: '',
       IntegralList: [],//积分排行
       queryInfo1: { // 获取积分列表的参数对象
         pageNum: 1,
@@ -289,7 +294,7 @@ export default {
       allBook()
         .then((res) => {
           // console.log(res)
-          if (res.code == 200) this.bookList = res.data
+          if (res.code === 200) this.bookList = res.data
         })
         .catch((err) => {
           console.log('err', err)
@@ -300,10 +305,13 @@ export default {
       allPlan()
         .then((res) => {
           // console.log(res)
-          if (res.code == 200) {
+          if (res.code === 200) {
             this.mainPlan = res.data.mainPlan
             this.planList = res.data.commonPlan
-            if (this.mainPlan) this.percentage = parseInt((this.mainPlan.finishedWord * 100) / this.mainPlan.allWord) - 0
+            if (this.mainPlan) {
+              this.percentage = parseInt((this.mainPlan.finishedWord * 100) / this.mainPlan.allWord) - 0
+              this.willDay = Math.ceil((this.mainPlan.allWord - this.mainPlan.finishedWord) / this.mainPlan.dayWord)
+            }
           }
         })
         .catch((err) => {
@@ -315,7 +323,7 @@ export default {
       hotIntegration(this.queryInfo1)
         .then((res) => {
           // console.log(res)
-          if (res.code == 200) {
+          if (res.code === 200) {
             this.IntegralList = res.data.records
             this.total1 = res.data.total
           }
@@ -385,14 +393,24 @@ export default {
     },
     addBook() {
       const bookName = this.bookName
-      addBook({ bookName })
-        .then((res) => {
-          // console.log(res)
-          if (res.code == 200) {
-            this.visibleAdd = false
-            this.$message.success('新增成功！')
-            this.getBookList()
-          }
+      if (bookName === "") {
+        this.$notify.warning({
+          title: "警告",
+          message: "请填写单词本名称"
+        })
+        return
+      }
+      addBook({bookName})
+          .then((res) => {
+            // console.log(res)
+            if (res.code === 200) {
+              this.visibleAdd = false
+              this.$notify.success({
+                title: "成功",
+                message: "新增单词本成功！"
+              })
+              this.getBookList()
+            }
         })
         .catch((err) => {
           console.log('err', err)

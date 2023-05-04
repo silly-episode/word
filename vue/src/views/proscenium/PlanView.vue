@@ -1,28 +1,61 @@
 <template>
   <el-dialog
-    :title="`${editFlag ? '修改计划' : '设置计划'}`"
-    :visible="visiblePlan"
-    :close-on-click-modal="false"
-    width="40%"
-    @close="closedPlan"
-  >
-    <el-input v-model="planName" placeholder="请填写计划名称"></el-input>
-    <div class="flex_center margin_t_20">
-      <el-select
-        v-model="dayWord"
-        placeholder="请计划每天完成的单词数"
-        @change="changeOptions"
-      >
-        <el-option
-          v-for="item in options"
-          :key="item"
-          :label="item"
-          :value="item"
-        >
-        </el-option>
-      </el-select>
-      <span class="margin_l_20">{{ days }}</span>
-    </div>
+      :center="true"
+      :visible="visiblePlan"
+      :close-on-click-modal="false"
+      :title="`${editFlag ? '修改单词计划' : '添加单词计划'}`"
+      width="40%"
+      @close="closedPlan">
+
+    <el-form
+        ref="formRef"
+        label-width="120px"
+        style="margin: 0 7% 0 0;">
+
+      <el-row>
+        <el-form-item label="计划名称" prop="signature">
+          <el-input
+              v-model="planName"
+              maxlength="8"
+              placeholder="请填写计划名称"
+              show-word-limit
+              type="text">
+          </el-input>
+        </el-form-item>
+      </el-row>
+
+      <el-row>
+        <el-col :span="12">
+          <el-form-item aria-rowindex="50px" label="单词数量" prop="userId">
+            <el-select
+                v-model="dayWord"
+                @change="changeOptions">
+              <el-option
+                  v-for="item in options"
+                  :key="item"
+                  :label="item"
+                  :value="item">
+              </el-option>
+            </el-select>
+          </el-form-item>
+        </el-col>
+
+        <el-col :span="12">
+          <el-form-item label="完成天数" prop="registerTime">
+            <el-select
+                v-model="days"
+                @change="changeDayOptions">
+              <el-option
+                  v-for="item in dayOptions"
+                  :key="item"
+                  :label="item"
+                  :value="item">
+              </el-option>
+            </el-select>
+          </el-form-item>
+        </el-col>
+      </el-row>
+    </el-form>
 
     <span slot="footer" class="dialog-footer">
       <el-button @click="closedPlan">取 消</el-button>
@@ -32,7 +65,8 @@
 </template>
 
 <script>
-import { addPlan } from '@/api/wordList'
+import {addPlan} from '@/api/wordList'
+
 export default {
   name: 'PlanView',
   data() {
@@ -43,6 +77,7 @@ export default {
       planId: '',
       wordCount: '',
       options: [],
+      dayOptions: [],
       planName: '',
       dayWord: '',
       days: '',
@@ -63,14 +98,27 @@ export default {
       }
       for (let i = 1; i < this.wordCount + 1; i++) {
         this.options.push(i)
+        let days = parseInt(this.wordCount / i)
+        if (this.wordCount % this.dayWord) days++
+        this.dayOptions.push(days)
       }
+      this.dayOptions = this.dayOptions.filter((item, index, arr) => arr.indexOf(item) === index);
     },
 
     changeOptions() {
       let days = parseInt(this.wordCount / this.dayWord)
       if (this.wordCount % this.dayWord) days++
-      this.days = '预计' + days + '天完成'
+      this.days = days
     },
+
+    changeDayOptions() {
+      let dayWord = Math.ceil((this.wordCount / this.days));
+      if (this.wordCount % this.days) {
+        this.dayWord++
+      }
+      this.dayWord = dayWord
+    },
+
 
     addPlan() {
       const data = {
@@ -84,7 +132,7 @@ export default {
       addPlan(data)
         .then((res) => {
           // console.log(res)
-          if (res.code == 200) {
+          if (res.code === 200) {
             this.closedPlan()
             this.$emit('ok')
             this.$message.success(`${this.editFlag ? '修改' : '加入'}成功！`)
@@ -103,10 +151,16 @@ export default {
       this.days = ''
       this.planId = ''
       this.options = []
+      this.dayOptions = []
     },
   }
 }
 </script>
 
-<style>
+<style scoped>
+
+.el-dialog__body {
+  padding-bottom: 0;
+}
+
 </style>
