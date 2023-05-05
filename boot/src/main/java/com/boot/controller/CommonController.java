@@ -1,17 +1,22 @@
 package com.boot.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.boot.bo.*;
 import com.boot.common.Exception.CustomException;
 import com.boot.common.result.Result;
 import com.boot.entity.Community;
 import com.boot.service.CommunityService;
+import com.boot.utils.SystemInfoUtils;
 import com.boot.utils.TranslateUtils;
 import com.tencentcloudapi.common.exception.TencentCloudSDKException;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.io.FileNotFoundException;
+import java.net.UnknownHostException;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -54,11 +59,31 @@ public class CommonController {
      * @Date: 2023/4/22 15:35
      */
     @GetMapping("systemInfo")
-    @RequiresAuthentication
-    public Result systemInfo() {
+//    @RequiresAuthentication
+    public Result<Map<String, Object>> systemInfo() {
+        try {
+            MyMemoryInfo memoryInfo = SystemInfoUtils.getMemory();
+            MyCpuInfo cpuInfo = SystemInfoUtils.getCpuInfo();
+            List<MyFileInfo> fileInfoList = SystemInfoUtils.getFileInfo();
+            MyJvmInfo jvmInfo = SystemInfoUtils.getJvmInfo();
+            MyServerInfo serverInfo = SystemInfoUtils.getServerInfo();
+//            System.out.println(serverInfo);
+//            System.out.println(jvmInfo);
+//            System.out.println(fileInfoList);
+//            System.out.println(myCpuInfo);
+//            System.out.println(memoryInfo);
 
-
-        return Result.success();
+            Map<String, Object> map = new HashMap<>(5);
+            map.put("memoryInfo", memoryInfo);
+            map.put("cpuInfo", cpuInfo);
+            map.put("fileInfoList", fileInfoList);
+            map.put("jvmInfo", jvmInfo);
+            map.put("serverInfo", serverInfo);
+            return Result.success(map);
+        } catch (FileNotFoundException | UnknownHostException e) {
+            e.printStackTrace();
+            return Result.error("系统错误");
+        }
     }
 
 

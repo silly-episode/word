@@ -30,10 +30,10 @@ public class MyFileInfo {
 
     private String freeSpace;
 
-    private String usableSpace;
+    private String unFreeSpace;
 
     private String totalSpace;
 
-    private String usablePercent;
+    private String unFreePercent;
 
 }

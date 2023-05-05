@@ -349,6 +349,43 @@ public class UserController {
 //        return Result.success(userMsgDto);
 //    }
 
+
+    /**
+     * @Return:
+     * @Author: DengYinzhe
+     * @Description: TODO 获取积分和发誓状态
+     * @Date: 2023/5/5 10:18
+     */
+    @GetMapping("integralAndSwear")
+    @RequiresAuthentication
+    public Result user(HttpServletRequest request) {
+        Long userId = jwtUtils.getUserIdFromRequest(request);
+        LocalDateTime today_start = LocalDateTime.of(LocalDate.now(), LocalTime.MIN);
+        LocalDateTime today_end = LocalDateTime.of(LocalDate.now(), LocalTime.MAX);
+        // 积分情况
+        LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.select(User::getIntegration).eq(User::getUserId, userId);
+        Integer integration = userService.getOne(queryWrapper).getIntegration();
+        //        发誓情况
+        Boolean swear;
+        LambdaQueryWrapper<Swear> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(Swear::getUserId, userId)
+                .ge(Swear::getSwearTime, today_start)
+                .le(Swear::getSwearTime, today_end);
+        long count = swearService.count(wrapper);
+        if (count > 0) {
+            swear = true;
+        } else {
+            swear = false;
+        }
+        /*组合数据*/
+        Map<String, Object> map = new HashMap<>(2);
+        map.put("integration", integration);
+        map.put("swear", swear);
+        return Result.success(map);
+    }
+
+
     /**
      * @param userId:
      * @Return: Result
