@@ -68,11 +68,11 @@
 
 <script>
 import Timer from '@/components/Timer.vue'
-import { getArticle } from '@/api/article.js'
-import { examResult } from '@/api/word.js'
+import {getArticle} from '@/api/article.js'
+import {examResult} from '@/api/word.js'
 
 export default {
-  components: { Timer },
+  components: {Timer},
   data() {
     return {
       articleId: '',
@@ -181,7 +181,13 @@ export default {
         examResult(info)
           .then(res => {
             console.log('res', res)
-            if (res.code == 200) this.$message.success(res.msg)
+            if (res.code === 200) {
+              this.$notify.success({
+                title: '成功',
+                message: res.msg,
+                offset: 60
+              });
+            }
           })
       } else console.log('未登录')
       this.$router.back()

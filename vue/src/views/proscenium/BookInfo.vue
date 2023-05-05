@@ -246,7 +246,11 @@ export default {
             fileDownload(response, this.bookName + "(" + dateTime + ").pdf")
           })
           .catch((err) => {
-            this.$message.error("导出失败")
+            this.$notify.error({
+              title: "错误",
+              message: "导出失败，请稍后再试",
+              offset: 60
+            })
           })
           .finally(() => {
             this.exportLoading = false;
@@ -265,7 +269,7 @@ export default {
       bookInfo(data)
           .then((res) => {
             // console.log('res', res)
-            if (res.code == 200) {
+            if (res.code === 200) {
               this.bookName = res.data.book.bookName
               this.list = res.data.word.records
               this.total = res.data.word.total
@@ -304,12 +308,14 @@ export default {
             this.$notify.success({
               title: '成功',
               message: res.msg,
+              offset: 60
             });
           })
           .catch((err) => {
             this.$notify.error({
               title: '失败',
               message: err.msg,
+              offset: 60
             });
           })
           .finally(() => {
@@ -328,6 +334,7 @@ export default {
               this.$notify.success({
                 title: '成功',
                 message: res.msg,
+                offset: 60
               });
             }
           })
@@ -352,7 +359,8 @@ export default {
       if (data.bookName.length > 8) {
         this.$notify.warning({
           title: "警告",
-          message: "单词本名称最多八个字符"
+          message: "单词本名称最多八个字符",
+          offset: 60
         })
         return
       }
@@ -362,7 +370,8 @@ export default {
               this.getBookInfo()
               this.$notify.success({
                 title: "成功",
-                message: "修改成功！"
+                message: "修改成功！",
+                offset: 60
               })
             }
           })
@@ -374,9 +383,13 @@ export default {
       deleteBook(this.bookId)
         .then((res) => {
           console.log('res', res)
-          if (res.code == 200) {
+          if (res.code === 200) {
+            this.$notify.success({
+              title: '成功',
+              message: "删除成功",
+              offset: 60
+            });
             this.$router.back() //后退
-            this.$message.success('删除成功！')
           }
         })
         .catch((err) => {

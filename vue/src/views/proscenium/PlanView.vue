@@ -135,7 +135,11 @@ export default {
           if (res.code === 200) {
             this.closedPlan()
             this.$emit('ok')
-            this.$message.success(`${this.editFlag ? '修改' : '加入'}成功！`)
+            this.$notify.success({
+              title: '成功',
+              message: `${this.editFlag ? '修改' : '加入'}成功！`,
+              offset: 60
+            });
           }
 
         })

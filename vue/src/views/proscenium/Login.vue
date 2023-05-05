@@ -199,7 +199,11 @@ export default {
         .then((res) => {
           console.log(res)
           if (res.code == 200) {
-            this.$message("已发送验证码，请查收");
+            this.$notify.success({
+              title: '成功',
+              message: "已发送验证码，请查收",
+              offset: 60
+            });
             this.codeDisabled = true;
             this.codeText = "请稍候...";
             setTimeout(() => {
@@ -233,25 +237,35 @@ export default {
     },
 
     login() {
-      const { loginForm } = this
-      if (!loginForm.loginAccount) this.$message.error(`请输入${this.telLogin ? '手机号码' : '账号'}`);
-      else if (!loginForm.loginPassword) this.$message.error(`请输入${this.telLogin ? '验证码' : '密码'}`);
-      else {
+      const {loginForm} = this
+      if (!loginForm.loginAccount) {
+        this.$notify.warning({
+          title: '警告',
+          message: `请输入${this.telLogin ? '手机号码' : '账号'}`,
+          offset: 60
+        });
+      } else if (!loginForm.loginPassword) {
+        this.$notify.warning({
+          title: '警告',
+          message: `请输入${this.telLogin ? '验证码' : '密码'}`,
+          offset: 60
+        });
+      } else {
         if (this.telLogin) loginForm.type = 'sms'
         else loginForm.type = 'pwd'
         login(this.loginForm)
-          .then((res) => {
-            if (res.code == 200) {
-              // console.log(res)
-              window.sessionStorage.removeItem("adminToken")
-              window.sessionStorage.setItem("token", res.data.token);
-              window.sessionStorage.setItem('userInfo', JSON.stringify(res.data.userInfo))
-              // this.$emit('beLogin')
-              // debugger
-              // console.log('path', this.$route.path)
-              if (this.$route.path == '/myword') this.$bus.$emit('myword')
-              if (this.$route.path == '/own') this.$bus.$emit('own')
-              if (this.$route.path == '/module') this.$bus.$emit('module')
+            .then((res) => {
+              if (res.code === 200) {
+                // console.log(res)
+                window.sessionStorage.removeItem("adminToken")
+                window.sessionStorage.setItem("token", res.data.token);
+                window.sessionStorage.setItem('userInfo', JSON.stringify(res.data.userInfo))
+                // this.$emit('beLogin')
+                // debugger
+                // console.log('path', this.$route.path)
+                if (this.$route.path == '/myword') this.$bus.$emit('myword')
+                if (this.$route.path == '/own') this.$bus.$emit('own')
+                if (this.$route.path == '/module') this.$bus.$emit('module')
               this.$bus.$emit('beLogin')
               this.closed()
             }
@@ -272,7 +286,11 @@ export default {
             .then((res) => {
               // console.log(res)
               window.sessionStorage.setItem("token", res.data);
-              this.$message.success("注册成功！");
+              this.$notify.success({
+                title: '成功',
+                message: "注册成功！",
+                offset: 60
+              });
               this.closed()
               // alert('submit!');
             })

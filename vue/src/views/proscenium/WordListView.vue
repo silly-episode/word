@@ -194,7 +194,7 @@ export default {
       this.$notify({
         title: '提示',
         message: '时间已到，你可知寸金难买寸光阴？',
-        duration: 0,
+        offset: 60
       });
     },
   },

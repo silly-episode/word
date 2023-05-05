@@ -201,14 +201,20 @@ export default {
       this.$notify({
         title: '提示',
         message: '时间已到',
-        duration: 0,
+        offset: 60
       });
       if (window.sessionStorage.getItem("token")) {
         const data = { resultType: 2, score: this.score, total: this.total }
         examResult(data)
           .then(res => {
             // console.log('res', res)
-            if (res.code == 200) this.$message.success(res.msg)
+            if (res.code === 200) {
+              this.$notify.success({
+                title: '成功',
+                message: res.msg,
+                offset: 60
+              });
+            }
           })
       } else console.log('未登录')
 

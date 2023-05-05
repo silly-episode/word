@@ -249,8 +249,11 @@ export default {
           this.total = res.data.total
         })
         .catch((err) => {
-          console.log(err.msg)
-          this.$message.error(err.msg)
+          this.$notify.error({
+            title: "错误",
+            message: err.msg,
+            offset: 60
+          })
         })
         .finally(() => {
           this.searchLoading = false;

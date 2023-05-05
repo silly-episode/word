@@ -379,7 +379,11 @@ export default {
           if (res.code == 200) {
             this.$set(this.collectList, this.wordIndex, true)
             this.checkList = []
-            this.$message.success('收藏成功！')
+            this.$notify.success({
+              title: '成功',
+              message: "收藏成功！",
+              offset: 60
+            });
           }
         })
         .catch((err) => {
@@ -525,7 +529,11 @@ export default {
             this.afresh(this.params)
           } else {
             this.isBack = true
-            this.$message.warning('已经到最后一页了！')
+            this.$notify.warning({
+              title: '警告',
+              message: "已经到最后一页了！",
+              offset: 60
+            });
           }
         } else {//是单词本
           if (this.pages > this.params.pageNum) {
@@ -533,7 +541,11 @@ export default {
             this.afresh(this.params)
           } else {
             this.isBack = true
-            this.$message.warning('已经到最后一页了！')
+            this.$notify.warning({
+              title: '警告',
+              message: "已经到最后一页了！",
+              offset: 60
+            });
           }
         }
       }

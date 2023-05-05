@@ -365,8 +365,12 @@ export default {
         .then((res) => {
           deletePlan(planId)
             .then((res) => {
-              if (res.code == 200) {
-                this.$message.success('删除成功！')
+              if (res.code === 200) {
+                this.$notify.success({
+                  title: '成功',
+                  message: "删除成功",
+                  offset: 60
+                });
                 this.getPlanList()
               }
             })
@@ -380,7 +384,7 @@ export default {
       }
       setMain(data)
         .then((res) => {
-          if (res.code == 200) this.getPlanList()
+          if (res.code === 200) this.getPlanList()
           // console.log('res', res)
         })
         .catch((err) => {
@@ -396,7 +400,8 @@ export default {
       if (bookName === "") {
         this.$notify.warning({
           title: "警告",
-          message: "请填写单词本名称"
+          message: "请填写单词本名称",
+          offset: 60
         })
         return
       }
@@ -407,7 +412,8 @@ export default {
               this.visibleAdd = false
               this.$notify.success({
                 title: "成功",
-                message: "新增单词本成功！"
+                message: "新增单词本成功！",
+                offset: 60
               })
               this.getBookList()
             }
@@ -451,7 +457,11 @@ export default {
             if (res.code == 200) {
               this.userInfo.swear = true
               window.sessionStorage.setItem('userInfo', JSON.stringify(this.userInfo))
-              this.$message.success('发誓成功！')
+              this.$notify.success({
+                title: '成功',
+                message: "一定要做到哦！",
+                offset: 60
+              });
             }
           })
           .catch((err) => {
