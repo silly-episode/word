@@ -22,9 +22,10 @@ export const monitorZoom = () => {
     ) {
         ratio = window.outerWidth / window.innerWidth;
     }
+    console.log("修正前：", ratio)
     if (ratio) {
         ratio = Math.round(ratio * 100 / 1.25);
     }
-    console.log(ratio)
+    console.log("修正后：", ratio)
     return ratio;
 };
