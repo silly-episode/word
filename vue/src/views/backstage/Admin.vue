@@ -60,9 +60,10 @@
           </el-submenu>
         </el-menu>
       </el-aside>
-      <el-main>
+      <el-main :style="`height:calc(10/9.0*${radio}*100vh - 62px)`">
         <router-view></router-view>
       </el-main>
+      <!--      /*:height="`calc(10/9.0*${radio}*100vh - 301px)`"*/-->
     </el-container>
   </el-container>
 </template>
@@ -71,6 +72,9 @@
 export default {
   data() {
     return {
+      tableHeight: 0,
+      radio: window.sessionStorage.getItem("ratio"),
+      clientWidth: document.body.clientWidth, // 文档宽度
       menulist: [
         {
           id: '2',
@@ -134,8 +138,21 @@ export default {
       isCollapse: false,
       //   记录处于激活状态的链接地址
       activePath: "",
+
+      height: "500px"
     };
   },
+
+
+  // computed:{
+  //   mainHeight(){
+  //     return {
+  //       "--height":this.height
+  //     }
+  //   }
+  //
+  // },
+
   created() {
     // 将记录下来的激活状态的链接赋予menu
     this.activePath = window.sessionStorage.getItem("activePath");
@@ -155,10 +172,18 @@ export default {
       this.activePath = activePath;
     },
   },
+
+
 };
 </script>
 
 <style scoped>
+
+
+.el-main {
+  background-color: #eaedf1;
+}
+
 .font_24 {
   font-size: 24px;
 }
@@ -184,14 +209,10 @@ export default {
   /*   使侧边栏丝滑折叠 */
   transition: width 0.2s;
 }
-
 .el-menu {
   border-right: none;
 }
 
-.el-main {
-  background-color: #eaedf1;
-}
 
 .iconfont {
   /* 让侧边菜单栏的图标和文字有间距 */

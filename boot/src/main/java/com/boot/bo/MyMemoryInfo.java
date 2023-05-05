@@ -25,7 +25,7 @@ public class MyMemoryInfo {
     /*系统已用内存*/
     private String usedMemory;
     /*系统内存使用率*/
-    private String memoryPercent;
+    private double memoryPercent;
 
 
     /*JVM内存总量*/
@@ -35,7 +35,7 @@ public class MyMemoryInfo {
     /*JVM已用内存*/
     private String jvmUsedMemory;
     /*JVM内存使用率*/
-    private String jvmMemoryPercent;
+    private double jvmMemoryPercent;
 
 
 }

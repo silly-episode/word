@@ -54,11 +54,11 @@ public class SystemInfoUtils {
         double jvmMemoryPercent = jvmUsedMemory * 100 / jvmMemoryTotal;
 
         return new MyMemoryInfo()
-                .setJvmMemoryPercent(Double.parseDouble(df.format(jvmMemoryPercent)) + " %")
+                .setJvmMemoryPercent(Double.parseDouble(df.format(jvmMemoryPercent)))
                 .setJvmMemoryTotal(Double.parseDouble(df.format(jvmMemoryTotal)) + " MB")
                 .setJvmRemainMemory(Double.parseDouble(df.format(jvmRemainMemory)) + " MB")
                 .setJvmUsedMemory(Double.parseDouble(df.format(jvmUsedMemory)) + " MB")
-                .setMemoryPercent(Double.parseDouble(df.format(memoryPercent)) + " %")
+                .setMemoryPercent(Double.parseDouble(df.format(memoryPercent)))
                 .setMemoryTotal(Double.parseDouble(df.format(memoryTotal)) + " GB")
                 .setRemainMemory(Double.parseDouble(df.format(remainMemory)) + " GB")
                 .setUsedMemory(Double.parseDouble(df.format(usedMemory)) + " GB");
@@ -76,11 +76,11 @@ public class SystemInfoUtils {
         /*核心数量*/
         int cpuNum = cpuInfo.getCpuNum();
         /*系统使用率*/
-        String sys = cpuInfo.getSys() + "%";
+        double sys = cpuInfo.getSys();
         /*用户使用率*/
-        String user = cpuInfo.getUser() + "%";
+        double user = cpuInfo.getUser();
         /*当前空闲率*/
-        String free = cpuInfo.getFree() + "%";
+        double free = cpuInfo.getFree();
 
         return new MyCpuInfo()
                 .setCpuModel(cpuModel)
@@ -114,7 +114,7 @@ public class SystemInfoUtils {
 
             String totalSpace = convertFileSize(store.getTotalSpace());
 
-            String unFreePercent = Double.parseDouble(df.format(100.0 * (store.getTotalSpace() - store.getFreeSpace()) / store.getTotalSpace())) + " %";
+            double unFreePercent = Double.parseDouble(df.format(100.0 * (store.getTotalSpace() - store.getFreeSpace()) / store.getTotalSpace()));
 
             info
                     .setFreeSpace(freeSpace)

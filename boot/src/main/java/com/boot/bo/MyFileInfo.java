@@ -34,6 +34,6 @@ public class MyFileInfo {
 
     private String totalSpace;
 
-    private String unFreePercent;
+    private double unFreePercent;
 
 }

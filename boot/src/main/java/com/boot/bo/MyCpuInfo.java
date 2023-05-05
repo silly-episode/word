@@ -23,10 +23,10 @@ public class MyCpuInfo {
     /*核心数量*/
     private int cpuNum;
     /*系统使用率*/
-    private String sys;
+    private double sys;
     /*用户使用率*/
-    private String user;
+    private double user;
     /*当前空闲率*/
-    private String free;
+    private double free;
 }
 

@@ -7,6 +7,16 @@
  */
 import request from "@/utils/request";
 
+/**
+ * 系统监控信息
+ * @returns {*}
+ */
+export function systemInfo() {
+    return request({
+        url: 'common/systemInfo',
+        method: 'get'
+    })
+}
 
 /**
  * 管理员登录
