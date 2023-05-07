@@ -31,7 +31,7 @@
                   <div class="cell">用户使用率</div>
                 </td>
                 <td class="el-table__cell is-leaf">
-                  <div v-if="server.cpuInfo" class="cell">{{ server.cpuInfo.user }}%</div>
+                  <div v-if="server.cpuInfo" class="cell">{{ server.cpuInfo.user + " %" }}</div>
                 </td>
               </tr>
               <tr>
@@ -39,7 +39,7 @@
                   <div class="cell">系统使用率</div>
                 </td>
                 <td class="el-table__cell is-leaf">
-                  <div v-if="server.cpuInfo" class="cell">{{ server.cpuInfo.sys }}%</div>
+                  <div v-if="server.cpuInfo" class="cell">{{ server.cpuInfo.sys + " %" }}</div>
                 </td>
               </tr>
               <tr>
@@ -47,7 +47,7 @@
                   <div class="cell">当前空闲率</div>
                 </td>
                 <td class="el-table__cell is-leaf">
-                  <div v-if="server.cpuInfo" class="cell">{{ server.cpuInfo.free }}%</div>
+                  <div v-if="server.cpuInfo" class="cell">{{ server.cpuInfo.free + " %" }}</div>
                 </td>
               </tr>
               </tbody>
@@ -114,12 +114,12 @@
                 </td>
                 <td class="el-table__cell is-leaf">
                   <div v-if="server.memoryInfo" :class="{'text-danger': server.memoryInfo.memoryPercent > 80}"
-                       class="cell">{{ server.memoryInfo.memoryPercent }} %
+                       class="cell">{{ server.memoryInfo.memoryPercent + " %" }}
                   </div>
                 </td>
                 <td class="el-table__cell is-leaf">
                   <div v-if="server.memoryInfo" :class="{'text-danger': server.memoryInfo.jvmMemoryPercent > 80}"
-                       class="cell">{{ server.memoryInfo.jvmMemoryPercent }} %
+                       class="cell">{{ server.memoryInfo.jvmMemoryPercent + " %" }}
                   </div>
                 </td>
               </tr>
@@ -232,7 +232,7 @@
                   <div class="cell">处理级别</div>
                 </td>
                 <td class="el-table__cell is-leaf">
-                  <div v-if="server.jvmInfo" class="cell">{{ server.jvmInfo.processingLevel }}</div>
+                  <div v-if="server.jvmInfo" class="cell">{{ server.jvmInfo.processingLevel + " Level" }}</div>
                 </td>
               </tr>
               <tr>
@@ -246,7 +246,7 @@
                   <div class="cell">进程标识</div>
                 </td>
                 <td class="el-table__cell is-leaf">
-                  <div v-if="server.jvmInfo" class="cell">{{ server.jvmInfo.jvmPid }}</div>
+                  <div v-if="server.jvmInfo" class="cell">{{ server.jvmInfo.jvmPid + " PID" }}</div>
                 </td>
               </tr>
               <tr>
@@ -322,7 +322,7 @@
                   <div class="cell">{{ sysFile.totalSpace }}</div>
                 </td>
                 <td class="el-table__cell is-leaf">
-                  <div class="cell">{{ sysFile.unFreePercent }}</div>
+                  <div class="cell">{{ sysFile.unFreePercent + " %" }}</div>
                 </td>
               </tr>
               </tbody>

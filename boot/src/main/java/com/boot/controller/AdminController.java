@@ -1,5 +1,6 @@
 package com.boot.controller;
 
+import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -13,10 +14,7 @@ import com.boot.entity.ActionLog;
 import com.boot.entity.Admin;
 import com.boot.entity.LoginLog;
 import com.boot.entity.User;
-import com.boot.service.ActionLogService;
-import com.boot.service.AdminService;
-import com.boot.service.LoginLogService;
-import com.boot.service.UserService;
+import com.boot.service.*;
 import com.boot.utils.ActionLogUtils;
 import com.boot.utils.BeanDtoVoUtils;
 import com.boot.utils.JwtUtils;
@@ -30,6 +28,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -56,6 +55,10 @@ public class AdminController {
     @Resource
     private JwtUtils jwtUtils;
     @Resource
+    private WordModuleService wordModuleService;
+    @Resource
+    private ElasticsearchClient elasticsearchClient;
+    @Resource
     private ActionLogUtils actionLogUtils;
     /*重置的密码*/
 
@@ -81,6 +84,91 @@ public class AdminController {
             return Result.error("密码不正确");
         }
     }
+
+    /**
+     * @Return:
+     * @Author: DengYinzhe
+     * @Description: TODO 更加token获取管理员基础信息
+     * @Date: 2023/5/6 10:52
+     */
+    @GetMapping("adminInfo")
+    @RequiresAuthentication
+    public Result admin(HttpServletRequest request) {
+        long adminId = jwtUtils.getUserIdFromRequest(request);
+        Admin admin = adminService.getById(adminId);
+        AdminMsgDto2 adminInfo = BeanDtoVoUtils.convert(admin, AdminMsgDto2.class);
+        return Result.success(adminInfo);
+    }
+
+    /**
+     * @Return:
+     * @Author: DengYinzhe
+     * @Description: TODO 管理员自己修改信息
+     * @Date: 2023/5/6 11:05
+     */
+    @PutMapping("adminInfo")
+    @RequiresAuthentication
+    public Result admin(Admin admin) {
+        /*todo*/
+        if (adminService.updateById(admin)) {
+            return Result.success("修改成功");
+        } else {
+            return Result.error("修改失败");
+        }
+    }
+
+
+    /**
+     * @Return:
+     * @Author: DengYinzhe
+     * @Description: TODO 管理员自己修改密码
+     * @Date: 2023/5/6 11:05
+     */
+    @PutMapping("adminPwd")
+    @RequiresAuthentication
+    public Result adminPwd(@RequestBody PasswordDto passwordDto, HttpServletRequest request) {
+        Long adminId = jwtUtils.getUserIdFromRequest(request);
+        if (adminId == null) {
+            return Result.error("token异常");
+        }
+        Admin admin = adminService.getById(adminId);
+        if (!admin.getPassword().equals(passwordDto.getOldPassword())) {
+            return Result.error("旧密码不正确");
+        }
+        if (admin.getPassword().equals(passwordDto.getNewPassword())) {
+            return Result.error("旧密码和新密码相同");
+        }
+        UpdateWrapper<Admin> updateWrapper = new UpdateWrapper<>();
+        updateWrapper.set("password", passwordDto.getNewPassword()).eq("admin_id", adminId);
+        if (adminService.update(updateWrapper)) {
+            return Result.success("修改密码成功");
+        } else {
+            return Result.error("修改密码失败");
+        }
+    }
+
+
+    /**
+     * @Return:
+     * @Author: DengYinzhe
+     * @Description: TODO 首页右上角框框信息
+     * @Date: 2023/5/6 11:30
+     */
+    @GetMapping("total")
+    @RequiresAuthentication
+    public Result<Map<String, Long>> total() throws IOException {
+        /*查询数据*/
+        long userTotal = userService.count();
+        long wordModuleTotal = wordModuleService.count();
+        long articleTotal = elasticsearchClient.count(builder -> builder.index("article")).count();
+        /*组装数据*/
+        Map<String, Long> map = new HashMap<>(3);
+        map.put("userTotal", userTotal);
+        map.put("wordModuleTotal", wordModuleTotal);
+        map.put("articleTotal", articleTotal);
+        return Result.success(map);
+    }
+
 
     /**
      * @Return:

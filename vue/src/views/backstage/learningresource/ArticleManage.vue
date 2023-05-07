@@ -97,7 +97,10 @@
             border
             highlight-current-row
             stripe
-            style="margin: auto; width: 100%; text-align: center">
+            style="margin: auto;
+            width: 100%;
+            text-align: center"
+        >
           <template slot="empty">
             <el-empty description="暂无数据"></el-empty>
           </template>

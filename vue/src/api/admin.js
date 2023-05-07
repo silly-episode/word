@@ -18,6 +18,113 @@ export function systemInfo() {
     })
 }
 
+
+/**
+ * 条件分页检索事项
+ * @returns {*}
+ */
+export function matterSearch(data) {
+    return request({
+        url: 'matters/matterSearch',
+        method: 'post',
+        data
+    })
+}
+
+/**
+ * 新增事项
+ * @returns {*}
+ */
+export function addMatter(data) {
+    return request({
+        url: 'matters/matter',
+        method: 'post',
+        data
+    })
+}
+
+/**
+ * 修改事项
+ * @returns {*}
+ */
+export function updateMatter(data) {
+    return request({
+        url: 'matters/matter',
+        method: 'put',
+        data
+    })
+}
+
+/**
+ * 删除事项
+ * @returns {*}
+ */
+export function deleteMatter(matterId) {
+    return request({
+        url: `matters/matter/${matterId}`,
+        method: 'delete'
+    })
+}
+
+/**
+ * 修改事项状态
+ * @returns {*}
+ */
+export function changeMatterStatus() {
+    return request({
+        url: 'matters/matterStatus',
+        method: 'put'
+    })
+}
+
+/**
+ * 获取首页的总数
+ * @returns {*}
+ */
+export function getTotalMessage() {
+    return request({
+        url: 'admin/total',
+        method: 'get'
+    })
+}
+
+
+/**
+ * 获取管理员信息
+ * @returns {*}
+ */
+export function adminInfo() {
+    return request({
+        url: 'admin/adminInfo',
+        method: 'get'
+    })
+}
+
+
+/**
+ * 获取管理员信息
+ * @returns {*}
+ */
+export function updateAdminInfo(data) {
+    return request({
+        url: 'admin/adminInfo',
+        method: 'put',
+        data
+    })
+}
+
+/**
+ * 获取管理员信息
+ * @returns {*}
+ */
+export function updateAdminPwd(data) {
+    return request({
+        url: 'admin/adminPwd',
+        method: 'put',
+        data
+    })
+}
+
 /**
  * 管理员登录
  * @param params

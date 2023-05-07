@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.boot.dao.MattersDao">
+
+    <resultMap type="com.boot.entity.Matters" id="MattersMap">
+        <result property="mattersId" column="matters_id" jdbcType="INTEGER"/>
+        <result property="adminId" column="admin_id" jdbcType="INTEGER"/>
+        <result property="mattersTitle" column="matters_title" jdbcType="VARCHAR"/>
+        <result property="mattersContent" column="matters_content" jdbcType="VARCHAR"/>
+        <result property="mattersImportance" column="matters_importance" jdbcType="VARCHAR"/>
+        <result property="mattersInsertTime" column="matters_insert_time" jdbcType="TIMESTAMP"/>
+        <result property="mattersFinishTime" column="matters_finish_time" jdbcType="TIMESTAMP"/>
+        <result property="mattersStatus" column="matters_status" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <!-- 批量插入 -->
+    <insert id="insertBatch" keyProperty="mattersId" useGeneratedKeys="true">
+        insert into word.matters(admin_id, matters_title, matters_content, matters_importance, matters_insert_time,
+        matters_finish_time, matters_status)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.adminId}, #{entity.mattersTitle}, #{entity.mattersContent}, #{entity.mattersImportance},
+            #{entity.mattersInsertTime}, #{entity.mattersFinishTime}, #{entity.mattersStatus})
+        </foreach>
+    </insert>
+    <!-- 批量插入或按主键更新 -->
+    <insert id="insertOrUpdateBatch" keyProperty="mattersId" useGeneratedKeys="true">
+        insert into word.matters(admin_id, matters_title, matters_content, matters_importance, matters_insert_time,
+        matters_finish_time, matters_status)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.adminId}, #{entity.mattersTitle}, #{entity.mattersContent}, #{entity.mattersImportance},
+            #{entity.mattersInsertTime}, #{entity.mattersFinishTime}, #{entity.mattersStatus})
+        </foreach>
+        on duplicate key update
+        admin_id = values(admin_id) , matters_title = values(matters_title) , matters_content = values(matters_content)
+        , matters_importance = values(matters_importance) , matters_insert_time = values(matters_insert_time) ,
+        matters_finish_time = values(matters_finish_time) , matters_status = values(matters_status)
+    </insert>
+
+</mapper>
+
