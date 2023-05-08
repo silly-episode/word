@@ -70,10 +70,10 @@ export function deleteMatter(matterId) {
  * 修改事项状态
  * @returns {*}
  */
-export function changeMatterStatus() {
+export function changeMatterStatus(mattersId, mattersStatus) {
     return request({
-        url: 'matters/matterStatus',
-        method: 'put'
+        url: `matters/mattersId/${mattersId}/mattersStatus/${mattersStatus}`,
+        method: 'put',
     })
 }
 

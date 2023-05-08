@@ -165,7 +165,7 @@
                 ><router-link
                   :to="{
                     name: 'article',
-                    params: { articleId: scope.row.articleId },
+                    params: { articleId: scope.row.articleId }
                   }"
                   >练习吧</router-link
                 >

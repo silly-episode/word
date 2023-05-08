@@ -26,4 +26,6 @@ public class MattersSearchDto extends PageDto {
     private String search;
     /*状态*/
     private Boolean matterStatus;
+    /*程度*/
+    private String matterImportance;
 }

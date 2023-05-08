@@ -8,7 +8,7 @@
           src="@/assets/学习.jpg"
           alt=""
         /> -->
-        <span style="margin-left: 15px">WORD背单词管理系统</span>
+        <span style="margin-left: 15px">基于Web的单词记忆系统</span>
       </div>
       <el-button type="info" @click="logout">退出</el-button>
     </el-header>

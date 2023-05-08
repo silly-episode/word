@@ -2,15 +2,18 @@ package com.boot.controller;
 
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.boot.common.result.Result;
 import com.boot.dto.MattersSearchDto;
 import com.boot.entity.Matters;
 import com.boot.service.MattersService;
+import com.boot.utils.JwtUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 
 /**
@@ -28,7 +31,8 @@ public class MattersController {
      */
     @Resource
     private MattersService mattersService;
-
+    @Resource
+    private JwtUtils jwtUtils;
 
     /**
      * @Return:
@@ -37,13 +41,17 @@ public class MattersController {
      * @Date: 2023/5/7 13:11
      */
     @PostMapping("matterSearch")
-    public Result selectAll(@RequestBody MattersSearchDto mattersSearchDto) {
+    public Result selectAll(@RequestBody MattersSearchDto mattersSearchDto, HttpServletRequest request) {
+//        System.out.println(mattersSearchDto);
         Page<Matters> pageInfo = new Page<>(mattersSearchDto.getPageNum(), mattersSearchDto.getPageSize());
         LambdaQueryWrapper<Matters> wrapper = new LambdaQueryWrapper<>();
+        long adminId = jwtUtils.getUserIdFromRequest(request);
         wrapper
+                .eq(Matters::getAdminId, adminId)
                 .ge(null != mattersSearchDto.getBeginTime(), Matters::getMattersInsertTime, mattersSearchDto.getBeginTime())
                 .le(null != mattersSearchDto.getEndTime(), Matters::getMattersInsertTime, mattersSearchDto.getEndTime())
                 .eq(null != mattersSearchDto.getMatterStatus(), Matters::getMattersStatus, mattersSearchDto.getMatterStatus())
+                .eq(!mattersSearchDto.getMatterImportance().isEmpty(), Matters::getMattersImportance, mattersSearchDto.getMatterImportance())
                 .eq(!mattersSearchDto.getSearch().isEmpty(), Matters::getMattersTitle, mattersSearchDto.getSearch())
                 .orderByDesc(Matters::getMattersInsertTime);
         mattersService.page(pageInfo, wrapper);
@@ -58,8 +66,11 @@ public class MattersController {
      * @Date: 2023/5/7 12:47
      */
     @PostMapping("matter")
-    public Result insert(@RequestBody Matters matters) {
-        matters.setMattersInsertTime(LocalDateTime.now());
+    public Result insert(@RequestBody Matters matters, HttpServletRequest request) {
+        long adminId = jwtUtils.getUserIdFromRequest(request);
+        matters
+                .setMattersInsertTime(LocalDateTime.now())
+                .setAdminId(adminId);
         if (mattersService.save(matters)) {
             return Result.success("修改成功");
         } else {
@@ -89,19 +100,28 @@ public class MattersController {
      * @Description: TODO 修改事项状态
      * @Date: 2023/5/7 12:33
      */
-    @PutMapping("matterStatus")
-    public Result mattersStatus(@RequestBody Matters matters) {
+    @PutMapping("mattersId/{mattersId}/mattersStatus/{mattersStatus}")
+    public Result mattersStatus(
+            @PathVariable("mattersId") long mattersId,
+            @PathVariable("mattersStatus") boolean mattersStatus,
+            HttpServletRequest request
+    ) {
+
+        long adminId = jwtUtils.getUserIdFromRequest(request);
+        LambdaUpdateWrapper<Matters> wrapper = new LambdaUpdateWrapper<>();
+        wrapper.eq(Matters::getAdminId, adminId).eq(Matters::getMattersId, mattersId);
         /*判断*/
-        if (matters.getMattersStatus()) {
-            matters.setMattersStatus(false);
-//            todo 传啥？
-            matters.setMattersFinishTime(null);
+        if (mattersStatus) {
+            wrapper
+                    .set(Matters::getMattersStatus, true)
+                    .set(Matters::getMattersFinishTime, LocalDateTime.now());
         } else {
-            matters.setMattersStatus(true);
-            matters.setMattersFinishTime(LocalDateTime.now());
+            wrapper
+                    .set(Matters::getMattersStatus, false)
+                    .set(Matters::getMattersFinishTime, null);
         }
         /*修改*/
-        if (mattersService.updateById(matters)) {
+        if (mattersService.update(wrapper)) {
             return Result.success("修改成功");
         } else {
             return Result.error("修改失败");
