@@ -7,6 +7,30 @@
  */
 import request from "@/utils/request";
 
+
+/**
+ * 单词模块学习人数
+ * @returns {*}
+ */
+export function getWordModuleStudyTotal() {
+    return request({
+        url: 'word/moduleStudyTotal',
+        method: 'get'
+    })
+}
+
+/**
+ * 文章模块学习人数
+ * @returns {*}
+ */
+export function getArticleStudyTotal() {
+    return request({
+        url: 'article/articleStudyTotal',
+        method: 'get'
+    })
+}
+
+
 /**
  * 系统监控信息
  * @returns {*}

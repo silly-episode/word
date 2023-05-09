@@ -2,67 +2,64 @@
   <div>
     <el-row :gutter="20">
       <el-col :span="8">
-        <el-card shadow="hover" style="height: 355px; margin-bottom: 20px">
+        <div id="he-plugin-standard"></div>
+        <el-card shadow="hover" style="height: 355px; margin-top: 20px">
           <template>
             <div class="user-info">
               <div class="user-info-cont">
                 <div>个人信息</div>
               </div>
             </div>
-            <!--            <el-form-->
-            <!--                ref="formRef"-->
-            <!--                label-width="80px"-->
-            <!--                size="medium"-->
-            <!--            >-->
-            <!--              <el-form-item   label="账号" prop="userId">-->
-            <!--                <el-input ></el-input>-->
-            <!--              </el-form-item>-->
+            <div class="user-info-list">
+              <el-row :gutter="50">
+                <el-col :span="12">
+                  <span>持有人：</span>
+                </el-col>
+                <el-col :span="12">
+                  <span>{{ adminInfo.keepName }}</span>
+                </el-col>
+              </el-row>
+              <el-row :gutter="50">
+                <el-col :span="12">
+                  账号：
+                </el-col>
+                <el-col :span="12">
+                  <span>{{ adminInfo.account }}</span>
+                </el-col>
+              </el-row>
+              <el-row :gutter="50">
+                <el-col :span="12">
+                  角色：
+                </el-col>
+                <el-col :span="12">
+                  <span>{{ roleList[adminInfo.role] }}</span>
+                </el-col>
+              </el-row>
+              <el-row :gutter="50">
+                <el-col :span="12">
+                  联系电话：
+                </el-col>
+                <el-col :span="12">
+                  <span>{{ adminInfo.tel }}</span>
+                </el-col>
+              </el-row>
+              <el-row :gutter="50">
+                <el-col :span="12">
+                  添加日期：
+                </el-col>
+                <el-col :span="12">
+                  <span v-text="`${adminInfo.addCreateTime.substring(0,10)}`"></span>
+                </el-col>
+              </el-row>
+            </div>
 
-            <!--              <el-form-item   label="持有人" prop="userId">-->
-            <!--                <el-input ></el-input>-->
-            <!--              </el-form-item>-->
-            <!--              <el-form-item  label="角色" prop="userId">-->
-            <!--                <el-input ></el-input>-->
-            <!--              </el-form-item>-->
-            <!--              <el-form-item  label="联系电话" prop="userId">-->
-            <!--                <el-input ></el-input>-->
-            <!--              </el-form-item>-->
-            <!--              <el-form-item  label="添加时间" prop="userId">-->
-            <!--                <el-input ></el-input>-->
-            <!--              </el-form-item>-->
-
-            <!--            </el-form>-->
-
-
-            <div class="user-info-list flex_between_center">
-              账号：
-              <span>{{ adminInfo.account }}</span>
-            </div>
-            <div class="user-info-list flex_between_center">
-              持有人：
-              <span>{{ adminInfo.keepName }}</span>
-            </div>
-            <div class="user-info-list flex_between_center">
-              角色：
-              <span>{{ adminInfo.role }}</span>
-            </div>
-            <div class="user-info-list flex_between_center">
-              联系电话：
-              <span>{{ adminInfo.tel }}</span>
-            </div>
-            <div class="user-info-list flex_between_center">
-              添加时间：
-              <span>{{ adminInfo.addCreateTime }}</span>
-            </div>
             <div class="flex_center_center">
-              <el-button type="primary" @click="openAdminDialog(true)">修改信息</el-button>
-              <el-button type="danger" @click="openAdminDialog(false)">修改密码</el-button>
+              <el-button icon="el-icon-edit" type="primary" @click="openAdminDialog(true)">修改信息</el-button>
+              <el-button icon="el-icon-lock" type="danger" @click="openAdminDialog(false)">修改密码</el-button>
             </div>
 
           </template>
         </el-card>
-        <div id="he-plugin-standard"></div>
-
       </el-col>
       <el-col :span="16">
         <el-row :gutter="20" class="mgb20">
@@ -205,14 +202,13 @@
               :header-cell-style="{'text-align':'center'}"
               :height="tableHeight === 0 ? `calc(10/9.0*${radio}*100vh - 590px)` : tableHeight"
               highlight-current-row
-              stripe
               :row-class-name="tableRowClassName"
               style="margin: auto;
               width: 100%;
               text-align: center"
           >
             <template slot="empty">
-              <el-empty description="去添加待办事项吧！"></el-empty>
+              <el-empty style="padding-top:100px"></el-empty>
             </template>
             <el-table-column label="完成" min-width="5%">
               <template v-slot="scope">
@@ -280,9 +276,11 @@
         <el-card shadow="hover">
         </el-card>
       </el-col>
-      <el-col :span="12">
-        <el-card shadow="hover">
-        </el-card>
+      <el-col :span="6">
+        <Category :total-flag=false></Category>
+      </el-col>
+      <el-col :span="6">
+        <Category :total-flag=true></Category>
       </el-col>
     </el-row>
 
@@ -294,7 +292,7 @@
         :visible="adminVisible"
         style="margin: 0 0 0 12%"
         title="修改个人信息"
-        top="80px"
+        top="200px"
         width="50%"
         @close="adminDialogClosed">
       <el-form
@@ -319,19 +317,36 @@
       <el-form
           v-if="!adminFlag"
           ref="form"
+          :model="adminPwd"
+          :rules="rules"
           label-width="80px"
-      >
-        <el-form-item label="旧密码" prop="userId">
-          <el-input></el-input>
+          style="margin: 0 7% 0 7%">
+        <el-form-item label="旧密码" prop="oldPassword">
+          <el-input
+              v-model="adminPwd.oldPassword"
+              placeholder="请输入旧密码"
+              show-password
+              type="password"
+          />
         </el-form-item>
-
-        <el-form-item label="新密码" prop="userId">
-          <el-input></el-input>
+        <el-form-item label="新密码" prop="newPassword">
+          <el-input
+              v-model="adminPwd.newPassword"
+              placeholder="请输入新密码"
+              show-password
+              type="password"
+          />
         </el-form-item>
-        <el-form-item label="新密码" prop="userId">
-          <el-input></el-input>
+        <el-form-item label="确认密码" prop="confirmPassword">
+          <el-input
+              v-model="adminPwd.confirmPassword"
+              placeholder="请确认新密码"
+              show-password
+              type="password"
+          />
         </el-form-item>
       </el-form>
+
 
       <div class="flex_center_center">
         <el-button type="danger" @click="adminSubmit">提交</el-button>
@@ -343,20 +358,21 @@
 
     <!--    事项详情-->
     <el-dialog
+        v-if="todoVisible"
+        :visible.sync="todoVisible"
+        destroy-on-close
         :close-on-click-modal="false"
         :lock-scroll="true"
-        :visible="todoVisible"
         style="margin: 0 0 0 12%"
         top="80px"
         width="97%"
         @close="todoDialogClosed">
 
       <el-form
-          ref="formRef"
+          ref="todoForm"
           :inline="true"
           :model="todoInfo"
       >
-
         <el-form-item aria-rowindex="50px" label="事项主题" prop="mattersTitle">
           <el-input
               v-model.number="todoInfo.mattersTitle"
@@ -366,7 +382,6 @@
               style="width: 440px"
           ></el-input>
         </el-form-item>
-
         <el-form-item label="重要程度" prop="mattersImportance">
           <el-select
               v-model="todoInfo.mattersImportance"
@@ -399,6 +414,7 @@
         </el-form-item>
       </el-form>
       <my-editor3
+          ref="myEditor"
           :content="todoInfo.mattersContent"
           @changeData="todoChanged"
       ></my-editor3>
@@ -435,14 +451,19 @@ import {
 import LhPagination from "@/components/lhPublic/lhPagination";
 import MyEditor from "@/components/MyEditor"
 import MyEditor3 from "@/components/MyEditor3"
-
+import Category from "@/components/category";
 
 export default {
-  components: {LhPagination, MyEditor, MyEditor3},
+  components: {LhPagination, MyEditor, MyEditor3, Category},
   data() {
+    const equalToPassword = (rule, value, callback) => {
+      if (this.adminPwd.newPassword !== value) {
+        callback(new Error("两次输入的密码不一致"));
+      } else {
+        callback();
+      }
+    };
     return {
-
-
       tableHeight: 0,
       clientWidth: document.body.clientWidth, // 文档宽度
       radio: window.sessionStorage.getItem("ratio"),
@@ -466,7 +487,7 @@ export default {
         pageSize: 5,
       },
       searchLoading: false,
-      adminInfo: {},
+      adminInfo: {addCreateTime: ""},
       totalMessage: {},
       total: 0,
       todoList: [],
@@ -480,12 +501,26 @@ export default {
       adminFlag: "",
       adminVisible: false,
       adminChangedInfo: {},
-      adminPwd: {},
+      adminPwd: {
+        oldPassword: undefined,
+        newPassword: undefined,
+        confirmPassword: undefined
+      },
+      // 表单校验
+      rules: {
+        oldPassword: [
+          {required: true, message: "旧密码不能为空", trigger: "blur"}
+        ],
+        newPassword: [
+          {required: true, message: "新密码不能为空", trigger: "blur"},
+        ],
+        confirmPassword: [
+          {required: true, message: "确认密码不能为空", trigger: "blur"},
+          {required: true, validator: equalToPassword, trigger: "blur"}
+        ]
+      },
       // 角色列表
-      roleList: [
-        {label: '超级管理员', value: '0'},
-        {label: '普通管理员', value: '1'}
-      ],
+      roleList: ['超级管理员', '普通管理员'],
       /*事项状态*/
       matterStatusList: [
         {label: '未完成', value: false},
@@ -541,8 +576,6 @@ export default {
       this.readOnlys = true;
 
     },
-
-
 
     /*获取管理员信息*/
     getAdminInfo() {
@@ -611,6 +644,7 @@ export default {
 
     /*接受富文本编辑器中的内容*/
     todoChanged(content) {
+      console.log('content', content)
       this.todoInfo.mattersContent = content;
       // console.log(content)
     },
@@ -660,12 +694,17 @@ export default {
               this.getAdminInfo();
             })
       } else {
-        updateAdminPwd(this.adminPwd)
-            .then((res) => {
+        this.$refs["form"].validate(valid => {
+          if (valid) {
+            updateAdminPwd(this.adminPwd).then(res => {
+              this.adminPwd = {
+                oldPassword: undefined,
+                newPassword: undefined,
+                confirmPassword: undefined
+              }
             })
-            .catch((err) => {
-              console.log(err)
-            })
+          }
+        })
       }
       this.adminDialogClosed();
     },
@@ -688,6 +727,7 @@ export default {
       } else {
         this.adminPwd = {};
       }
+      this.getAdminInfo();
       this.adminVisible = false
     },
 
@@ -698,6 +738,7 @@ export default {
         this.todoFlag = false;
       } else {
         this.todoInfo = JSON.parse(JSON.stringify(todoInfo));
+        console.log('todoInfo', this.todoInfo)
         this.todoFlag = true;
       }
       this.todoVisible = true
@@ -712,12 +753,16 @@ export default {
       }
 
 
+      this.todoInfo = {
+        mattersTitle: "",
+        mattersImportance: '2',
+        mattersContent: "",
+      }
       this.todoVisible = false
       this.matterSearch();
     },
     /*改变todo表格颜色*/
     tableRowClassName({row, rowIndex}) {
-      console.log(row.mattersStatus)
       if (!row.mattersStatus) {
         return 'warning-row';
       } else {
@@ -816,7 +861,6 @@ export default {
 }
 
 .user-info-cont {
-  /*padding-left: 50px;*/
   flex: 1;
   font-size: 14px;
   color: #999;
@@ -831,15 +875,14 @@ export default {
 }
 
 .user-info-list {
+  border-bottom: 2px solid #ccc;
   font-size: 22px;
   color: #999;
-  line-height: 25px;
-  margin-bottom: 10px;
+  line-height: 20px;
+  margin-bottom: 15px;
 }
 
-.user-info-list span {
 
-}
 
 .mgb20 {
   margin-bottom: 20px;

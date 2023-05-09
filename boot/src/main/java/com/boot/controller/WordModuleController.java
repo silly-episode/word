@@ -16,6 +16,7 @@ import com.boot.common.Exception.CustomException;
 import com.boot.common.Hutool.IdUtils;
 import com.boot.common.result.CodeMsg;
 import com.boot.common.result.Result;
+import com.boot.dto.EchartDataDto;
 import com.boot.dto.WordModuleSearchDto;
 import com.boot.entity.Plan;
 import com.boot.entity.User;
@@ -63,30 +64,43 @@ public class WordModuleController {
 
     @Resource
     private MinIOUtils minioUtils;
-
     @Resource
     private WordModuleService wordModuleService;
-
     @Resource
     private ElasticsearchClient elasticsearchClient;
-
     @Resource
     private MinIOUtils minIOUtils;
-
-
     @Resource
     private UserService userService;
-
-
     @Resource
     private PlanService planService;
-
-
     @Resource
     private ActionLogUtils actionLogUtils;
-
     @Resource
     private JwtUtils jwtUtils;
+
+
+    /**
+     * @Return:
+     * @Author: DengYinzhe
+     * @Description: TODO 获取单词学习情况
+     * @Date: 2023/5/9 17:14
+     */
+    @GetMapping("moduleStudyTotal")
+    @RequiresAuthentication
+    public Result moduleStudyTotal() {
+        LambdaQueryWrapper<WordModule> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.select(WordModule::getModuleName, WordModule::getStudyNumber);
+        List<WordModule> oldList = wordModuleService.list(queryWrapper);
+        List<EchartDataDto> newList = new ArrayList<>(oldList.size());
+        for (WordModule wordModule : oldList) {
+            EchartDataDto dto = new EchartDataDto()
+                    .setName(wordModule.getModuleName())
+                    .setValue(wordModule.getStudyNumber());
+            newList.add(dto);
+        }
+        return Result.success(newList);
+    }
 
     /**
      * @param file:       词源和模块头像文件

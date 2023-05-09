@@ -10,6 +10,7 @@ import co.elastic.clients.json.JsonData;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.boot.common.result.Result;
 import com.boot.dto.ArticleSearchDto;
+import com.boot.dto.EchartDataDto;
 import com.boot.entity.Article;
 import com.boot.utils.ActionLogUtils;
 import com.boot.utils.SnowFlakeUtil;
@@ -36,13 +37,47 @@ import java.util.Objects;
 @RestController
 @RequestMapping("article")
 @Slf4j
-//@RequiresAuthentication
 public class ArticleController {
 
     @Resource
     private ElasticsearchClient elasticsearchClient;
     @Resource
     private ActionLogUtils actionLogUtils;
+
+
+    /**
+     * @Return:
+     * @Author: DengYinzhe
+     * @Description: TODO 获取单词学习情况
+     * @Date: 2023/5/9 17:14
+     */
+    @GetMapping("articleStudyTotal")
+    @RequiresAuthentication
+    public Result articleStudyTotal() throws IOException {
+
+        SearchRequest request = new SearchRequest.Builder()
+                //去哪个索引里搜索
+                .index("article")
+                .source(sourceConfigBuilders ->
+                        sourceConfigBuilders
+                                .filter(sourceFilterBuilder ->
+                                        sourceFilterBuilder
+                                                .includes("articleTitle", "articleStudyNumber")
+                                ))
+                .size(1000)
+                .build();
+        List<EchartDataDto> list = new ArrayList<>();
+        List<Hit<Article>> hits = elasticsearchClient.search(request, Article.class).hits().hits();
+        for (Hit<Article> hit : hits) {
+            assert hit.source() != null;
+            EchartDataDto dto = new EchartDataDto()
+                    .setName(hit.source().getArticleTitle())
+                    .setValue(hit.source().getArticleStudyNumber());
+            list.add(dto);
+        }
+        return Result.success(list);
+    }
+
 
     /**
      * @param article:
@@ -152,7 +187,6 @@ public class ArticleController {
      */
     @PostMapping("articleSearch")
     public Result<Page<Article>> article(@RequestBody ArticleSearchDto articleSearchDto) throws IOException {
-        log.info(articleSearchDto.toString());
         Integer pageNum = articleSearchDto.getPageNum();
         Integer pageSize = articleSearchDto.getPageSize();
         SearchRequest request = new SearchRequest.Builder()

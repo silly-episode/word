@@ -77,6 +77,7 @@ export default {
 
   created() {
     this.html = this.content;
+    console.log('this.html', this.html)
   },
   methods: {
     onCreated(editor) {
@@ -94,6 +95,8 @@ export default {
     },
   },
   beforeDestroy() {
+    console.log("dasjfkasjdf")
+    this.html = ""
     const editor = this.editor;
     if (editor == null) return;
     editor.destroy(); // 组件销毁时，及时销毁 editor ，重要！！！
