@@ -6,6 +6,7 @@ import co.elastic.clients.elasticsearch._types.FieldValue;
 import co.elastic.clients.elasticsearch._types.query_dsl.QueryBuilders;
 import co.elastic.clients.elasticsearch.core.SearchRequest;
 import co.elastic.clients.elasticsearch.core.search.Hit;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.boot.bo.WordPlan;
 import com.boot.common.result.Result;
 import com.boot.dto.Question;
@@ -19,7 +20,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -68,24 +68,29 @@ public class ExamResultController {
     }
 
     /**
-     * @param userId:
-     * @param beginTime:
-     * @param endTime:
-     * @param planId:
      * @Return: Result
      * @Author: DengYinzhe
      * @Description: TODO 查询用户成绩，时间条件，计划id （平均分，最高分，最低分）（模块名称，考试时间，考试成绩，是否合格）
      * @Date: 2023/2/23 20:29
      */
-    @GetMapping("examResult/{userId}/{beginTime}/{endTime}/{planId}")
-    public Result examResult(
-            @PathVariable() Long userId,
-            @PathVariable(required = false) LocalDate beginTime,
-            @PathVariable(required = false) LocalDate endTime,
-            @PathVariable(required = false) Long planId) {
+    @GetMapping("examResult")
+    public Result examResult(HttpServletRequest request) {
+        long userId = jwtUtils.getUserIdFromRequest(request);
+        LambdaQueryWrapper<ExamResult> queryWrapper = new LambdaQueryWrapper<>();
+        /*查询条件*/
+        queryWrapper.eq(ExamResult::getUserId, userId);
+
+        List<ExamResult> oldList = examResultService.list(queryWrapper);
+
+        for (ExamResult examResult : oldList) {
 
 
-        return Result.success();
+        }
+
+        Map<String, Object> map = new HashMap<>(3);
+
+
+        return Result.success(map);
     }
 
 
@@ -121,7 +126,7 @@ public class ExamResultController {
             }
 
             /*查找非正确答案选项信息*/
-            Integer answer = ran.nextInt(Math.toIntExact(4));
+            int answer = ran.nextInt(Math.toIntExact(4));
             List<FieldValue> list = new ArrayList<FieldValue>();
             for (Integer integer : set) {
                 list.add(FieldValue.of(String.valueOf(integer)));

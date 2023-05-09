@@ -11,7 +11,6 @@
         ref="formRef"
         label-width="120px"
         style="margin: 0 7% 0 0;">
-
       <el-row>
         <el-form-item label="计划名称" prop="signature">
           <el-input
@@ -55,12 +54,13 @@
           </el-form-item>
         </el-col>
       </el-row>
+      <el-row class="flex_center_center">
+        <el-button @click="closedPlan">取 消</el-button>
+        <el-button type="primary" @click="addPlan">确 定</el-button>
+      </el-row>
+
     </el-form>
 
-    <span slot="footer" class="dialog-footer">
-      <el-button @click="closedPlan">取 消</el-button>
-      <el-button type="primary" @click="addPlan">确 定</el-button>
-    </span>
   </el-dialog>
 </template>
 

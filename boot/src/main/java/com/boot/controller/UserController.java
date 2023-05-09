@@ -81,6 +81,21 @@ public class UserController {
     private final String lockResult = "5";
     private LoginLog loginLog;
 
+
+    /**
+     * @Return:
+     * @Author: DengYinzhe
+     * @Description: TODO 用户活跃情况
+     * @Date: 2023/5/9 18:54
+     */
+    @GetMapping("loginStatus")
+    @RequiresAuthentication
+    public Result loginStatus() {
+
+        return Result.success();
+    }
+
+
     /**
      * @param phone: 中国手机号码
      * @Return: String 短信验证码

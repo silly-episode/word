@@ -32,6 +32,17 @@ export function getArticleStudyTotal() {
 
 
 /**
+ * 用户活跃情况
+ * @returns {*}
+ */
+export function getUserActive() {
+    return request({
+        url: 'user/loginStatus',
+        method: 'get'
+    })
+}
+
+/**
  * 系统监控信息
  * @returns {*}
  */

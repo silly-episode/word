@@ -97,7 +97,7 @@ export default {
       getArticle(this.articleId)
         .then((res) => {
           // console.log('res', res.data
-          if (res.code == 200) {
+          if (res.code === 200) {
             const articleArr = this.fnAddBr(res.data.content)
             let ansArr = []
             articleArr.forEach((item, index) => {
@@ -117,7 +117,7 @@ export default {
             });
             this.articleArr = articleArr
             this.ansArr = ansArr
-            console.log(articleArr)
+            // console.log(articleArr)
           }
         })
         .catch((err) => {

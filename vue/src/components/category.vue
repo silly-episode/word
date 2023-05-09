@@ -52,6 +52,13 @@ export default {
       tooltip: {
         trigger: 'item'
       },
+      grid: {
+        left: 0,
+        top: 0,
+        right: 0,
+        bottom: 0,
+        containLabel: true  // 这个啥？看下面
+      },
       series: [
         {
           name: 'Access From',
@@ -73,13 +80,6 @@ export default {
           data: this.studyTotal
         }
       ],
-      grid: {
-        left: 0,
-        top: 0,
-        right: 0,
-        bottom: 0,
-        containLabel: true  // 这个啥？看下面
-      },
     })
     Chart.on('mouseover', (par) => {
       // 获取鼠标移上的数据
