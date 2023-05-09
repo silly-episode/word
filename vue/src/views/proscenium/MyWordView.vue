@@ -33,7 +33,9 @@
         </h2>
         <el-divider class="font_16 font_bold">主要计划</el-divider>
         <!--        <p class="font_16 font_bold flex_center_center margin_t_20">主要计划</p>-->
-        <div class="font_16 border_ccc flex_between_center padding_20 margin_t_20">
+        <div
+          class="font_16 border_ccc flex_between_center padding_20 margin_t_20"
+        >
           <template v-if="JSON.stringify(mainPlan) === '{}'">
             暂无主计划，去添加计划吧！
           </template>
@@ -41,33 +43,34 @@
             <div class="wid_per70">
               <p>计划名称：{{ mainPlan.planName }}</p>
               <p class="margin_t_20">单词模块：{{ mainPlan.moduleName }}</p>
-              <p class="margin_t_20">单词数量：{{ mainPlan.dayWord + "  ( 仍需 " + willDay + " 天完成 ) " }}</p>
               <p class="margin_t_20">
-                开始时间：{{ mainPlan.planCreateTime }}
+                单词数量：{{
+                  mainPlan.dayWord + "  ( 仍需 " + willDay + " 天完成 ) "
+                }}
               </p>
+              <p class="margin_t_20">开始时间：{{ mainPlan.planCreateTime }}</p>
               <div class="flex_center margin_t_20">
-                <p>
-                  背诵进度：
-                </p>
+                <p>背诵进度：</p>
                 <div class="wid_per50">
                   <el-progress :percentage="percentage"></el-progress>
                 </div>
                 <p>
                   (
                   <span class="blue font_bold">
-                    {{ mainPlan.finishedWord }}
-                  </span>/ {{ mainPlan.allWord + " )" }}
+                    {{ mainPlan.finishedWord }} </span
+                  >/ {{ mainPlan.allWord + " )" }}
                 </p>
               </div>
             </div>
             <div class="flex_center">
-              <el-button
-                  type="success"
-                  icon="el-icon-edit"
-                  @click="editMain">
+              <el-button type="success" icon="el-icon-edit" @click="editMain">
                 修改计划
               </el-button>
-              <el-button icon="el-icon-s-promotion" type="primary" @click="startRecite">
+              <el-button
+                icon="el-icon-s-promotion"
+                type="primary"
+                @click="startRecite"
+              >
                 完成计划
               </el-button>
             </div>
@@ -77,19 +80,21 @@
         <div>
           <!--          <p class="font_16 font_bold flex_center_center margin_t_20">次要计划</p>-->
           <el-table
-              :data="planList"
-              style="width: 100%"
-              :cell-style="{ 'text-align': 'center' }"
-              highlight-current-row
-              :header-cell-style="{ 'text-align': 'center' }"
-              stripe>
+            :data="planList"
+            style="width: 100%"
+            :cell-style="{ 'text-align': 'center' }"
+            highlight-current-row
+            :header-cell-style="{ 'text-align': 'center' }"
+            stripe
+          >
             <template slot="empty">
               <el-empty description="去添加计划吧！"></el-empty>
             </template>
             <el-table-column label="计划名称" prop="planName">
               <template slot-scope="scope">
                 <el-popover placement="top" trigger="hover">
-                  <p>背诵进度:
+                  <p>
+                    背诵进度:
                     <span class="blue font_bold">
                       {{ scope.row.finishedWord }}
                     </span>
@@ -106,31 +111,32 @@
             <el-table-column prop="moduleName" label="单词模块">
             </el-table-column>
             <el-table-column prop="allWord" label="单词总量"></el-table-column>
-            <el-table-column label="单词数量" prop="dayWord">
-            </el-table-column>
+            <el-table-column label="单词数量" prop="dayWord"> </el-table-column>
             <el-table-column label="相关操作" width="300px">
               <template slot-scope="scope">
                 <el-button
-                    type="success"
-                    icon="el-icon-edit"
-                    @click="$refs.plan.show(scope.row)"
-                    size="mini"
+                  type="success"
+                  icon="el-icon-edit"
+                  @click="$refs.plan.show(scope.row)"
+                  size="mini"
                 ></el-button>
                 <el-button
-                    type="danger"
-                    icon="el-icon-delete"
+                  type="danger"
+                  icon="el-icon-delete"
                   @click="removePlan(scope.row.planId)"
                   size="mini"
                 ></el-button
                 ><el-button
-                  :icon="`el-icon-${scope.row.planStatus == 0 ?'top':'check'}`"
+                  :icon="`el-icon-${
+                    scope.row.planStatus == 0 ? 'top' : 'check'
+                  }`"
                   type="primary"
                   size="mini"
                   :disabled="scope.row.planStatus == '1'"
                   @click="setMain(scope.row.planId)"
                   >{{
-                  scope.row.planStatus == "0" ? "设置主计划" : "已完成"
-                }}</el-button
+                    scope.row.planStatus == "0" ? "设置主计划" : "已完成"
+                  }}</el-button
                 >
               </template>
             </el-table-column>
@@ -155,9 +161,7 @@
         ></el-image>
         <p class="margin_t_20">{{ userInfo.nickName }}</p>
         <p class="margin_t_b_10">
-          积分:<span class="blue font_bold margin_l_10">{{
-            userInfo.integration
-          }}</span>
+          积分:<span class="blue font_bold margin_l_10">{{ integration }}</span>
         </p>
 
         <el-popover placement="bottom" width="200" v-model="visible">
@@ -186,12 +190,12 @@
               <span>排名</span><span>用户名</span><span>分数</span>
             </div>
             <div
-                v-for="(item, index) in IntegralList"
-                :key="item.userId"
-                class="flex_between_center margin_b_10"
+              v-for="(item, index) in IntegralList"
+              :key="item.userId"
+              class="flex_between_center margin_b_10"
             >
               <span
-                  :class="`${
+                :class="`${
                   index == 0 || index == 1 || index == 2
                     ? 'bg_orange'
                     : 'bg_c1_grey'
@@ -207,9 +211,9 @@
           </el-tab-pane>
           <el-tab-pane label="昨日动态" name="2">
             <div
-                v-for="item in SwearList"
-                :key="item.userId"
-                class="flex_center"
+              v-for="item in SwearList"
+              :key="item.userId"
+              class="flex_center"
             >
               <el-avatar :size="40" :src="item.headImage"></el-avatar>
               <div class="margin_l_20">
@@ -225,20 +229,21 @@
       </div>
     </el-aside>
     <el-dialog
-        :center="true"
-        :visible="visibleAdd"
-        :close-on-click-modal="false"
-        title="添加单词本"
-        width="30%"
-        @close="closedAdd">
+      :center="true"
+      :visible="visibleAdd"
+      :close-on-click-modal="false"
+      title="添加单词本"
+      width="30%"
+      @close="closedAdd"
+    >
       <el-input
-          v-model.trim="bookName"
-          auto-complete="false"
-          clearable
-          maxlength="8"
-          placeholder="请输入新增单词本名称"
-          show-li
-          show-word-limit
+        v-model.trim="bookName"
+        auto-complete="false"
+        clearable
+        maxlength="8"
+        placeholder="请输入新增单词本名称"
+        show-li
+        show-word-limit
       ></el-input>
       <span slot="footer" class="dialog-footer">
         <el-button @click="closedAdd">取 消</el-button>
@@ -251,15 +256,16 @@
 </template>
 
 <script>
-import {addBook, allBook, allPlan, deletePlan, hotIntegration, setMain, swear, swearSearch} from '@/api/wordList'
+import { addBook, allBook, allPlan, deletePlan, hotIntegration, setMain, swear, integralAndSwear, swearSearch } from '@/api/wordList'
 // import { userInfo } from '@/api/user'
-import {avatarUrl} from '@/utils/img.js'
+import { avatarUrl } from '@/utils/img.js'
 import PlanView from './PlanView.vue'
 import Login from './Login.vue'
 
 export default {
   data() {
     return {
+      integration: 0,//个人积分 
       avatarSrc: 'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png',
       activeName: '1',
       token: '',
@@ -326,6 +332,19 @@ export default {
           if (res.code === 200) {
             this.IntegralList = res.data.records
             this.total1 = res.data.total
+          }
+        })
+        .catch((err) => {
+          console.log('err', err)
+        })
+    },
+    getIntegralAndSwear() {
+      integralAndSwear()
+        .then((res) => {
+          // console.log('res', res)
+          if (res.code == 200) {
+            this.integration = res.data.integration
+            this.btnDisable = res.data.swear
           }
         })
         .catch((err) => {
@@ -405,18 +424,18 @@ export default {
         })
         return
       }
-      addBook({bookName})
-          .then((res) => {
-            // console.log(res)
-            if (res.code === 200) {
-              this.visibleAdd = false
-              this.$notify.success({
-                title: "成功",
-                message: "新增单词本成功！",
-                offset: 60
-              })
-              this.getBookList()
-            }
+      addBook({ bookName })
+        .then((res) => {
+          // console.log(res)
+          if (res.code === 200) {
+            this.visibleAdd = false
+            this.$notify.success({
+              title: "成功",
+              message: "新增单词本成功！",
+              offset: 60
+            })
+            this.getBookList()
+          }
         })
         .catch((err) => {
           console.log('err', err)
@@ -474,11 +493,11 @@ export default {
       if (!this.token) this.token = window.sessionStorage.getItem('token')
       this.getBookList()
       this.getPlanList()
+      this.getIntegralAndSwear()
       const userInfo = JSON.parse(window.sessionStorage.getItem('userInfo'))
       if (userInfo) {
         this.userInfo = userInfo
         this.avatarSrc = avatarUrl(this.userInfo.userId)
-        this.btnDisable = userInfo.swear
       }
     }
   },
@@ -491,7 +510,7 @@ export default {
     this.token = token
     this.getIntegralList()
     this.getSwearList()
-    if (token) this.init()
+    if (token) { } this.init()
   },
   mounted() {
     if (!this.token) this.$refs.login.showLogin()

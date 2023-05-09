@@ -90,6 +90,12 @@ export function swearSearch(data) {
     })
 }
 
+export function integralAndSwear() {
+    return request({
+        url: 'user/integralAndSwear',
+        method: 'get',
+    })
+}
 
 export function swear() {
     return request({
