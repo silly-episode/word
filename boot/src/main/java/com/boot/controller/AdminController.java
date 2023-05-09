@@ -108,7 +108,7 @@ public class AdminController {
      */
     @PutMapping("adminInfo")
     @RequiresAuthentication
-    public Result admin(Admin admin) {
+    public Result admin(@RequestBody Admin admin) {
         /*todo*/
         if (adminService.updateById(admin)) {
             return Result.success("修改成功");

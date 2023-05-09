@@ -2,24 +2,67 @@
   <div>
     <el-row :gutter="20">
       <el-col :span="8">
-        <!--        <el-card shadow="hover">-->
-        <!--  -->
-        <!--&lt;!&ndash;          <div class="user-info">&ndash;&gt;-->
-        <!--&lt;!&ndash;            <div class="user-info-cont">&ndash;&gt;-->
-        <!--&lt;!&ndash;              <div class="user-info-name">1</div>&ndash;&gt;-->
-        <!--&lt;!&ndash;              <div>2</div>&ndash;&gt;-->
-        <!--&lt;!&ndash;            </div>&ndash;&gt;-->
-        <!--&lt;!&ndash;          </div>&ndash;&gt;-->
-        <!--&lt;!&ndash;          <div class="user-info-list">&ndash;&gt;-->
-        <!--&lt;!&ndash;            上次登录时间：&ndash;&gt;-->
-        <!--&lt;!&ndash;            <span>2022-10-01</span>&ndash;&gt;-->
-        <!--&lt;!&ndash;          </div>&ndash;&gt;-->
-        <!--&lt;!&ndash;          <div class="user-info-list">&ndash;&gt;-->
-        <!--&lt;!&ndash;            上次登录地点：&ndash;&gt;-->
-        <!--&lt;!&ndash;            <span>东莞</span>&ndash;&gt;-->
-        <!--&lt;!&ndash;          </div>&ndash;&gt;-->
-        <!--        </el-card>-->
+        <el-card shadow="hover" style="height: 355px; margin-bottom: 20px">
+          <template>
+            <div class="user-info">
+              <div class="user-info-cont">
+                <div>个人信息</div>
+              </div>
+            </div>
+            <!--            <el-form-->
+            <!--                ref="formRef"-->
+            <!--                label-width="80px"-->
+            <!--                size="medium"-->
+            <!--            >-->
+            <!--              <el-form-item   label="账号" prop="userId">-->
+            <!--                <el-input ></el-input>-->
+            <!--              </el-form-item>-->
+
+            <!--              <el-form-item   label="持有人" prop="userId">-->
+            <!--                <el-input ></el-input>-->
+            <!--              </el-form-item>-->
+            <!--              <el-form-item  label="角色" prop="userId">-->
+            <!--                <el-input ></el-input>-->
+            <!--              </el-form-item>-->
+            <!--              <el-form-item  label="联系电话" prop="userId">-->
+            <!--                <el-input ></el-input>-->
+            <!--              </el-form-item>-->
+            <!--              <el-form-item  label="添加时间" prop="userId">-->
+            <!--                <el-input ></el-input>-->
+            <!--              </el-form-item>-->
+
+            <!--            </el-form>-->
+
+
+            <div class="user-info-list flex_between_center">
+              账号：
+              <span>{{ adminInfo.account }}</span>
+            </div>
+            <div class="user-info-list flex_between_center">
+              持有人：
+              <span>{{ adminInfo.keepName }}</span>
+            </div>
+            <div class="user-info-list flex_between_center">
+              角色：
+              <span>{{ adminInfo.role }}</span>
+            </div>
+            <div class="user-info-list flex_between_center">
+              联系电话：
+              <span>{{ adminInfo.tel }}</span>
+            </div>
+            <div class="user-info-list flex_between_center">
+              添加时间：
+              <span>{{ adminInfo.addCreateTime }}</span>
+            </div>
+            <div class="flex_center_center">
+              <el-button type="primary" @click="openAdminDialog(true)">修改信息</el-button>
+              <el-button type="danger" @click="openAdminDialog(false)">修改密码</el-button>
+            </div>
+
+          </template>
+        </el-card>
         <div id="he-plugin-standard"></div>
+
       </el-col>
       <el-col :span="16">
         <el-row :gutter="20" class="mgb20">
@@ -148,7 +191,7 @@
                 <el-button icon="el-icon-search" type="text" @click="matterSearch">
                   查询
                 </el-button>
-                <el-button icon="el-icon-plus" type="text" @click="openDialog('todoInfo')">
+                <el-button icon="el-icon-plus" type="text" @click="openTodoDialog('todoInfo')">
                   添加
                 </el-button>
               </el-form>
@@ -210,7 +253,7 @@
                     icon="el-icon-postcard"
                     size="mini"
                     type="text"
-                    @click="openDialog(scope.row)"
+                    @click="openTodoDialog(scope.row)"
                 >详情
                 </el-button>
                 <!-- 删除按钮 -->
@@ -244,15 +287,69 @@
     </el-row>
 
 
+    <!-- 修改个人信息Dialog -->
+    <el-dialog
+        :close-on-click-modal="false"
+        :lock-scroll="true"
+        :visible="adminVisible"
+        style="margin: 0 0 0 12%"
+        title="修改个人信息"
+        top="80px"
+        width="50%"
+        @close="adminDialogClosed">
+      <el-form
+          v-if="adminFlag"
+          ref="formRef"
+          :model="adminChangedInfo"
+          label-width="80px"
+          style="margin: 0 7% 0 7%"
+      >
+        <el-form-item label="账号" prop="account">
+          <el-input v-model.trim="adminChangedInfo.account" type="number"></el-input>
+        </el-form-item>
+
+        <el-form-item label="持有人" prop="keepName">
+          <el-input v-model.trim="adminChangedInfo.keepName"></el-input>
+        </el-form-item>
+        <el-form-item label="联系电话" prop="tel">
+          <el-input v-model.trim="adminChangedInfo.tel" type="number"></el-input>
+        </el-form-item>
+      </el-form>
+
+      <el-form
+          v-if="!adminFlag"
+          ref="form"
+          label-width="80px"
+      >
+        <el-form-item label="旧密码" prop="userId">
+          <el-input></el-input>
+        </el-form-item>
+
+        <el-form-item label="新密码" prop="userId">
+          <el-input></el-input>
+        </el-form-item>
+        <el-form-item label="新密码" prop="userId">
+          <el-input></el-input>
+        </el-form-item>
+      </el-form>
+
+      <div class="flex_center_center">
+        <el-button type="danger" @click="adminSubmit">提交</el-button>
+        <el-button type="info" @click="adminDialogClosed">关闭</el-button>
+      </div>
+
+
+    </el-dialog>
+
     <!--    事项详情-->
     <el-dialog
         :close-on-click-modal="false"
         :lock-scroll="true"
-        :visible="visible"
+        :visible="todoVisible"
         style="margin: 0 0 0 12%"
         top="80px"
         width="97%"
-        @close="closed">
+        @close="todoDialogClosed">
 
       <el-form
           ref="formRef"
@@ -378,8 +475,17 @@ export default {
         mattersImportance: '2',
         mattersContent: "",
       },
-      visible: false,
+      todoVisible: false,
       todoFlag: "",
+      adminFlag: "",
+      adminVisible: false,
+      adminChangedInfo: {},
+      adminPwd: {},
+      // 角色列表
+      roleList: [
+        {label: '超级管理员', value: '0'},
+        {label: '普通管理员', value: '1'}
+      ],
       /*事项状态*/
       matterStatusList: [
         {label: '未完成', value: false},
@@ -402,21 +508,23 @@ export default {
     window.WIDGET = {
       "CONFIG": {
         "layout": "1",
-        "width": "450",
+        "width": "475",
         "height": "150",
         "background": "1",
         "dataColor": "FFFFFF",
         "language": "zh",
+        "borderRadius": "5",
+        "city": "CN101250109",
         "key": "465a66420c744e46af2fee004936bb00"
       }
     };
     (function (d) {
-      var c = d.createElement('link')
+      const c = d.createElement('link');
       c.rel = 'stylesheet'
       c.href = 'https://widget.qweather.net/standard/static/css/he-standard.css?v=1.4.0'
-      var s = d.createElement('script')
+      const s = d.createElement('script');
       s.src = 'https://widget.qweather.net/standard/static/js/he-standard.js?v=1.4.0'
-      var sn = d.getElementsByTagName('script')[0]
+      const sn = d.getElementsByTagName('script')[0];
       sn.parentNode.insertBefore(c, sn)
       sn.parentNode.insertBefore(s, sn)
     })(document);
@@ -435,24 +543,13 @@ export default {
     },
 
 
+
     /*获取管理员信息*/
     getAdminInfo() {
       adminInfo().then((res) => {
         this.adminInfo = res.data;
       })
     },
-
-    /*修改基础信息*/
-    updateAdminInfo() {
-      updateAdminInfo()
-          .then()
-    },
-    /*修改密码*/
-    updateAdminPwd() {
-      updateAdminPwd()
-          .then()
-    },
-
 
     /*获取管理员信息*/
     getTotalMessage() {
@@ -525,7 +622,7 @@ export default {
         updateMatter(this.todoInfo)
             .then((res) => {
               this.$message.success(res.msg)
-              this.closed();
+              this.todoDialogClosed();
             })
             .catch((err) => {
               this.$message.error(err.msg)
@@ -535,7 +632,7 @@ export default {
         addMatter(this.todoInfo)
             .then((res) => {
               this.$message.success(res.msg)
-              this.closed();
+              this.todoDialogClosed();
             })
             .catch((err) => {
               debugger
@@ -545,19 +642,69 @@ export default {
       }
     },
 
+    /*提交管理员信息（修改基础信息和修改密码）*/
+    adminSubmit() {
+      if (this.adminFlag) {
+        updateAdminInfo(this.adminChangedInfo)
+            .then((res) => {
+              this.$notify.success({
+                title: '成功',
+                message: "修改成功",
+                offset: 60
+              });
+            })
+            .catch((err) => {
+              console.log(err)
+            })
+            .finally(() => {
+              this.getAdminInfo();
+            })
+      } else {
+        updateAdminPwd(this.adminPwd)
+            .then((res) => {
+            })
+            .catch((err) => {
+              console.log(err)
+            })
+      }
+      this.adminDialogClosed();
+    },
+
+    /*打开修改信息的dialog*/
+    openAdminDialog(flag) {
+      /*修改信息为true*/
+      /*修改密码为false*/
+      this.adminFlag = flag;
+      if (flag) {
+        this.adminChangedInfo = JSON.parse(JSON.stringify(this.adminInfo))
+      }
+      this.adminVisible = true
+    },
+    /*关闭修改 信息的 dialog*/
+    adminDialogClosed() {
+
+      if (this.adminFlag) {
+        this.adminChangedInfo = {};
+      } else {
+        this.adminPwd = {};
+      }
+      this.adminVisible = false
+    },
+
+
     /*打开dialog*/
-    openDialog(todoInfo) {
+    openTodoDialog(todoInfo) {
       if (todoInfo === "todoInfo") {
         this.todoFlag = false;
       } else {
         this.todoInfo = JSON.parse(JSON.stringify(todoInfo));
         this.todoFlag = true;
       }
-      this.visible = true
+      this.todoVisible = true
     },
 
     /*关闭dialog*/
-    closed() {
+    todoDialogClosed() {
       if (this.todoFlag) {
 
       } else {
@@ -565,7 +712,7 @@ export default {
       }
 
 
-      this.visible = false
+      this.todoVisible = false
       this.matterSearch();
     },
     /*改变todo表格颜色*/
@@ -598,6 +745,8 @@ export default {
 </script>
 
 <style scoped>
+
+
 /deep/ .el-row {
   margin-bottom: 20px;
 }
@@ -667,25 +816,29 @@ export default {
 }
 
 .user-info-cont {
-  padding-left: 50px;
+  /*padding-left: 50px;*/
   flex: 1;
   font-size: 14px;
   color: #999;
 }
 
 .user-info-cont div:first-child {
-  font-size: 30px;
-  color: #222;
+  font-size: 22px;
+  color: #0086b3;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .user-info-list {
-  font-size: 14px;
+  font-size: 22px;
   color: #999;
   line-height: 25px;
+  margin-bottom: 10px;
 }
 
 .user-info-list span {
-  margin-left: 70px;
+
 }
 
 .mgb20 {
