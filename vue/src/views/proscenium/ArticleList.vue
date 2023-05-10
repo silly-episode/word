@@ -93,15 +93,16 @@
       <!-- 文章列表区 -->
       <div class="noTableScrollBar">
         <el-table
-            v-loading="searchLoading"
-            :data="articleList"
-
-            :header-cell-style="{ 'text-align': 'center' }"
-            :height="tableHeight === 0 ? `calc(${radio}*100vh - 301px)` : tableHeight"
-            border
-            highlight-current-row
-            stripe
-            style="margin: auto; width: 100%; text-align: center"
+          v-loading="searchLoading"
+          :data="articleList"
+          :header-cell-style="{ 'text-align': 'center' }"
+          :height="
+            tableHeight === 0 ? `calc(${radio}*100vh - 301px)` : tableHeight
+          "
+          border
+          highlight-current-row
+          stripe
+          style="margin: auto; width: 100%; text-align: center"
         >
           <template slot="empty">
             <el-empty description="暂无数据"></el-empty>
@@ -114,10 +115,10 @@
             </template>
           </el-table-column>
           <el-table-column
-              align="center"
-              label="标题"
-              min-width="18%"
-              prop="articleTitle"
+            align="center"
+            label="标题"
+            min-width="18%"
+            prop="articleTitle"
           ></el-table-column>
           <el-table-column
             align="center"
@@ -132,10 +133,10 @@
             prop="wordNumber"
           ></el-table-column>
           <el-table-column
-              align="center"
-              label="练习次数"
-              min-width="8%"
-              prop="articleStudyNumber"
+            align="center"
+            label="练习次数"
+            min-width="8%"
+            prop="articleStudyNumber"
           ></el-table-column>
           <el-table-column
             align="center"
@@ -153,22 +154,24 @@
           </el-table-column>
 
           <el-table-column
-              label="内容描述"
-              min-width="25%"
-              prop="remark"
-              show-overflow-tooltip
-              text-align="left"
+            label="内容描述"
+            min-width="25%"
+            prop="remark"
+            show-overflow-tooltip
+            text-align="left"
           ></el-table-column>
           <el-table-column align="center" label="Action" min-width="10%">
             <template v-slot="scope">
-              <el-button icon="el-icon-postcard" size="medium" type="danger"
-                ><router-link
-                  :to="{
-                    name: 'article',
-                    params: { articleId: scope.row.articleId }
-                  }"
-                  >练习吧</router-link
-                >
+              <el-button icon="el-icon-postcard" size="medium" type="danger">
+                <keep-alive include="article">
+                  <router-link
+                    :to="{
+                      name: 'article',
+                      params: { articleId: scope.row.articleId },
+                    }"
+                    >练习吧</router-link
+                  >
+                </keep-alive>
               </el-button>
             </template>
           </el-table-column>
@@ -191,7 +194,7 @@
 
 <script>
 
-import {articleSearch} from "@/api/admin.js"
+import { articleSearch } from "@/api/admin.js"
 import dayjs from "dayjs";
 import LhPagination from "@/components/lhPublic/lhPagination";
 
@@ -203,7 +206,7 @@ export default {
       clientWidth: document.body.clientWidth, // 文档宽度
       radio: window.sessionStorage.getItem("ratio"),
       //起始时间和截止时间的时间列表
-      pickDate: {beginDate: "", endDate: ""},
+      pickDate: { beginDate: "", endDate: "" },
       // 获取用户列表的参数对象
       queryInfo: {
         /*开始时间*/

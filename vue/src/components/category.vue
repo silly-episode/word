@@ -1,23 +1,19 @@
 <template>
   <div>
-
     <!--      <div slot="header" class="header">-->
     <!--        <div class="category-header">-->
     <!--          <span>销售额类别占比</span>-->
     <!--        </div>-->
     <!--      </div>-->
     <el-card>
-
-      <div ref="charts" class="charts"/>
+      <div ref="charts" class="charts" />
     </el-card>
-
-
   </div>
 </template>
 
 <script>
 import * as echarts from 'echarts'
-import {getArticleStudyTotal, getWordModuleStudyTotal} from "@/api/admin.js"
+import { getArticleStudyTotal, getWordModuleStudyTotal } from "@/api/admin.js"
 
 export default {
   name: 'Category',
@@ -40,73 +36,80 @@ export default {
       this.getWordModuleStudyTotal();
     }
   },
-  mounted() {
-    const Chart = echarts.init(this.$refs.charts)
-    Chart.setOption({
-      title: {
-        text: '',
-        subtext: '',
-        left: 'center',
-        top: 'center'
-      },
-      tooltip: {
-        trigger: 'item'
-      },
-      grid: {
-        left: 0,
-        top: 0,
-        right: 0,
-        bottom: 0,
-        containLabel: true  // 这个啥？看下面
-      },
-      series: [
-        {
-          name: 'Access From',
-          type: 'pie',
-          radius: ['40%', '70%'],
-          avoidLabelOverlap: false,
-          itemStyle: {
-            borderRadius: 5,
-            borderColor: '#fff',
-            borderWidth: 2
-          },
-          label: {
-            show: false,
-            position: 'center'
-          },
-          labelLine: {
-            show: false
-          },
-          data: this.studyTotal
-        }
-      ],
-    })
-    Chart.on('mouseover', (par) => {
-      // 获取鼠标移上的数据
-      const {name, value} = par
-      Chart.setOption({
-        title: {
-          text: name,
-          subtext: value
-        }
-      })
-    })
-  },
   methods: {
     getArticleStudyTotal() {
       getArticleStudyTotal()
-          .then((res) => {
-            this.studyTotal = res.data;
+        .then((res) => {
+          // console.log('studyTsotal', res.data)
+          this.studyTotal = res.data;
+          this.$nextTick(() => {
+            this.createEcharts();
           })
+        })
     },
 
     getWordModuleStudyTotal() {
       getWordModuleStudyTotal()
-          .then((res) => {
-            this.studyTotal = res.data;
+        .then((res) => {
+          // console.log('studyTotal', res.data)
+          this.studyTotal = res.data;
+          this.$nextTick(() => {
+            this.createEcharts();
           })
+        })
     },
-
+    createEcharts() {
+      const Chart = echarts.init(this.$refs.charts)
+      Chart.setOption({
+        title: {
+          text: '',
+          subtext: '',
+          left: 'center',
+          top: 'center'
+        },
+        tooltip: {
+          trigger: 'item'
+        },
+        grid: {
+          left: 0,
+          top: 0,
+          right: 0,
+          bottom: 0,
+          containLabel: true  // 这个啥？看下面
+        },
+        series: [
+          {
+            name: 'Access From',
+            type: 'pie',
+            radius: ['40%', '70%'],
+            avoidLabelOverlap: false,
+            itemStyle: {
+              borderRadius: 5,
+              borderColor: '#fff',
+              borderWidth: 2
+            },
+            label: {
+              show: false,
+              position: 'center'
+            },
+            labelLine: {
+              show: false
+            },
+            data: this.studyTotal
+          }
+        ],
+      })
+      Chart.on('mouseover', (par) => {
+        // 获取鼠标移上的数据
+        const { name, value } = par
+        Chart.setOption({
+          title: {
+            text: name,
+            subtext: value
+          }
+        })
+      })
+    }
   },
 
 }

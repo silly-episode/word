@@ -133,7 +133,7 @@ const routes = [
     component: ExamView,
   },
   {
-    path: "/article",
+    path: "/article/:articleId",
     name: 'article',
     component: ArticleView,
   }, {
