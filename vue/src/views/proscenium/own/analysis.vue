@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-card>
-      <div ref="charts" class="charts" />
+      <div ref="chartLine" class="charts"/>
     </el-card>
   </div>
 </template>
@@ -33,7 +33,7 @@ export default {
         })
     },
     createEcharts() {
-      let chartLine = echarts.init(this.$refs.charts)
+      let chartLine = echarts.init(this.$refs.chartLine)
       let option = {
         title: {
           left: 'center',

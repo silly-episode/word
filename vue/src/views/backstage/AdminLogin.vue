@@ -35,9 +35,14 @@ export default {
   },
   methods: {
     adminLogin() {
+      /*清除和设置相关信息*/
+      window.sessionStorage.clear();
+      window.sessionStorage.setItem("userKind", "admin");
       adminLogin(this.loginMessage)
           .then((res) => {
-            window.sessionStorage.clear();
+            // window.sessionStorage.clear();
+            // window.sessionStorage.setItem("userKind", "admin");
+
             window.sessionStorage.setItem("adminToken", res.data);
             this.$router.push('/admin/welcome')
           })

@@ -274,6 +274,7 @@
     <el-row :gutter="20">
       <el-col :span="12">
         <el-card shadow="hover">
+
         </el-card>
       </el-col>
       <el-col :span="6">
@@ -371,8 +372,7 @@
       <el-form
           ref="todoForm"
           :inline="true"
-          :model="todoInfo"
-      >
+          :model="todoInfo">
         <el-form-item aria-rowindex="50px" label="事项主题" prop="mattersTitle">
           <el-input
               v-model.number="todoInfo.mattersTitle"
@@ -409,7 +409,7 @@
         </el-form-item>
 
         <el-form-item class="flex_center_center">
-          <el-button type="danger">清空正文</el-button>
+          <el-button type="danger" @click="clearToDoContent">清空正文</el-button>
           <el-button type="primary" @click="submitTodo">保 存</el-button>
         </el-form-item>
       </el-form>
@@ -647,6 +647,11 @@ export default {
       console.log('content', content)
       this.todoInfo.mattersContent = content;
       // console.log(content)
+    },
+
+    /*清空todo的正文*/
+    clearToDoContent() {
+      this.$refs.myEditor.clearContent();
     },
 
     /*保存事项*/

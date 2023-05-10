@@ -90,9 +90,15 @@ export default {
     getEditorText() {
       const editor = this.editor;
       if (editor == null) return;
-
       console.log("1111  " + editor.getText()); // 执行 editor API
     },
+
+    clearContent() {
+      const editor = this.editor;
+      if (editor == null) return;
+      editor.clear();
+    },
+
   },
   beforeDestroy() {
     console.log("dasjfkasjdf")

@@ -165,7 +165,7 @@ router.beforeEach((to, from, next) => {
     next()
   } else {
     document.body.style.zoom = 100 / m;
-    /*todo ？？？循环*/
+    /*放行*/
     next()
   }
 

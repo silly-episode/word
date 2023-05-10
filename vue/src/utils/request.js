@@ -1,5 +1,5 @@
 import axios from 'axios'
-import {Message, MessageBox, Notification} from 'element-ui'
+import {Message, Notification} from 'element-ui'
 
 // axios.defaults.headers['Content-Type'] = 'application/json;charset=utf-8'
 // axios.defaults.headers.common['Authorization'] = getJwtAuthorization()
@@ -16,9 +16,12 @@ const service = axios.create({
 service.interceptors.request.use(config => {
     const token = window.sessionStorage.getItem('token')
     const adminToken = window.sessionStorage.getItem('adminToken')
-    token ? config.headers.Authorization = token : null;
-    adminToken ? config.headers.Authorization = adminToken : null;
-
+    const userKind = window.sessionStorage.getItem("userKind");
+    if (userKind === "commonUser") {
+        token ? config.headers.Authorization = token : null;
+    } else if (userKind === "admin") {
+        adminToken ? config.headers.Authorization = adminToken : null;
+    }
     return config
 }, error => {
     console.log(error)
@@ -27,47 +30,40 @@ service.interceptors.request.use(config => {
 
 // 响应拦截器
 service.interceptors.response.use(res => {
-    // 未设置状态码则默认成功状态
-    const code = res.data.code || 200;
-    // 获取错误信息
-    const message = res.data.msg
-    if (code === 4010) {
-        MessageBox.confirm(
-            '登录状态已过期，您可以继续留在该页面，或者重新登录',
-            '系统提示',
-            {
-                confirmButtonText: '重新登录',
-                cancelButtonText: '取消',
-                type: 'warning'
-            }
-        ).then(() => {
-            // store.dispatch('LogOut').then(() => {
-            //   location.reload() // 为了重新实例化vue-router对象 避免bug
-            // })
-        })
-    } else if (code === 500) {
-        Message({
-            message: message,
-            type: 'error'
-        })
-        return Promise.reject(new Error(message))
-    } else if (code !== 200) {
-        Notification.error({
-            title: message
-        })
-        return Promise.reject('error')
-    } else {
-        return res.data
-    }
-},
-    error => {
-        console.log('err' + error)
-        Message({
-            message: error.message,
-            type: 'error',
-            duration: 5 * 1000
-        })
-        return Promise.reject(error)
+        console.log(res)
+        // 未设置状态码则默认成功状态
+        const code = res.data.code || 200;
+        // 获取错误信息
+        const message = res.data.msg
+        if (code === 500) {
+
+            Message({
+                message: message,
+                type: 'error'
+            });
+            return Promise.reject(new Error(message));
+        } else if (code !== 200) {
+            Notification.error({
+                title: message
+            });
+            return Promise.reject('error');
+        } else {
+            return res.data;
+        }
+    },
+    err => {
+        console.log('err' + err)
+        const code = err.response.data.code || 500;
+        const message = err.response.data.msg
+        if (code === 4010) {
+            console.log("uncauth")
+            // Notification.info({
+            //     title: "请登录！",
+            //     offset:60
+            // });
+        }
+
+        return Promise.reject(err)
     }
 )
 

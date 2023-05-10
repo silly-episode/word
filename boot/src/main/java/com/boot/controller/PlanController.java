@@ -33,7 +33,6 @@ import java.util.Map;
 @Slf4j
 @RequestMapping("plan")
 @SuppressWarnings("all")
-@RequiresAuthentication
 public class PlanController {
 
 
@@ -55,6 +54,7 @@ public class PlanController {
      * @Date: 2023/2/14 14:49
      */
     @GetMapping("plan")
+    @RequiresAuthentication
     public Result plan(HttpServletRequest request) {
         Long userId = jwtUtils.getUserIdFromRequest(request);
         Map map = new HashMap<>();
@@ -74,6 +74,7 @@ public class PlanController {
      * @Date: 2023/2/14 13:31
      */
     @PostMapping("plan")
+    @RequiresAuthentication
     public Result plan(@RequestBody Plan plan, HttpServletRequest request) {
         Long userId = jwtUtils.getUserIdFromRequest(request);
 
@@ -109,6 +110,7 @@ public class PlanController {
      * @Date: 2023/2/14 15:19
      */
     @DeleteMapping("plan/{planId}")
+    @RequiresAuthentication
     public Result planDelete(@PathVariable Long planId) {
         Plan plan = planService.getById(planId);
         if (plan == null) {
@@ -127,19 +129,6 @@ public class PlanController {
         }
     }
 
-    /**
-     * @param :
-     * @Return: Result
-     * @Author: DengYinzhe
-     * @Description: 查询所有的单词模块信息 已测试
-     * @Date: 2023/2/14 13:46
-     */
-    @GetMapping("wordModule")
-    public Result wordModule() {
-        List<WordModule> list = new WordModule().selectAll();
-
-        return Result.success(list);
-    }
 
     /**
      * @param oldPlanId:
@@ -150,6 +139,7 @@ public class PlanController {
      * @Date: 2023/2/14 16:07
      */
     @PutMapping("mainPlan/{oldPlanId}/{newPlanId}")
+    @RequiresAuthentication
     public Result mainPlan(@PathVariable Long oldPlanId, @PathVariable Long newPlanId) {
         Plan oldPlan = new Plan().setPlanId(oldPlanId).setPlanStatus("0");
         Plan newPlan = new Plan().setPlanId(newPlanId).setPlanStatus("1");
@@ -176,6 +166,7 @@ public class PlanController {
      * @Date: 2023/2/14 17:13
      */
     @PutMapping("finishPlan/{planId}")
+    @RequiresAuthentication
     public Result finishPlan(@PathVariable Long planId) {
         UpdateWrapper<Plan> updateWrapper = new UpdateWrapper<>();
         updateWrapper.set("plan_status", 2).eq("plan_id", planId);

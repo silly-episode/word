@@ -1,19 +1,19 @@
 <template>
   <div>
-    <!--      <div slot="header" class="header">-->
-    <!--        <div class="category-header">-->
-    <!--          <span>销售额类别占比</span>-->
-    <!--        </div>-->
-    <!--      </div>-->
-    <el-card>
-      <div ref="charts" class="charts" />
+    <el-card shadow="hover" style="height: 250px">
+      <!--      <div slot="header" class="header" >-->
+      <!--        <div class="category-header">-->
+      <!--          <span>销售额类别占比</span>-->
+      <!--        </div>-->
+      <!--      </div>-->
+      <div ref="charts" class="charts"/>
     </el-card>
   </div>
 </template>
 
 <script>
 import * as echarts from 'echarts'
-import { getArticleStudyTotal, getWordModuleStudyTotal } from "@/api/admin.js"
+import {getArticleStudyTotal, getWordModuleStudyTotal} from "@/api/admin.js"
 
 export default {
   name: 'Category',
@@ -70,18 +70,12 @@ export default {
         tooltip: {
           trigger: 'item'
         },
-        grid: {
-          left: 0,
-          top: 0,
-          right: 0,
-          bottom: 0,
-          containLabel: true  // 这个啥？看下面
-        },
         series: [
           {
-            name: 'Access From',
+            name: '详细数据',
             type: 'pie',
             radius: ['40%', '70%'],
+            center: ['50%', '32%'],
             avoidLabelOverlap: false,
             itemStyle: {
               borderRadius: 5,

@@ -138,7 +138,6 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(CustomException.class)
     public Result<String> exceptionHandler(CustomException ex) {
-
         return Result.error(ex.getMessage());
     }
 

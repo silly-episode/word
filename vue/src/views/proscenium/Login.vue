@@ -172,16 +172,24 @@ export default {
         account: [{ required: true, message: '请输入账号', trigger: 'blur' },
         { min: 6, max: 15, message: '长度在 6 到 15 个字符', trigger: 'blur' }],
         nickName: [{ required: true, message: '请输入昵称', trigger: 'blur' },
-        { min: 1, max: 10, message: '长度在 1 到 10 个字符', trigger: 'blur' }],
+          {min: 1, max: 10, message: '长度在 1 到 10 个字符', trigger: 'blur'}],
         password: [
-          { validator: validatePass, trigger: 'blur' }
+          {validator: validatePass, trigger: 'blur'}
         ],
         pwd: [
-          { validator: validatePass2, trigger: 'blur' }
+          {validator: validatePass2, trigger: 'blur'}
         ]
       }
     }
   },
+
+  created() {
+    /*清除和设置相关信息*/
+    window.sessionStorage.removeItem("adminToken")
+    /*当前为普通用户使用*/
+    window.sessionStorage.setItem("userKind", "commonUser");
+  },
+
   methods: {
     showLogin() {
       this.visible = true
@@ -198,7 +206,7 @@ export default {
       sms(this.loginForm.loginAccount)
         .then((res) => {
           console.log(res)
-          if (res.code == 200) {
+          if (res.code === 200) {
             this.$notify.success({
               title: '成功',
               message: "已发送验证码，请查收",
@@ -253,11 +261,14 @@ export default {
       } else {
         if (this.telLogin) loginForm.type = 'sms'
         else loginForm.type = 'pwd'
+
         login(this.loginForm)
             .then((res) => {
               if (res.code === 200) {
                 // console.log(res)
-                window.sessionStorage.removeItem("adminToken")
+                // window.sessionStorage.removeItem("adminToken")
+                // /*当前为普通用户使用*/
+                // window.sessionStorage.setItem("userKind", "commonUser");
                 window.sessionStorage.setItem("token", res.data.token);
                 window.sessionStorage.setItem('userInfo', JSON.stringify(res.data.userInfo))
                 // this.$emit('beLogin')
@@ -266,8 +277,8 @@ export default {
                 if (this.$route.path == '/myword') this.$bus.$emit('myword')
                 if (this.$route.path == '/own') this.$bus.$emit('own')
                 if (this.$route.path == '/module') this.$bus.$emit('module')
-              this.$bus.$emit('beLogin')
-              this.closed()
+                this.$bus.$emit('beLogin')
+                this.closed()
             }
           })
           .catch((err) => {
