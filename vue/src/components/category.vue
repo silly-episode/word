@@ -1,11 +1,11 @@
 <template>
   <div>
-    <el-card shadow="hover" style="height: 250px">
-      <!--      <div slot="header" class="header" >-->
-      <!--        <div class="category-header">-->
-      <!--          <span>销售额类别占比</span>-->
-      <!--        </div>-->
-      <!--      </div>-->
+    <el-card shadow="hover">
+      <div slot="header" class="header">
+        <div class="category-header">
+          <span :class="`${this.headTitle}`" v-text="cardTitle"></span>
+        </div>
+      </div>
       <div ref="charts" class="charts"/>
     </el-card>
   </div>
@@ -25,22 +25,30 @@ export default {
   },
   data() {
     return {
-      value: '123',
+      value: '',
       studyTotal: [],
+      cardTitle: "",
+      headTitle: "",
+      centerTip: ""
     }
   },
   created() {
     if (this.totalFlag) {
       this.getArticleStudyTotal();
+      this.cardTitle = "英语文章"
+      this.headTitle = "articleTitle"
+      this.centerTip = "练习次数"
     } else {
       this.getWordModuleStudyTotal();
+      this.cardTitle = "单词模块"
+      this.headTitle = "moduleTitle"
+      this.centerTip = "学习人数"
     }
   },
   methods: {
     getArticleStudyTotal() {
       getArticleStudyTotal()
         .then((res) => {
-          // console.log('studyTsotal', res.data)
           this.studyTotal = res.data;
           this.$nextTick(() => {
             this.createEcharts();
@@ -51,7 +59,6 @@ export default {
     getWordModuleStudyTotal() {
       getWordModuleStudyTotal()
         .then((res) => {
-          // console.log('studyTotal', res.data)
           this.studyTotal = res.data;
           this.$nextTick(() => {
             this.createEcharts();
@@ -62,20 +69,37 @@ export default {
       const Chart = echarts.init(this.$refs.charts)
       Chart.setOption({
         title: {
-          text: '',
+          text: this.centerTip,
           subtext: '',
           left: 'center',
-          top: 'center'
+          top: 'center',
+          textStyle: {
+            fontSize: 22
+          },
+          subtextStyle: {
+            fontSize: 20
+          }
         },
         tooltip: {
-          trigger: 'item'
+          trigger: 'item',
+          textStyle: {
+            fontSize: '18',
+            color: '#000'  // 设置文本颜色 默认#FFF
+          },
         },
+        // legend: {
+        //   bottom: 'center',
+        //   left: '70%',
+        //   type: "scroll",
+        //   orient: 'vertical',
+        //   show: true,
+        // },
         series: [
           {
             name: '详细数据',
             type: 'pie',
-            radius: ['40%', '70%'],
-            center: ['50%', '32%'],
+            radius: ['60%', '95%'],
+            // center:['34%','50%'],
             avoidLabelOverlap: false,
             itemStyle: {
               borderRadius: 5,
@@ -110,8 +134,27 @@ export default {
 </script>
 
 <style scoped>
+
+.moduleTitle {
+  font-size: 22px;
+  color: #88cf8f;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+
+.articleTitle {
+  font-size: 22px;
+  color: #e46569;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+
 .charts {
   width: 100%;
-  height: 350px;
+  height: 300px;
 }
 </style>

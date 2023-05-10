@@ -169,9 +169,9 @@ export default {
       },
       pwd: '',
       rules: {
-        account: [{ required: true, message: '请输入账号', trigger: 'blur' },
-        { min: 6, max: 15, message: '长度在 6 到 15 个字符', trigger: 'blur' }],
-        nickName: [{ required: true, message: '请输入昵称', trigger: 'blur' },
+        account: [{required: true, message: '请输入账号', trigger: 'blur'},
+          {min: 6, max: 15, message: '长度在 6 到 15 个字符', trigger: 'blur'}],
+        nickName: [{required: true, message: '请输入昵称', trigger: 'blur'},
           {min: 1, max: 10, message: '长度在 1 到 10 个字符', trigger: 'blur'}],
         password: [
           {validator: validatePass, trigger: 'blur'}
@@ -279,7 +279,7 @@ export default {
                 if (this.$route.path == '/module') this.$bus.$emit('module')
                 this.$bus.$emit('beLogin')
                 this.closed()
-            }
+              }
           })
           .catch((err) => {
             console.log('err', err)

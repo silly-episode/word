@@ -90,7 +90,9 @@ public class WordModuleController {
     @RequiresAuthentication
     public Result moduleStudyTotal() {
         LambdaQueryWrapper<WordModule> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.select(WordModule::getModuleName, WordModule::getStudyNumber);
+        queryWrapper
+                .select(WordModule::getModuleName, WordModule::getStudyNumber)
+                .eq(WordModule::getWordModuleStatus, "0");
         List<WordModule> oldList = wordModuleService.list(queryWrapper);
         List<EchartDataDto> newList = new ArrayList<>(oldList.size());
         for (WordModule wordModule : oldList) {
