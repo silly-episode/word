@@ -9,9 +9,17 @@ import co.elastic.clients.elasticsearch.core.search.Hit;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.boot.bo.WordPlan;
 import com.boot.common.result.Result;
+import com.boot.dto.ArticleResult;
+import com.boot.dto.GameResult;
+import com.boot.dto.PlanResult;
 import com.boot.dto.Question;
 import com.boot.entity.ExamResult;
+import com.boot.entity.Plan;
+import com.boot.entity.WordModule;
 import com.boot.service.ExamResultService;
+import com.boot.service.PlanService;
+import com.boot.service.WordModuleService;
+import com.boot.utils.BeanDtoVoUtils;
 import com.boot.utils.JwtUtils;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -41,6 +49,10 @@ public class ExamResultController {
     private ExamResultService examResultService;
     @Resource
     private ElasticsearchClient elasticsearchClient;
+    @Resource
+    private PlanService planService;
+    @Resource
+    private WordModuleService wordModuleService;
     @Resource
     private JwtUtils jwtUtils;
 
@@ -77,19 +89,82 @@ public class ExamResultController {
     public Result examResult(HttpServletRequest request) {
         long userId = jwtUtils.getUserIdFromRequest(request);
         LambdaQueryWrapper<ExamResult> queryWrapper = new LambdaQueryWrapper<>();
-        /*查询条件*/
-        queryWrapper.eq(ExamResult::getUserId, userId);
+        int recordSize = 50;
+        int[] recordIndex = new int[recordSize];
+        String lastSql = " limit " + recordSize;
+        List<ExamResult> oldList;
+        List<PlanResult> planResults = new ArrayList<>(recordSize);
+        List<ArticleResult> articleResults = new ArrayList<>(recordSize);
+        List<GameResult> gameResults = new ArrayList<>(recordSize);
 
-        List<ExamResult> oldList = examResultService.list(queryWrapper);
-
-        for (ExamResult examResult : oldList) {
-
-
+        /*横轴*/
+        for (int i = 1; i <= recordSize; i++) {
+            recordIndex[i - 1] = i;
         }
 
+        /*考试*/
+        queryWrapper
+                .eq(ExamResult::getUserId, userId)
+                .eq(ExamResult::getResultType, "0")
+                .orderByDesc(ExamResult::getExamTime)
+                .last(lastSql);
+        oldList = examResultService.list(queryWrapper);
+        for (ExamResult result : oldList) {
+            String planName = "";
+            String moduleName = "";
+            PlanResult planResult = BeanDtoVoUtils.convert(result, PlanResult.class);
+            Plan plan = planService.getById(result.getPlanId());
+            if (plan != null) {
+                planName = plan.getPlanName();
+                WordModule wordModule = wordModuleService.getById(plan.getModuleId());
+                if (wordModule != null) {
+                    moduleName = wordModule.getModuleName();
+                }
+            }
+            planResult
+                    .setValue(Double.valueOf(result.getGrade()))
+                    .setPlanName(planName)
+                    .setModuleName(moduleName);
+            planResults.add(planResult);
+        }
+        Collections.reverse(planResults);
+
+        /*文章*/
+        queryWrapper.clear();
+        queryWrapper
+                .eq(ExamResult::getUserId, userId)
+                .eq(ExamResult::getResultType, "1")
+                .orderByDesc(ExamResult::getExamTime)
+                .last(lastSql);
+        oldList = examResultService.list(queryWrapper);
+        for (ExamResult result : oldList) {
+            ArticleResult articleResult = BeanDtoVoUtils.convert(result, ArticleResult.class);
+            articleResult.setValue(result.getVelocity());
+            articleResults.add(articleResult);
+        }
+        Collections.reverse(articleResults);
+
+        /*游戏*/
+        queryWrapper.clear();
+        queryWrapper
+                .eq(ExamResult::getUserId, userId)
+                .eq(ExamResult::getResultType, "2")
+                .orderByDesc(ExamResult::getExamTime)
+                .last(lastSql);
+        oldList = examResultService.list(queryWrapper);
+        for (ExamResult result : oldList) {
+            GameResult gameResult = BeanDtoVoUtils.convert(result, GameResult.class);
+            gameResult.setValue(Double.valueOf(result.getScore()));
+            gameResults.add(gameResult);
+        }
+        Collections.reverse(gameResults);
+
         Map<String, Object> map = new HashMap<>(3);
-
-
+        map.put("planResults", planResults);
+        map.put("articleResults", articleResults);
+        map.put("gameResults", gameResults);
+        map.put("recordIndex", recordIndex);
+        map.put("endIndex", Math.max(planResults.size(), Math.max(gameResults.size(), articleResults.size())));
         return Result.success(map);
     }
 

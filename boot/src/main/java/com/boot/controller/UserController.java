@@ -13,6 +13,7 @@ import com.boot.dto.*;
 import com.boot.entity.LoginLog;
 import com.boot.entity.Swear;
 import com.boot.entity.User;
+import com.boot.service.LoginLogService;
 import com.boot.service.SwearService;
 import com.boot.service.UserService;
 import com.boot.utils.*;
@@ -34,6 +35,7 @@ import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -64,6 +66,8 @@ public class UserController {
     @Resource
     private MinIOUtils minIOUtils;
     @Resource
+    private LoginLogService loginLogService;
+    @Resource
     private SwearService swearService;
     /*登录方式*/
     private final String loginBySm = "sms";
@@ -91,8 +95,56 @@ public class UserController {
     @GetMapping("loginStatus")
     @RequiresAuthentication
     public Result loginStatus() {
+        /*初始化*/
+        long dayRange = 15;
+        DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDateTime DateEnd = LocalDateTime.of(LocalDate.now(), LocalTime.MAX);
+        LocalDateTime DateBegin = LocalDateTime.of(LocalDate.now(), LocalTime.MIN).minusDays(dayRange - 1);
+        LocalDate[] xData = new LocalDate[(int) dayRange];
+        int[] yData = new int[(int) dayRange];
+        Map<LocalDate, Integer> map = new HashMap<>();
+        Map<String, Object> resultMap = new HashMap<>(2);
+        /*具体时间*/
+        for (int i = 0; i < dayRange; i++) {
+            xData[i] = DateEnd.minusDays(i).toLocalDate();
+            map.put(xData[i], 0);
+        }
 
-        return Result.success();
+        /*查询数据*/
+        LambdaQueryWrapper<LoginLog> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper
+                .select(LoginLog::getLoginTime)
+                .eq(LoginLog::getResult, "0")
+                .lt(LoginLog::getLoginTime, DateEnd)
+                .gt(LoginLog::getLoginTime, DateBegin)
+                .orderByAsc(LoginLog::getLoginTime);
+        List<LoginLog> logList = loginLogService.list(queryWrapper);
+
+        /*处理数据*/
+        for (LoginLog login : logList) {
+            LocalDate localDate = login.getLoginTime().toLocalDate();
+            if (localDate != null) {
+                map.put(localDate, map.get(localDate) + 1);
+            }
+        }
+        for (int i = 0; i < xData.length; i++) {
+            yData[i] = map.get(xData[i]);
+        }
+
+
+        LocalDate[] finallyXData = new LocalDate[(int) dayRange];
+        int[] finallyYData = new int[(int) dayRange];
+        int count = (int) dayRange;
+        /*倒序*/
+        for (int i = 0; i < dayRange; i++) {
+            count--;
+            finallyXData[i] = xData[count];
+            finallyYData[i] = yData[count];
+        }
+
+        resultMap.put("yData", finallyYData);
+        resultMap.put("xData", finallyXData);
+        return Result.success(resultMap);
     }
 
 

@@ -9,6 +9,17 @@ import request from "@/utils/request";
 
 
 /**
+ * 用户活跃度
+ * @returns {*}
+ */
+export function getLoginLogStatus() {
+    return request({
+        url: 'user/loginStatus',
+        method: 'get'
+    })
+}
+
+/**
  * 单词模块学习人数
  * @returns {*}
  */

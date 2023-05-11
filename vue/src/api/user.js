@@ -1,5 +1,13 @@
 import request from '../utils/request'
 
+
+export function examResult() {
+    return request({
+        url: `examResult/examResult`,
+        method: 'get'
+    })
+}
+
 export function sms(phone) {
     return request({
         url: `/user/sms/${phone}`,

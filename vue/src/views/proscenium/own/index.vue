@@ -151,7 +151,7 @@ export default {
       fit: 'cover',
       roleGroup: {},
       postGroup: {},
-      activeTab: "userinfo"
+      activeTab: "analysis"
     };
   },
   created() {

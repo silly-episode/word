@@ -274,7 +274,7 @@
     <el-row :gutter="20">
       <el-col :span="12">
         <el-card shadow="hover">
-
+          <LineChart></LineChart>
         </el-card>
       </el-col>
       <el-col :span="6">
@@ -452,9 +452,10 @@ import LhPagination from "@/components/lhPublic/lhPagination";
 import MyEditor from "@/components/MyEditor"
 import MyEditor3 from "@/components/MyEditor3"
 import Category from "@/components/category";
+import LineChart from "@/components/LineChart"
 
 export default {
-  components: {LhPagination, MyEditor, MyEditor3, Category},
+  components: {LhPagination, MyEditor, MyEditor3, Category, LineChart},
   data() {
     const equalToPassword = (rule, value, callback) => {
       if (this.adminPwd.newPassword !== value) {

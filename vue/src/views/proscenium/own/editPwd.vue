@@ -25,13 +25,13 @@
       />
     </el-form-item>
     <el-form-item class="flex_center_center">
-      <el-button type="primary" size="mini" @click="submit">保存</el-button>
+      <el-button size="medium" type="primary" @click="submit">保存</el-button>
     </el-form-item>
   </el-form>
 </template>
 
 <script>
-import { editPwd } from "@/api/user";
+import {editPwd} from "@/api/user";
 
 export default {
   data() {

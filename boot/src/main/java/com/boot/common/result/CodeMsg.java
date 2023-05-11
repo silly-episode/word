@@ -33,7 +33,7 @@ public class CodeMsg {
      * @Date: 2023/2/6 21:21
      */
     public static final CodeMsg PARAMETER_ERROR = new CodeMsg(4000, "参数不正确！");
-    public static final CodeMsg NULL_POINT = new CodeMsg(4010, "参数异常(NullPointerException),请稍后再试试哦");
+    public static final CodeMsg NULL_POINT = new CodeMsg(4011, "参数异常(NullPointerException),请稍后再试试哦");
 
     /**
      * @Author: DengYinzhe

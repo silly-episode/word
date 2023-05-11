@@ -1,103 +1,140 @@
 <template>
   <div>
     <el-card>
-      <div ref="chartLine" class="charts"/>
+      <!--       :style="`zoom:${1.25*radio}`"-->
+      <div ref="resultChart" class="resultChart"/>
     </el-card>
   </div>
 </template>
 
 <script>
 import * as echarts from 'echarts'
-// import {} from "@/api/admin.js"
+import {examResult} from "@/api/user.js"
+
 export default {
   name: 'analysis',
   data() {
     return {
-      value: '123',
-      studyTotal: [],
+      radio: window.sessionStorage.getItem("ratio"),
+      value: '',
+      chart: null,
+      xData: [],
+      yData1: [],
+      yData2: [],
+      yData3: [],
+      endIndex: "",
+
     }
   },
-  created() {
-    // this.getachievement();
 
+  created() {
+    this.examResult()
   },
-  mounted() { this.createEcharts() },
+
+
+  mounted() {
+    this.$nextTick(() => {
+      this.initChart()
+    })
+  },
   methods: {
-    getachievement() {
-      getachievement()
-        .then((res) => {
-          this.achievement = res.data;
-          this.$nextTick(() => {
-            this.createEcharts();
+    examResult() {
+      examResult()
+          .then((res) => {
+            console.log(res)
+            this.xData = res.data.recordIndex;
+            this.yData1 = res.data.planResults;
+            this.yData2 = res.data.articleResults;
+            this.yData3 = res.data.gameResults;
+            this.endIndex = res.data.endIndex;
+            this.$nextTick(() => {
+              this.initChart();
+            })
           })
-        })
     },
-    createEcharts() {
-      let chartLine = echarts.init(this.$refs.chartLine)
-      let option = {
+
+
+    initChart() {
+      this.chart = echarts.init(this.$refs.resultChart)
+
+      this.chart.setOption({
         title: {
-          left: 'center',
-          text: '旅客时间分布',
-          textStyle: {
-            color: '#fff',
-            fontSize: 35,
-            fontWeight: 'normal'
+          text: '成绩记录'
+        },
+        tooltip: {
+          trigger: 'axis',
+          axisPointer: {
+            type: 'shadow'
+          },
+          // formatter:function(params){
+          //   console.log(params)
+          //   return params[0].name;
+          // }
+
+        },
+        legend: {
+          data: ['计划成绩', '文章练习', '游戏得分']
+        },
+        grid: {
+          left: '3%',
+          right: '4%',
+          bottom: '3%',
+          containLabel: true
+        },
+        dataZoom: [
+          {
+            type: "slider",
+            realtime: true, //拖动滚动条时是否动态的更新图表数据
+            height: 25, //滚动条高度
+            start: 0, //滚动条开始位置（共100等份）
+            end: this.endIndex//结束位置（共100等份）
+          }
+        ],
+        //?
+        toolbox: {
+          feature: {
+            saveAsImage: {}
           }
         },
-        // 设置折线图的位置
-        grid: {
-          // x: 50,
-          // y: 90,
-          // x2: 30,
-          // y2: 30
-        },
-        // 设置折线图的位置
         xAxis: {
           type: 'category',
           boundaryGap: false,
-          axisLabel: {
-            interval: 0,
-            fontSize: 20
-          },
-          data: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月']
+          data: this.xData
         },
         yAxis: {
-          name: '人次',
-          // y轴名称的位置
-          nameTextStyle: {
-            align: "right",
-            fontSize: 20
-          },
-          type: 'value',
-          min: 0,
-          max: 100,
-          // 只能设置偶数
-          splitNumber: 6,
-          axisLabel: {
-            fontSize: 20
-          }
+          type: 'value'
         },
         series: [
           {
-            data: [15, 23, 22, 21, 13, 17, 60, 22, 21, 13, 17, 60],
+            name: '游戏得分',
             type: 'line',
-            // symbol: 'circle',     //设定为实心点
-            symbolSize: 15,   //设定圆圈的大小
-
+            stack: 'Total',
+            data: this.yData3
+          },
+          {
+            name: '计划成绩',
+            type: 'line',
+            stack: 'Total',
+            data: this.yData1
+          },
+          {
+            name: '文章练习',
+            type: 'line',
+            stack: 'Total',
+            data: this.yData2
           }
         ]
-      }
-      // 使用刚指定的配置项和数据显示图表。
-      chartLine.setOption(option);
-
-    },
+      })
+    }
   }
 }
+
 </script>
 
 <style scoped>
-.charts {
-  width: 90%;
-  height: 70vh;
+.resultChart {
+  width: 100%;
+  height: 377px;
 }
 </style>
+

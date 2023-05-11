@@ -11,25 +11,31 @@
           <span class="textCss">时间</span>
         </div>
         <div
-          v-for="item in cols"
-          :key="item.lable"
-          class="flex-1 flex_column_center_center"
+            v-for="item in cols"
+            :key="item.label"
+            class="flex-1 flex_column_center_center"
         >
           <div class="numCss">{{ info[item.props] }}</div>
-          <span class="textCss">{{ item.lable }}</span>
+          <span class="textCss">{{ item.label }}</span>
         </div>
       </div>
       <div
-        @click="Start"
-        :class="`white ${
-          isStart ? 'bg_c1_grey' : 'bg_purple'
+          @click="Start"
+          :class="`white ${
+          isStart ? 'bg_c1_grey' : 'bg_green'
         }  radius_10 text_center pointer wid_100 hei_50 flex_center_center font_18`"
       >
         {{ isStart ? "Pause" : "Start" }}
       </div>
       <div
-        @click="End"
-        class="white bg_purple radius_10 text_center pointer wid_100 hei_50 flex_center_center font_18"
+          class="white bg_purple radius_10 text_center pointer wid_100 hei_50 flex_center_center font_18"
+          @click="empty"
+      >
+        Restart
+      </div>
+      <div
+          class="white bg_red radius_10 text_center pointer wid_100 hei_50 flex_center_center font_18"
+          @click="End"
       >
         End
       </div>
@@ -86,10 +92,10 @@ export default {
         correctNum: 0,
         correctRate: 0,
       },
-      cols: [{ lable: '输入数', props: 'inputNum' },
-      { lable: '速度(字/秒)', props: 'velocity' },
-      { lable: '正确数', props: 'correctNum' },
-      { lable: '正确率', props: 'correctRate' }],
+      cols: [{label: '输入数', props: 'inputNum'},
+        {label: '速度(字/分钟)', props: 'velocity'},
+        {label: '正确数', props: 'correctNum'},
+        {label: '正确率', props: 'correctRate'}],
     }
   },
   methods: {
@@ -120,17 +126,40 @@ export default {
             // console.log(articleArr)
           }
         })
-        .catch((err) => {
-          console.log('err', err)
-        })
+          .catch((err) => {
+            console.log('err', err)
+          })
     },
 
     Start() {
       this.isStart = !this.isStart
     },
 
+    empty() {
+      window.location.reload()
+      // let time = this.trunTime(this.$refs.jishi.content)
+      // if (time == 0) return
+      // this.articleArr.forEach((item,i) => {
+      //   // console.log('input',this.$refs[`input${i}`])
+      //   this.$refs[`input${i}`].value=''
+      //   // console.log('this.articleArr[i]',this.articleArr[i])
+      //   this.articleArr[i].forEach((it, ind) => {
+      //     this.arr[ind] = -1
+      //   });
+      // })
+      //
+      // this.isStart = false
+      // this.info= {
+      //   inputNum: 0,
+      //   velocity: 0,
+      //   correctNum: 0,
+      //   correctRate: 0,
+      // }
+
+    },
+
     input(e) {
-      const { value, name } = e.target
+      const {value, name} = e.target
       // console.log('value', value)
       // console.log('value.length', value.length)
       // console.log('this.articleArr[name].length', this.articleArr[name].length)
@@ -141,7 +170,7 @@ export default {
       if (e.data) {
         this.info.inputNum++;
         let ss = this.trunTime(this.$refs.jishi.content)
-        if (ss > 0) this.info.velocity = (this.info.inputNum / ss).toFixed(2);
+        if (ss > 0) this.info.velocity = (this.info.inputNum / ss * 60).toFixed(2);
 
         // console.log(this.articleArr[name][value.length - 1])
         // console.log(e.data)

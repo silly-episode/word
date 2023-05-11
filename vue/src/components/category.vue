@@ -6,7 +6,7 @@
           <span :class="`${this.headTitle}`" v-text="cardTitle"></span>
         </div>
       </div>
-      <div ref="charts" class="charts"/>
+      <div ref="pieChart" :style="`zoom:${1.25*0.9*radio}`" class="pieChart"/>
     </el-card>
   </div>
 </template>
@@ -25,6 +25,7 @@ export default {
   },
   data() {
     return {
+      radio: window.sessionStorage.getItem("ratio"),
       value: '',
       studyTotal: [],
       cardTitle: "",
@@ -66,7 +67,7 @@ export default {
         })
     },
     createEcharts() {
-      const Chart = echarts.init(this.$refs.charts)
+      const Chart = echarts.init(this.$refs.pieChart)
       Chart.setOption({
         title: {
           text: this.centerTip,
@@ -153,7 +154,7 @@ export default {
 }
 
 
-.charts {
+.pieChart {
   width: 100%;
   height: 300px;
 }

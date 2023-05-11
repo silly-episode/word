@@ -28,14 +28,14 @@
     </el-form-item>
 
     <el-form-item class="flex_center_center">
-      <el-button type="primary" size="mini" @click="submit">保存</el-button>
+      <el-button size="medium" type="primary" @click="submit">保存</el-button>
       <!-- <el-button type="danger" size="mini" @click="close">关闭</el-button> -->
     </el-form-item>
   </el-form>
 </template>
 
 <script>
-import { editTel, smsLogined } from "@/api/user";
+import {editTel, smsLogined} from "@/api/user";
 
 export default {
   data() {
