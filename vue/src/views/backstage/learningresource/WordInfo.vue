@@ -8,6 +8,7 @@
 -->
 <template>
   <el-dialog
+      v-if="visible"
       :destroy-on-close="true"
       :close-on-click-modal="false"
       :lock-scroll="true"
@@ -385,6 +386,7 @@ export default {
 
     // 对话框的关闭
     closed() {
+      this.moduleMessage = {};
       if (!this.flag && !this.importLoading) {
         this.flagText = "将文件拖到此处，或<em>点击上传"
         this.fileCount = 0

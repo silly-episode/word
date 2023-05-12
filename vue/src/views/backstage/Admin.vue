@@ -124,15 +124,20 @@ export default {
             id: '43',
             authName: '服务信息',
             path: 'admin/serviceinformation'
-          }, {
-            id: '44',
-            authName: '缓存列表',
-            path: 'admin/cachelist'
-          }, {
-            id: '45',
-            authName: '数据库表信息',
-            path: 'admin/dbinformation'
-          }]
+          },
+
+
+            //   {
+            //   id: '44',
+            //   authName: '缓存列表',
+            //   path: 'admin/cachelist'
+            // }, {
+            //   id: '45',
+            //   authName: '数据库表信息',
+            //   path: 'admin/dbinformation'
+            // }
+
+          ]
         }],
       //   侧边栏是否折叠
       isCollapse: false,

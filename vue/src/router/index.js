@@ -31,8 +31,6 @@ import SentenceManage from '@/views/backstage/learningresource/SentenceManage.vu
 
 import OperationLog from '@/views/backstage/system/OperationLog.vue'
 import ServiceInformation from '@/views/backstage/system/ServiceInformation.vue'
-import CacheList from '@/views/backstage/system/CacheList.vue'
-import DbInformation from '@/views/backstage/system/DbInformation.vue'
 
 import AdminLogin from "@/views/backstage/AdminLogin";
 
@@ -114,13 +112,17 @@ const routes = [
     }, {
       path: '/admin/serviceinformation',
       component: ServiceInformation
-    }, {
-      path: '/admin/cachelist',
-      component: CacheList
-    }, {
-      path: '/admin/dbinformation',
-      component: DbInformation
-    }]
+    },
+
+      //   {
+      //   path: '/admin/cachelist',
+      //   component: CacheList
+      // }, {
+      //   path: '/admin/dbinformation',
+      //   component: DbInformation
+      // }
+
+    ]
   },
   {
     path: "/word",
